@@ -17,3 +17,11 @@ conda env create -f environment.yml
 conda activate hacx
 ```
 - This should install and run the env for hacx
+
+### Running the backend
+- run
+```
+uvicorn src.api.backend:app --reload
+```
+- Backend is hosted on localhost:8000
+- To see the docs, go to localhost:8000/localhost
