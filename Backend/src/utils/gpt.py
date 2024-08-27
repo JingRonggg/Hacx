@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import os
 import requests
 from dotenv import load_dotenv
@@ -74,3 +75,30 @@ def parse_gpt_response(gpt_response):
     explanation = explanation_match.group(1).strip() if explanation_match else "No explanation provided."
 
     return verdict, confidence, explanation
+=======
+import openai
+from dotenv import load_dotenv
+import os
+
+# Load environment variables from a .env file
+load_dotenv()
+
+# Get the API key from environment variables
+api_key = os.getenv("OPENAI_ENV_KEY")
+
+# Set the API key
+openai.api_key = api_key
+
+completion = openai.chat.completions.create(
+    model="gpt-3.5-turbo",
+    messages=[
+        {"role": "system", "content": "You are a helpful assistant."},
+        {
+            "role": "user",
+            "content": "Write a haiku about recursion in programming."
+        }
+    ]
+)
+
+print(completion.choices[0].message)
+>>>>>>> 95bb7cd (trained version1 of our model, added new libraries to environment.yml, included a gpt.py which cannot work due to API-Token billing issues)
