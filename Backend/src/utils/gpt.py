@@ -1,5 +1,6 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 import os
 import requests
 from dotenv import load_dotenv
@@ -79,28 +80,37 @@ def parse_gpt_response(gpt_response):
 =======
 import openai
 from dotenv import load_dotenv
+=======
+>>>>>>> f211b3c (Added a gpt.py to pre-process data. Currently it just works like a ChatGPT)
 import os
+import requests
+from dotenv import load_dotenv
 
-# Load environment variables from a .env file
+# Load environment variables from the .env file
 load_dotenv()
 
-# Get the API key from environment variables
-api_key = os.getenv("OPENAI_ENV_KEY")
+# Configuration
+API_KEY = os.getenv("OPENAI_API_KEY")  # Get the API key from the .env file
 
-# Set the API key
-openai.api_key = api_key
+headers = {
+    "Content-Type": "application/json",
+    "api-key": API_KEY,
+}
 
-completion = openai.chat.completions.create(
-    model="gpt-3.5-turbo",
-    messages=[
-        {"role": "system", "content": "You are a helpful assistant."},
-        {
-            "role": "user",
-            "content": "Write a haiku about recursion in programming."
-        }
-    ]
-)
+# Function to get a response from the GPT model
+def get_gpt_response(user_input):
+    # Payload for the request
+    payload = {
+        "messages": [
+            {"role": "system", "content": "You are an AI assistant that helps people find information."},
+            {"role": "user", "content": user_input}
+        ],
+        "temperature": 0.7,
+        "top_p": 0.95,
+        "max_tokens": 800
+    }
 
+<<<<<<< HEAD
 print(completion.choices[0].message)
 >>>>>>> 95bb7cd (trained version1 of our model, added new libraries to environment.yml, included a gpt.py which cannot work due to API-Token billing issues)
 =======
@@ -130,3 +140,36 @@ completion = openai.chat.completions.create(
 
 print(completion.choices[0].message)
 >>>>>>> 94be2a6 (Added gpt.py)
+=======
+    ENDPOINT = "https://kevingpt.openai.azure.com/openai/deployments/kevinGPT/chat/completions?api-version=2024-02-15-preview"
+
+    # Send request
+    try:
+        response = requests.post(ENDPOINT, headers=headers, json=payload)
+        response.raise_for_status()  # Will raise an HTTPError if the HTTP request returned an unsuccessful status code
+        return response.json()
+    except requests.RequestException as e:
+        raise SystemExit(f"Failed to make the request. Error: {e}")
+
+# Main function to interact with the user
+def main():
+    while True:
+        # Get user input
+        user_input = input("You: ")
+
+        # Break the loop if the user wants to exit
+        if user_input.lower() in ['exit', 'quit']:
+            print("Goodbye!")
+            break
+
+        # Get GPT's response
+        response = get_gpt_response(user_input)
+
+        # Extract and print the response from the GPT model
+        gpt_response = response['choices'][0]['message']['content'].strip()
+        print(f"GPT: {gpt_response}")
+
+# Run the main function
+if __name__ == "__main__":
+    main()
+>>>>>>> f211b3c (Added a gpt.py to pre-process data. Currently it just works like a ChatGPT)
