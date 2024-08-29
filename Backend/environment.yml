@@ -154,5 +154,5 @@ dependencies:
       - scikit-learn==1.5.1
       - seaborn
       - matplotlib
-      - openai
+      - openai==0.28
       - python-dotenv
