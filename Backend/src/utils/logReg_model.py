@@ -1,4 +1,5 @@
-#LLM Model 1: Logistic Regression Model
+# LLM Model 1: Logistic Regression Model
+# runs our Logistic Regression Model
 
 from transformers import pipeline
 import pickle
