@@ -2,17 +2,14 @@
 
 from db.db_access import DatabaseAccess
 
-# Example usage
-# remember await needs to be used within an async function
-async def main():
-    db = DatabaseAccess()
+db = DatabaseAccess(db_name='database.db')
 
-    # Send data to the input table
-    await db.send("input", ("Sample Text", "image.png"))
+# Example of inserting data
+db.send("processedData", ("Example text", True))
 
-    # Fetch data from the input table
-    rows = await db.fetch("input")
-    print(rows)
+# Example of extracting data
+data = db.extract("processedData", "Label = 1")
+print(data)
 
-# To run the example
-# asyncio.run(main())
+# Example of deleting data
+db.delete("processedData", "Text = 'Example text'")
