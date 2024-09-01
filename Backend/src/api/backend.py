@@ -1,22 +1,18 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from typing import Optional
-from src.utils.fake_news_detector import load_model, check_fake_news, interpret_results
-# from src.utils.web_crawler import fetch_article
+from src.utils.fake_news_detector import detect_fake_news
+from src.utils.web_crawler import fetch_article
 app = FastAPI()
 
-class NewsItem(BaseModel):
-    text: str
+class ArticleInput(BaseModel):
+    url: str
 
 class ArticleOutput(BaseModel):
     title: str
     text: str
     is_fake: Optional[bool] = None
     confidence: Optional[float] = None
-
-@app.on_event("startup")
-async def startup_event():
-    load_model()
 
 @app.get("/")
 async def health() -> dict:
@@ -29,14 +25,17 @@ async def health() -> dict:
     return {"messages": "Hello Hacx!"}
 
 
-@app.post("/check_news")
-async def check_news(news_item: NewsItem):
+@app.post("/check-article/", response_model=ArticleOutput)
+async def check_article(input_data: ArticleInput):
     try:
-        scores = check_fake_news(news_item.text)
-        interpretation = interpret_results(scores)
-        return {
-            "scores": scores,
-            "interpretation": interpretation
-        }
+        article = fetch_article(input_data.url)
+        detection_result = detect_fake_news(article['text'])
+        article_output = ArticleOutput(
+            title=article['title'],
+            text=article['text'],
+            is_fake=detection_result['label'] == "FAKE",
+            confidence=detection_result['score']
+        )
+        return article_output
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e))
