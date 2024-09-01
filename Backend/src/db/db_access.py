@@ -54,5 +54,23 @@ class DatabaseAccess:
     async def fetch(self, table_name, conditions=None):
         return await self.run_in_executor(self._fetch, table_name, conditions)
 
+    def _delete(self, table_name, conditions=None):
+
+        # Change this when migrating to MySQL
+        conn = sqlite3.connect(self.db_path)
+        
+        cursor = conn.cursor()
+
+        query = f"DELETE FROM {table_name}"
+        if conditions:
+            query += f" WHERE {conditions}"
+
+        cursor.execute(query)
+        conn.commit()
+
+        conn.close()
+
+    async def delete(self, table_name, conditions=None):
+        await self.run_in_executor(self._delete, table_name, conditions)
 
 
