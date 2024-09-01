@@ -25,3 +25,4 @@ def interpret_results(scores):
         return "LIKELY TRUE"
     else:
         return "CHECK AGAIN"
+
