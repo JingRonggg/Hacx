@@ -13,7 +13,10 @@ class DatabaseAccess:
         return await loop.run_in_executor(self.executor, func, *args)
 
     def _send(self, table_name, data):
+
+        # Change this when migrating to MySQL
         conn = sqlite3.connect(self.db_path)
+
         cursor = conn.cursor()
 
         if table_name == "input":
@@ -32,7 +35,10 @@ class DatabaseAccess:
         await self.run_in_executor(self._send, table_name, data)
 
     def _fetch(self, table_name, conditions=None):
+
+        # Change this when migrating to MySQL
         conn = sqlite3.connect(self.db_path)
+
         cursor = conn.cursor()
 
         query = f"SELECT * FROM {table_name}"
@@ -47,5 +53,6 @@ class DatabaseAccess:
 
     async def fetch(self, table_name, conditions=None):
         return await self.run_in_executor(self._fetch, table_name, conditions)
+
 
 
