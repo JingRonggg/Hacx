@@ -29,7 +29,7 @@ class ArticleInput(BaseModel):
 class ArticleOutput(BaseModel):
     title: str
     text: str
-    is_fake: Optional[bool] = None
+    is_fake: str
     confidence: Optional[float] = None
 
 
@@ -52,20 +52,19 @@ async def check_article(request: Request, input_data: str = Form(...)):
     try:
         # unquote() function decodes the special characters in URL
         article = fetch_article(unquote(input_data))
-        print(article['text'])
+        article['text'] = article['text'].replace('\n', ' ').replace('\r', ' ').replace('\t', ' ').replace('\xa0', ' ').replace('\u200b', ' ').replace('\u200e', ' ').replace('\u200f', ' ')
         # Perform fake news detection
         detection_result = detect_fake_news(article['text'])
-        print("Detection result: successful", detection_result)
         interpretation = interpret_results(detection_result)
 
         # Determine if it's fake based on the highest score
-        is_fake = max(detection_result, key=detection_result.get) == "FAKE"
+        # is_fake = max(detection_result, key=detection_result.get) == "FAKE"
         confidence = max(detection_result.values())
 
         article_output = ArticleOutput(
             title=article['title'],
             text=article['text'],
-            is_fake=is_fake,
+            is_fake=interpretation,
             confidence=confidence
         )
         return templates.TemplateResponse('main.html', context={'request': request, 'result': article_output, 'input_data': article})
