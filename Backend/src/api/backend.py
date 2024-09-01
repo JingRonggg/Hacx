@@ -5,7 +5,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.gzip import GZipMiddleware
 from pydantic import BaseModel
 from typing import Annotated, Optional
-from src.utils.fake_news_detector import detect_fake_news, interpret_results, load_model
+from src.utils.fake_news_detector import detect_fake_news, interpret_results
 from src.utils.web_crawler import fetch_article
 import os
 from urllib.parse import unquote
@@ -51,10 +51,11 @@ async def check_article(request: Request, input_data: str = Form(...)):
     # input_data gets the url link from the textbox
     try:
         # unquote() function decodes the special characters in URL
-        article = fetch_article((input_data))
-
+        article = fetch_article(unquote(input_data))
+        print(article['text'])
         # Perform fake news detection
         detection_result = detect_fake_news(article['text'])
+        print("Detection result: successful", detection_result)
         interpretation = interpret_results(detection_result)
 
         # Determine if it's fake based on the highest score
