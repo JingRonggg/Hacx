@@ -19,6 +19,9 @@ save_dir = org.create_training_subdirectory()
 DataPrep.create_distribution(DataPrep.train_news, save_dir)
 DataPrep.create_distribution(DataPrep.test_news, save_dir)
 DataPrep.create_distribution(DataPrep.valid_news, save_dir)
+FeatureSelection.get_countVectorizer_stats(save_dir)
+FeatureSelection.get_tfidf_stats(save_dir)
+
 
 # Logistic Regression Pipeline with TF-IDF
 logR_pipeline_ngram = Pipeline([
