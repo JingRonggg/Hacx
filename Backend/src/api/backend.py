@@ -5,7 +5,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.gzip import GZipMiddleware
 from pydantic import BaseModel
 from typing import Annotated, Optional
-from src.utils.fake_news_detector import detect_fake_news, interpret_results
+from Backend.src.utils.deBERTa_model import detect_fake_news, interpret_results
 from src.utils.web_crawler import fetch_article
 from src.utils.gpt import get_gpt_response, parse_gpt_response
 import os
