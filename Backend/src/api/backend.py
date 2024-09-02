@@ -7,6 +7,7 @@ from pydantic import BaseModel
 from typing import Annotated, Optional
 from src.utils.fake_news_detector import detect_fake_news, interpret_results
 from src.utils.web_crawler import fetch_article
+from src.utils.gpt import get_gpt_response, parse_gpt_response
 import os
 from urllib.parse import unquote
 
@@ -28,7 +29,7 @@ class ArticleInput(BaseModel):
 
 class ArticleOutput(BaseModel):
     title: str
-    text: str
+    explanation: str
     is_fake: str
     confidence: Optional[float] = None
 
@@ -53,17 +54,21 @@ async def check_article(request: Request, input_data: str = Form(...)):
         # unquote() function decodes the special characters in URL
         article = fetch_article(unquote(input_data))
         article['text'] = article['text'].replace('\n', ' ').replace('\r', ' ').replace('\t', ' ').replace('\xa0', ' ').replace('\u200b', ' ').replace('\u200e', ' ').replace('\u200f', ' ')
-        # Perform fake news detection
-        detection_result = detect_fake_news(article['text'])
-        interpretation = interpret_results(detection_result)
+        
+        # Perform fake news detection, layer 1 (Chatgpt)
+        response = get_gpt_response(article['text'])
+        gpt_response = response['choices'][0]['message']['content'].strip()
+        interpretation, confidence, explanation = parse_gpt_response(gpt_response)
+        if confidence == "Unknown" or confidence < 50:
 
-        # Determine if it's fake based on the highest score
-        # is_fake = max(detection_result, key=detection_result.get) == "FAKE"
-        confidence = max(detection_result.values())
+            # Perform fake news detection, layer 2 (hugging face LLM)
+            detection_result = detect_fake_news(article['text'])
+            interpretation = interpret_results(detection_result)
+            confidence = max(detection_result.values())
 
         article_output = ArticleOutput(
             title=article['title'],
-            text=article['text'],
+            explanation=explanation,
             is_fake=interpretation,
             confidence=confidence
         )
