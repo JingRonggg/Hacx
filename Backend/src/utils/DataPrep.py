@@ -1,22 +1,32 @@
 import os
 import pandas as pd
-import numpy as np
 import nltk
 from nltk.stem import SnowballStemmer
 from nltk.stem.porter import PorterStemmer
 import seaborn as sb
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
-from db.db_access import DatabaseAccessAzure  # Import the DatabaseAccessAzure class
+from dotenv import load_dotenv
+from db.db_access import DatabaseAccessAzure
+
+load_dotenv()
+
+# Configuration
+API_KEY = os.getenv("OPENAI_API_KEY")
+ENDPOINT = os.getenv("OPENAI_API_ENDPOINT")
+SERVER_NAME = os.getenv("SERVER_NAME")
+DATABASE_NAME = os.getenv("DATABASE_NAME")
+SERVER_USERNAME = os.getenv("SERVER_USERNAME")
+SERVER_PASSWORD = os.getenv("SERVER_PASSWORD")
 
 # Load data from the pre_processed_data table using db_access
 def load_data_from_db():
     # Initialize the database connection
     db = DatabaseAccessAzure(
-        server_name='fakenewsserver.database.windows.net',  
-        database_name='FakeNews_DB',  
-        username='fakenewsadmin',  
-        password='fakenews1!'  
+        server_name = SERVER_NAME,  
+        database_name = DATABASE_NAME,  
+        username = SERVER_USERNAME,  
+        password = SERVER_PASSWORD  
     )
     
     # Extract data from pre_processed_data table
