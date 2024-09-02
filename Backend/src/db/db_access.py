@@ -1,58 +1,87 @@
-import sqlite3
-import os
+import pyodbc
 
-class DatabaseAccess:
-    def __init__(self, db_name='database.db'):
-        self.db_path = os.path.join(os.path.dirname(__file__), db_name)
+class DatabaseAccessAzure:
+    def __init__(self, server_name, database_name, username, password):
+        self.conn_str = (
+            f"DRIVER={{ODBC Driver 17 for SQL Server}};"
+            f"SERVER={server_name};"
+            f"DATABASE={database_name};"
+            f"UID={username};"
+            f"PWD={password};"
+        )
 
-    # send function as previously defined
+ # Send function to insert data into Azure SQL Database
     def send(self, table_name, data):
-        conn = sqlite3.connect(self.db_path)
+        conn = pyodbc.connect(self.conn_str)
         cursor = conn.cursor()
 
-        if table_name == "input":
-            cursor.execute("INSERT INTO input (Text, Images) VALUES (?, ?)", data)
-        elif table_name == "processedData":
-            cursor.execute("INSERT INTO processedData (Text, Label) VALUES (?, ?)", data)
-        elif table_name == "output":
-            cursor.execute("INSERT INTO output (Text, Label, Author) VALUES (?, ?, ?)", data)
+       
+        if table_name == "input_data":
+            cursor.execute("INSERT INTO dbo.input_data (title, maintext, author, description) VALUES (?, ?, ?, ?)", data)
+        elif table_name == "pre_processed_data":
+            cursor.execute("INSERT INTO dbo.pre_processed_data (statement, label) VALUES (?, ?)", data)
+        elif table_name == "output_data":
+            cursor.execute("INSERT INTO dbo.output_data (statement, label) VALUES (?, ?)", data)
         else:
             raise ValueError("Table name not recognized.")
 
         conn.commit()
+        cursor.close()
         conn.close()
 
-    # extract function as previously defined
-    def extract(self, table_name, conditions=None):
-        conn = sqlite3.connect(self.db_path)
+    # Extract function to retrieve data from Azure SQL Database
+    def extract(self, table_name, conditions=None): 
+        conn = pyodbc.connect(self.conn_str)
         cursor = conn.cursor()
 
-        query = f"SELECT * FROM {table_name}"
+        # Start building the SQL query
+        query = f"SELECT * FROM dbo.{table_name}"
+        
         if conditions:
+            # Convert TEXT data type columns to VARCHAR for comparison
+            conditions = conditions.replace('author', 'CAST(author AS VARCHAR(MAX))')
+            conditions = conditions.replace('maintext', 'CAST(maintext AS VARCHAR(MAX))')
+            conditions = conditions.replace('description', 'CAST(description AS VARCHAR(MAX))')
             query += f" WHERE {conditions}"
 
+        # Execute the query
         cursor.execute(query)
         rows = cursor.fetchall()
 
+        cursor.close()
         conn.close()
         return rows
 
-    # New delete function
+    # Delete function to remove data from Azure SQL Database
     def delete(self, table_name, conditions=None):
-        conn = sqlite3.connect(self.db_path)
+        conn = pyodbc.connect(self.conn_str)
         cursor = conn.cursor()
 
-        query = f"DELETE FROM {table_name}"
+        # Start building the SQL query
+        query = f"DELETE FROM dbo.{table_name}"
+        
         if conditions:
+            # Use CAST to convert any TEXT column to VARCHAR for comparison
+            conditions = conditions.replace('author', 'CAST(author AS VARCHAR(MAX))')
+            conditions = conditions.replace('maintext', 'CAST(maintext AS VARCHAR(MAX))')
+            conditions = conditions.replace('description', 'CAST(description AS VARCHAR(MAX))')
             query += f" WHERE {conditions}"
 
+        # Execute the query
         cursor.execute(query)
         conn.commit()
+
+        cursor.close()
         conn.close()
 
 # Example usage
 if __name__ == "__main__":
-    db = DatabaseAccess(db_name='database.db')
+    db = DatabaseAccessAzure(
+        server_name='fakenewsserver.database.windows.net',  
+        database_name='FakeNews_DB',  
+        username='fakenewsadmin',  
+        password='fakenews1!'  
+    )
 
     # Example of extracting data
     data = db.extract("processedData")
