@@ -1,4 +1,4 @@
-#This Script creates a new subfolder full of training information each time LLM Model 1 is retrained
+#This Script creates a new subfolder full of training information each time Logistic Regression Model is trained
 
 import os
 from datetime import datetime
