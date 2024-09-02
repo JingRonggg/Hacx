@@ -1,6 +1,12 @@
+##LLM Model 2: MoritzLaurer's Zero-Shot Classification trained on Microsoft's Dataset
+
+# Citation:
+# Laurer, Moritz, Wouter van Atteveldt, Andreu Salleras Casas, and Kasper Welbers. 2022. 
+# ‘Less Annotating, More Classifying – Addressing the Data Scarcity Issue of Supervised Machine Learning 
+# with Deep Transfer Learning and BERT - NLI’. Preprint, June. Open Science Framework.
+
 import tensorflow as tf
 from transformers import AutoTokenizer, TFAutoModelForSequenceClassification
-
 
 # Load the model at startup
 print("Loading model... This may take a few moments.")
@@ -24,5 +30,19 @@ def interpret_results(scores):
     elif scores["entailment"] > 0.5:
         return "LIKELY TRUE"
     else:
-        return "CHECK AGAIN"
+        return "CHECK AGAIN or CROSS CHECK WITH GPT"
 
+def main():
+    
+    while True:
+        text = input("Enter the news text to check (or 'quit' to exit): ")
+        if text.lower() == 'quit':
+            break
+        
+        scores = detect_fake_news(text)
+        interpretation = interpret_results(scores)
+        
+        print("\nResults:")
+        for label, score in scores.items():
+            print(f"{label}: {score:.2f}")
+        print(f"\nInterpretation: {interpretation}\n")
