@@ -22,7 +22,6 @@ DataPrep.create_distribution(DataPrep.valid_news, save_dir)
 FeatureSelection.get_countVectorizer_stats(save_dir)
 FeatureSelection.get_tfidf_stats(save_dir)
 
-
 # Logistic Regression Pipeline with TF-IDF
 logR_pipeline_ngram = Pipeline([
     ('LogR_tfidf', FeatureSelection.tfidf_ngram),
@@ -34,13 +33,12 @@ performance_report_file = os.path.join(save_dir, 'model_performance_report.txt')
 
 # Open the file in write mode
 with open(performance_report_file, 'w') as f:
-
     # Training and Evaluating Logistic Regression
-    logR_pipeline_ngram.fit(DataPrep.train_news['Statement'], DataPrep.train_news['Label'])
-    predicted_LogR_ngram = logR_pipeline_ngram.predict(DataPrep.test_news['Statement'])
+    logR_pipeline_ngram.fit(DataPrep.train_news['statement'], DataPrep.train_news['label'])
+    predicted_LogR_ngram = logR_pipeline_ngram.predict(DataPrep.test_news['statement'])
     
     # Capture the performance report for Logistic Regression
-    logR_report = classification_report(DataPrep.test_news['Label'], predicted_LogR_ngram)    
+    logR_report = classification_report(DataPrep.test_news['label'], predicted_LogR_ngram)    
     f.write("Logistic Regression Performance:\n")
     f.write(logR_report)
     f.write("\n\n")  # Add spacing between reports
@@ -53,18 +51,18 @@ parameters_lr = {
 }
 
 gs_logR = GridSearchCV(logR_pipeline_ngram, parameters_lr, n_jobs=1, scoring="f1")
-gs_logR.fit(DataPrep.train_news['Statement'], DataPrep.train_news['Label'])
+gs_logR.fit(DataPrep.train_news['statement'], DataPrep.train_news['label'])
 print("Best Logistic Regression Parameters:", gs_logR.best_params_)
 
-# Saving the Logistic Regression
+# Saving the Logistic Regression model
 model_file = 'final_model.sav'
 pickle.dump(gs_logR.best_estimator_, open(model_file, 'wb'))
 
 # Plotting Learning Curve
 def plot_learning_curve(pipeline, title):
     cv = KFold(n_splits=5, shuffle=True)
-    X = DataPrep.train_news["Statement"]
-    y = DataPrep.train_news["Label"]
+    X = DataPrep.train_news["statement"]
+    y = DataPrep.train_news["label"]
     
     train_sizes, train_scores, test_scores = learning_curve(
         pipeline, X, y, n_jobs=-1, cv=cv, train_sizes=np.linspace(.1, 1.0, 5)
@@ -113,6 +111,6 @@ def show_most_informative_features(model, vect, clf, n=20, save_dir=None):
         for (cp, fnp), (cn, fnn) in zip(top_positive_coefs, top_negative_coefs):
             f.write(f"{cp:0.4f} {fnp: >30}    {cn:0.4f} {fnn: >30}\n")
 
-
+# Generate plots and reports
 plot_learning_curve(gs_logR.best_estimator_, "Logistic Regression Classifier")
-show_most_informative_features(gs_logR.best_estimator_, 'LogR_tfidf', 'LogR_clf')
+show_most_informative_features(gs_logR.best_estimator_, 'LogR_tfidf', 'LogR_clf', save_dir=save_dir)
