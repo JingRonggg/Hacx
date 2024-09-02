@@ -1,5 +1,3 @@
-# Adapted from NishitP
-
 import DataPrep
 import os
 import numpy as np
@@ -9,41 +7,35 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 import nltk
 import nltk.corpus 
 
-
-#creating feature vector - document term matrix
+# Create feature vector - document term matrix
 countV = CountVectorizer()
-train_count = countV.fit_transform(DataPrep.train_news['Statement'].values)
+train_count = countV.fit_transform(DataPrep.train_news['statement'].values)
 
-
-#print training doc term matrix
-#we have matrix of size of (10240, 12196) by calling below
+# Print training document term matrix statistics
 def get_countVectorizer_stats(save_dir):
     with open(os.path.join(save_dir, 'count_vectorizer_stats.txt'), 'w') as f:
         f.write(f'Vocabulary Size: {train_count.shape[1]}\n')
         f.write(f'Vocabulary: {countV.vocabulary_}\n')
-        f.write(f'Feature Names: {countV.get_feature_names()[:25]}\n')
+        f.write(f'Feature Names: {countV.get_feature_names_out()[:25]}\n')
 
-
-#create tf-df frequency features
-#tf-idf 
+# Create TF-IDF frequency features
 tfidfV = TfidfTransformer()
 train_tfidf = tfidfV.fit_transform(train_count)
 
 def get_tfidf_stats(save_dir):
     with open(os.path.join(save_dir, 'tfidf_stats.txt'), 'w') as f:
         f.write(f'Train TF-IDF shape: {train_tfidf.shape}\n')
-        f.write(f'First 10 feature names: {train_tfidf.A[:10]}\n')
+        f.write(f'First 10 TF-IDF feature vectors: {train_tfidf.A[:10]}\n')
 
+# TF-IDF Vectorizer with n-grams
+tfidf_ngram = TfidfVectorizer(stop_words='english', ngram_range=(1, 4), use_idf=True, smooth_idf=True)
 
-tfidf_ngram = TfidfVectorizer(stop_words='english',ngram_range=(1,4),use_idf=True,smooth_idf=True)
-
-#POS Tagging
+# POS Tagging example (if required)
 tagged_sentences = nltk.corpus.treebank.tagged_sents()
-
 cutoff = int(.75 * len(tagged_sentences))
-training_sentences = DataPrep.train_news['Statement']
+training_sentences = DataPrep.train_news['statement']
 
-#training POS tagger based on words
+# Training POS tagger based on words (optional, if POS tagging is needed in your model)
 def features(sentence, index):
     """ sentence: [w1, w2, ...], index: the index of the word """
     return {
@@ -65,15 +57,14 @@ def features(sentence, index):
         'is_numeric': sentence[index].isdigit(),
         'capitals_inside': sentence[index][1:].lower() != sentence[index][1:]
     }
-    
-    
-#helper function to strip tags from tagged corpus	
+
+# Helper function to strip tags from tagged corpus
 def untag(tagged_sentence):
     return [w for w, t in tagged_sentence]
 
-#Using Word2Vec 
+# Using Word2Vec 
 with open("glove.6B.50d.txt", "rb") as lines:
-    w2v = {line.split()[0]: np.array(map(float, line.split()[1:]))
+    w2v = {line.split()[0]: np.array(list(map(float, line.split()[1:])))
            for line in lines}
 
 class MeanEmbeddingVectorizer(object):
@@ -81,7 +72,7 @@ class MeanEmbeddingVectorizer(object):
         self.word2vec = word2vec
         # if a text is empty we should return a vector of zeros
         # with the same dimensionality as all the other vectors
-        self.dim = len(word2vec.itervalues().next())
+        self.dim = len(next(iter(word2vec.values())))
 
     def fit(self, X, y):
         return self
