@@ -1,5 +1,3 @@
-# Adapted from NishitP 
-
 import os
 import pandas as pd
 import numpy as np
@@ -9,28 +7,40 @@ from nltk.stem.porter import PorterStemmer
 import seaborn as sb
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
-from db.db_access import DatabaseAccess  # Import the DatabaseAccess class
+from db.db_access import DatabaseAccessAzure  # Import the DatabaseAccessAzure class
 
-# Load data from the processedData table using db_access
+# Load data from the pre_processed_data table using db_access
 def load_data_from_db():
-    db = DatabaseAccess(db_name='database.db')
-    data = db.extract("processedData")  # Extract data from processedData table
-    df = pd.DataFrame(data, columns=['id','Text', 'Label'])  # Assuming the data has Text and Label columns
-    return df
+    # Initialize the database connection
+    db = DatabaseAccessAzure(
+        server_name='fakenewsserver.database.windows.net',  
+        database_name='FakeNews_DB',  
+        username='fakenewsadmin',  
+        password='fakenews1!'  
+    )
+    
+    # Extract data from pre_processed_data table
+    data = db.extract("pre_processed_data")  # Extract data from pre_processed_data table
+    
+    # Assuming the data has 'statement' and 'label' columns
+    df = pd.DataFrame(data, columns=['id', 'statement', 'label'])
+    
+    # Use only 'statement' and 'label' columns
+    return df[['statement', 'label']]
 
 # Split the data into train, test, and validation sets
 def split_data(data):
-    train_data, temp_data = train_test_split(data, test_size=0.25, random_state=42, stratify=data['Label'])
-    test_data, valid_data = train_test_split(temp_data, test_size=0.6, random_state=42, stratify=temp_data['Label'])
+    train_data, temp_data = train_test_split(data, test_size=0.3, random_state=42, stratify=data['label'])
+    test_data, valid_data = train_test_split(temp_data, test_size=0.333, random_state=42, stratify=temp_data['label'])
     return train_data, test_data, valid_data
 
 # Load data from the database and split it
 data = load_data_from_db()
 train_news, test_news, valid_news = split_data(data)
 
-#distribution of classes for prediction
+# Distribution of classes for prediction
 def create_distribution(dataFile, save_dir):
-    plot = sb.countplot(x='Label', data=dataFile, palette='hls', legend=False)
+    plot = sb.countplot(x='label', data=dataFile, palette='hls', legend=False)
     plt.title('Class Distribution')
     plt.xlabel('Class')
     plt.ylabel('Count')
@@ -39,47 +49,45 @@ def create_distribution(dataFile, save_dir):
     plt.savefig(plot_path)
     plt.clf()  # Clear the figure to avoid overlap in subsequent plots
 
+# Stemming configuration
 eng_stemmer = SnowballStemmer('english')
 stopwords = set(nltk.corpus.stopwords.words('english'))
 
-#Stemming
+# Stemming function
 def stem_tokens(tokens, stemmer):
-    stemmed = []
-    for token in tokens:
-        stemmed.append(stemmer.stem(token))
-    return stemmed
+    return [stemmer.stem(token) for token in tokens]
 
-#process the data
+# Process the data
 def process_data(data, exclude_stopword=True, stem=True):
-    tokens = [w.lower() for w in data]
-    tokens_stemmed = tokens
-    tokens_stemmed = stem_tokens(tokens, eng_stemmer)
-    tokens_stemmed = [w for w in tokens_stemmed if w not in stopwords]
-    return tokens_stemmed
+    tokens = [w.lower() for w in data.split()]
+    if stem:
+        tokens = stem_tokens(tokens, eng_stemmer)
+    if exclude_stopword:
+        tokens = [w for w in tokens if w not in stopwords]
+    return tokens
 
-#creating ngrams
-#unigram 
+# Creating ngrams
+# Unigram
 def create_unigram(words):
-    assert type(words) == list
+    assert isinstance(words, list)
     return words
 
-#bigram
+# Bigram
 def create_bigrams(words):
-    assert type(words) == list
+    assert isinstance(words, list)
     skip = 0
     join_str = " "
-    Len = len(words)
-    if Len > 1:
+    if len(words) > 1:
         lst = []
-        for i in range(Len-1):
-            for k in range(1,skip+2):
-                if i+k < Len:
-                    lst.append(join_str.join([words[i],words[i+k]]))
+        for i in range(len(words) - 1):
+            for k in range(1, skip + 2):
+                if i + k < len(words):
+                    lst.append(join_str.join([words[i], words[i + k]]))
     else:
-        #set it as unigram
         lst = create_unigram(words)
     return lst
 
+# Porter Stemmer for tokenizer
 porter = PorterStemmer()
 
 def tokenizer(text):
