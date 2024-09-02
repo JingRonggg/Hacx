@@ -1,5 +1,4 @@
-# LLM Model 1: Logistic Regression Model
-# runs our Logistic Regression Model
+# LLM Model 3: Logistic Regression Model (Last line of defence)
 
 from transformers import pipeline
 import pickle
