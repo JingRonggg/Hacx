@@ -8,16 +8,25 @@ from nltk.stem import SnowballStemmer
 from nltk.stem.porter import PorterStemmer
 import seaborn as sb
 import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from db.db_access import DatabaseAccess  # Import the DatabaseAccess class
 
-#before reading the files, setup the working directory to point to project repo
-#reading data files 
-test_filename = 'reduced_test.csv'
-train_filename = 'reduced_train.csv'
-valid_filename = 'reduced_valid.csv'
+# Load data from the processedData table using db_access
+def load_data_from_db():
+    db = DatabaseAccess(db_name='database.db')
+    data = db.extract("processedData")  # Extract data from processedData table
+    df = pd.DataFrame(data, columns=['id','Text', 'Label'])  # Assuming the data has Text and Label columns
+    return df
 
-train_news = pd.read_csv(train_filename)
-test_news = pd.read_csv(test_filename)
-valid_news = pd.read_csv(valid_filename)
+# Split the data into train, test, and validation sets
+def split_data(data):
+    train_data, temp_data = train_test_split(data, test_size=0.25, random_state=42, stratify=data['Label'])
+    test_data, valid_data = train_test_split(temp_data, test_size=0.6, random_state=42, stratify=temp_data['Label'])
+    return train_data, test_data, valid_data
+
+# Load data from the database and split it
+data = load_data_from_db()
+train_news, test_news, valid_news = split_data(data)
 
 #distribution of classes for prediction
 def create_distribution(dataFile, save_dir):
@@ -30,7 +39,6 @@ def create_distribution(dataFile, save_dir):
     plt.savefig(plot_path)
     plt.clf()  # Clear the figure to avoid overlap in subsequent plots
 
-    
 eng_stemmer = SnowballStemmer('english')
 stopwords = set(nltk.corpus.stopwords.words('english'))
 
@@ -42,13 +50,12 @@ def stem_tokens(tokens, stemmer):
     return stemmed
 
 #process the data
-def process_data(data,exclude_stopword=True,stem=True):
+def process_data(data, exclude_stopword=True, stem=True):
     tokens = [w.lower() for w in data]
     tokens_stemmed = tokens
     tokens_stemmed = stem_tokens(tokens, eng_stemmer)
-    tokens_stemmed = [w for w in tokens_stemmed if w not in stopwords ]
+    tokens_stemmed = [w for w in tokens_stemmed if w not in stopwords]
     return tokens_stemmed
-
 
 #creating ngrams
 #unigram 
@@ -77,7 +84,6 @@ porter = PorterStemmer()
 
 def tokenizer(text):
     return text.split()
-
 
 def tokenizer_porter(text):
     return [porter.stem(word) for word in text.split()]
