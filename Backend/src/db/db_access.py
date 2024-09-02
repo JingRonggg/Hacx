@@ -10,12 +10,11 @@ class DatabaseAccessAzure:
             f"PWD={password};"
         )
 
- # Send function to insert data into Azure SQL Database
+    # Send function to insert data into Azure SQL Database
     def send(self, table_name, data):
         conn = pyodbc.connect(self.conn_str)
         cursor = conn.cursor()
 
-       
         if table_name == "input_data":
             cursor.execute("INSERT INTO dbo.input_data (title, maintext, author, description) VALUES (?, ?, ?, ?)", data)
         elif table_name == "pre_processed_data":
@@ -34,7 +33,6 @@ class DatabaseAccessAzure:
         conn = pyodbc.connect(self.conn_str)
         cursor = conn.cursor()
 
-        # Start building the SQL query
         query = f"SELECT * FROM dbo.{table_name}"
         
         if conditions:
@@ -44,7 +42,6 @@ class DatabaseAccessAzure:
             conditions = conditions.replace('description', 'CAST(description AS VARCHAR(MAX))')
             query += f" WHERE {conditions}"
 
-        # Execute the query
         cursor.execute(query)
         rows = cursor.fetchall()
 
@@ -57,7 +54,6 @@ class DatabaseAccessAzure:
         conn = pyodbc.connect(self.conn_str)
         cursor = conn.cursor()
 
-        # Start building the SQL query
         query = f"DELETE FROM dbo.{table_name}"
         
         if conditions:
@@ -67,7 +63,6 @@ class DatabaseAccessAzure:
             conditions = conditions.replace('description', 'CAST(description AS VARCHAR(MAX))')
             query += f" WHERE {conditions}"
 
-        # Execute the query
         cursor.execute(query)
         conn.commit()
 
@@ -84,5 +79,5 @@ if __name__ == "__main__":
     )
 
     # Example of extracting data
-    data = db.extract("processedData")
+    data = db.extract("pre_processed_data")
     print(data)
