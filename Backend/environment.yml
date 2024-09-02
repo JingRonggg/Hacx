@@ -156,3 +156,4 @@ dependencies:
       - matplotlib
       - openai==0.28
       - python-dotenv
+      - pyodbc
