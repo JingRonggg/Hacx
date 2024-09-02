@@ -1,4 +1,4 @@
-##LLM Model 2: MoritzLaurer's Zero-Shot Classification trained on Microsoft's Dataset
+##LLM Model 2: MoritzLaurer's Zero-Shot Classification trained on Microsoft's Dataset (2nd line of defence)
 
 # Citation:
 # Laurer, Moritz, Wouter van Atteveldt, Andreu Salleras Casas, and Kasper Welbers. 2022. 
