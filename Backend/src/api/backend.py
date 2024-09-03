@@ -10,10 +10,29 @@ from src.utils.LLMs.gpt_model import get_gpt_response, parse_gpt_response
 from src.utils.web_crawler import fetch_article
 import os
 from urllib.parse import unquote
+from src.db.db_access import DatabaseAccessAzure
+from dotenv import load_dotenv
 
 
 app = FastAPI()
 BASE_DIR = os.path.dirname(os.getcwd())
+
+load_dotenv()
+
+# Configuration
+API_KEY = os.getenv("OPENAI_API_KEY")
+SERVER_NAME = os.getenv("SERVER_NAME")
+DATABASE_NAME = os.getenv("DATABASE_NAME")
+SERVER_USERNAME = os.getenv("SERVER_USERNAME")
+SERVER_PASSWORD = os.getenv("SERVER_PASSWORD")
+
+# Initialize Database Access
+db = DatabaseAccessAzure(
+    server_name = SERVER_NAME,  
+    database_name = DATABASE_NAME,  
+    username = SERVER_USERNAME,  
+    password = SERVER_PASSWORD
+)
 
 # Set the correct path for Jinja2 templates directory
 templates = Jinja2Templates(directory="..\Frontend")
@@ -72,6 +91,13 @@ async def check_article(request: Request, input_data: str = Form(...)):
             is_fake=interpretation,
             confidence=confidence
         )
+
+        # sends data into output_data table for storage
+        # UNCOMMENT TO START SAVING INTO output_data table
+
+        # true = 0 if interpretation.lower() == "true" else 1
+        # db.send("output_data", (article["text"], true))
+
         return templates.TemplateResponse('main.html', context={'request': request, 'result': article_output, 'input_data': article})
         # return article_output
     except Exception as e:
