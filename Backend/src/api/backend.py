@@ -7,7 +7,6 @@ from pydantic import BaseModel
 from typing import Annotated, Optional
 from src.utils.LLMs.deBERTa_model import detect_fake_news, interpret_results
 from src.utils.LLMs.gpt_model import get_gpt_response, parse_gpt_response
-from src.utils.LLMs.logReg_model import logReg_detect_fake_news
 from src.utils.web_crawler import fetch_article
 import os
 from urllib.parse import unquote
@@ -68,7 +67,7 @@ async def check_article(request: Request, input_data: str = Form(...)):
             confidence = max(detection_result.values())
 
             if confidence < 0.5:
-                #Perfrom fake news detection, layer 3 (Logistic Regression)
+                #Perform fake news detection, layer 3 (Logistic Regression)
                 interpretation, confidence = logReg_detect_fake_news(article["text"])
                 
 
