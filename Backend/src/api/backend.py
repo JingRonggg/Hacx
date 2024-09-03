@@ -6,8 +6,9 @@ from fastapi.middleware.gzip import GZipMiddleware
 from pydantic import BaseModel
 from typing import Annotated, Optional
 from src.utils.deBERTa_model import detect_fake_news, interpret_results
-from src.utils.web_crawler import fetch_article
 from src.utils.gpt_model import get_gpt_response, parse_gpt_response
+from src.utils.logReg_model import logReg_detect_fake_news
+from src.utils.web_crawler import fetch_article
 import os
 from urllib.parse import unquote
 
@@ -65,6 +66,11 @@ async def check_article(request: Request, input_data: str = Form(...)):
             detection_result = detect_fake_news(article['text'])
             interpretation = interpret_results(detection_result)
             confidence = max(detection_result.values())
+
+            if confidence < 0.5:
+                #Perfrom fake news detection, layer 3 (Logistic Regression)
+                interpretation, confidence = logReg_detect_fake_news(article["text"])
+                
 
         article_output = ArticleOutput(
             title=article['title'],
