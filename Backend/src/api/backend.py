@@ -66,11 +66,6 @@ async def check_article(request: Request, input_data: str = Form(...)):
             interpretation = interpret_results(detection_result)
             confidence = max(detection_result.values())
 
-            if confidence < 0.5:
-                #Perform fake news detection, layer 3 (Logistic Regression)
-                interpretation, confidence = logReg_detect_fake_news(article["text"])
-                
-
         article_output = ArticleOutput(
             title=article['title'],
             explanation=explanation,
