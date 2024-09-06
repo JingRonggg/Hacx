@@ -12,6 +12,7 @@ import os
 from urllib.parse import unquote
 from src.db.db_access import DatabaseAccessAzure
 from dotenv import load_dotenv
+from src.utils.OCR import azure_ocr_image_to_text
 
 
 app = FastAPI()
@@ -45,6 +46,8 @@ app.add_middleware(GZipMiddleware)
 class ArticleInput(BaseModel):
     url: str
 
+class ImageURL(BaseModel):
+    url: str
 
 class ArticleOutput(BaseModel):
     title: str
@@ -105,3 +108,11 @@ async def check_article(request: Request, input_data: str = Form(...)):
         return templates.TemplateResponse('main.html', context={'request': request, 'result': e, 'input_data': article})
 
         # raise HTTPException(status_code=400, detail=str(e))
+
+@app.post("/ocr/")
+async def ocr_endpoint(image: ImageURL):
+    try:
+        extracted_text = azure_ocr_image_to_text(image.url)
+        return {"extracted_text": extracted_text}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
