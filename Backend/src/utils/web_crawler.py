@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup, SoupStrainer
 import json
 from urllib.parse import urljoin, urlparse
 import re
-from newsplease import NewsPlease  # Import NewsPlease
+from newsplease import NewsPlease
 
 # Set the root URL and output file path
 root_url = "https://www.channelnewsasia.com/"
