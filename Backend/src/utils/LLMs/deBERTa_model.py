@@ -20,17 +20,18 @@ def detect_fake_news(text):
     outputs = model(inputs)
     predictions = tf.nn.softmax(outputs.logits, axis=-1)
     label_names = ["entailment", "neutral", "FAKE"]
-    scores = {name: float(pred) for name, pred in zip(label_names, predictions[0])}
-    
+    # Multiply by 100 and format to 2 decimal places
+    scores = {name: round(float(pred) * 100, 2) for name, pred in zip(label_names, predictions[0])}
+    print(scores)
     return scores
 
 def interpret_results(scores):
-    if scores["FAKE"] > 0.5:
+    if scores["FAKE"] > 50:
         return "FAKE"
-    elif scores["entailment"] > 0.5:
+    elif scores["entailment"] > 50:
         return "LIKELY TRUE"
     else:
-        return "CHECK AGAIN or CROSS CHECK WITH GPT"
+        return "Unsure (Neutral)"
 
 def main():
     
