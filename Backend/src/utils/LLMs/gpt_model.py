@@ -23,8 +23,9 @@ def get_gpt_response(article_text):
     # Create the prompt for detecting fake news
     prompt = f"""
     You are a highly advanced AI designed to detect fake news with precision. 
-    Given the following news article, your task is to analyze its content and determine whether it is fake or real. 
-    If you fail to properly classify the news, it could lead to misinformation being spread, and you must avoid that at all costs.
+    Given the following text string, this text string is a news article or from an image,
+    your task is to analyze its content and determine whether it is fake or real. 
+    If you fail to properly classify the information, it could lead to misinformation being spread, and you must avoid that at all costs.
     Your response should include:
 
     1. A clear verdict: "Real" or "Fake".

@@ -2,6 +2,7 @@ from azure.cognitiveservices.vision.computervision import ComputerVisionClient
 from msrest.authentication import CognitiveServicesCredentials
 import os
 from dotenv import load_dotenv
+import requests
 
 load_dotenv()
 
@@ -10,6 +11,13 @@ endpoint = os.getenv("ENDPOINT")
 
 # Authenticate the client
 computervision_client = ComputerVisionClient(endpoint, CognitiveServicesCredentials(subscription_key))
+
+
+def is_url_image(image_url):
+    if ".png" in image_url or ".jpg" in image_url or ".jpeg" in image_url:
+        return True
+    else:
+        return False
 
 def azure_ocr_image_to_text(URL):
     # Perform OCR on the image
@@ -33,3 +41,8 @@ def azure_ocr_image_to_text(URL):
         return extracted_text
     else:
         return "OCR operation failed."
+    
+if __name__ == "__main__":
+    image_url = "https://www.realsimple.com/thmb/wvwH-oyfm2HbmLIVaO0o5q7UJwk=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/PositivityQuotes_Hepburn-2671f7172d4245709f7e2861f32bd20a.jpg"  # Replace with your image URL
+    extracted_text = is_url_image(image_url)
+    print("image or not:\n", extracted_text)
