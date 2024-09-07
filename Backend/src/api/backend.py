@@ -12,7 +12,7 @@ import os
 from urllib.parse import unquote
 from src.db.db_access import DatabaseAccessAzure
 from dotenv import load_dotenv
-from src.utils.OCR import azure_ocr_image_to_text
+from src.utils.OCR import azure_ocr_image_to_text, is_url_image
 
 
 app = FastAPI()
@@ -52,7 +52,7 @@ class ImageURL(BaseModel):
 class ArticleOutput(BaseModel):
     title: str
     explanation: str
-    is_fake: str
+    interpretation: str
     confidence: Optional[float] = None
 
 
@@ -71,19 +71,34 @@ async def health(request: Request):
 @app.post("/")
 # @app.post("/check-article/", response_model=ArticleOutput)
 async def check_article(request: Request, input_data: str = Form(...)):
-    # input_data gets the url link from the textbox
+    # input_data gets the URL link from the textbox
     try:
-        # unquote() function decodes the special characters in URL
-        article = fetch_article(unquote(input_data))
-        article['text'] = article['text'].replace('\n', ' ').replace('\r', ' ').replace('\t', ' ').replace('\xa0', ' ').replace('\u200b', ' ').replace('\u200e', ' ').replace('\u200f', ' ')
-        
-        # Perform fake news detection, layer 1 (Chatgpt)
+        # Decode any special characters in the URL
+        url = unquote(input_data)
+
+        if is_url_image(url):
+            # The input URL is an image
+            extracted_text = azure_ocr_image_to_text(url)
+            print(extracted_text)
+            article_text = extracted_text.replace('\n', ' ').replace('\r', ' ').replace('\t', ' ') \
+                .replace('\xa0', ' ').replace('\u200b', ' ').replace('\u200e', ' ').replace('\u200f', ' ')
+            article = {
+                'title': 'Text Extracted from Image',
+                'text': article_text
+            }
+        else:
+            # The input URL is a web link
+            article = fetch_article(url)
+            article['text'] = article['text'].replace('\n', ' ').replace('\r', ' ').replace('\t', ' ') \
+                .replace('\xa0', ' ').replace('\u200b', ' ').replace('\u200e', ' ').replace('\u200f', ' ')
+
+        # Perform fake news detection, Layer 1 (ChatGPT)
         response = get_gpt_response(article['text'])
         gpt_response = response['choices'][0]['message']['content'].strip()
         interpretation, confidence, explanation = parse_gpt_response(gpt_response)
-        if confidence == "Unknown" or confidence < 50:
 
-            # Perform fake news detection, layer 2 (hugging face LLM)
+        if confidence == "Unknown" or confidence < 50:
+            # Perform fake news detection, Layer 2 (Hugging Face LLM)
             detection_result = detect_fake_news(article['text'])
             interpretation = interpret_results(detection_result)
             confidence = max(detection_result.values())
@@ -91,28 +106,24 @@ async def check_article(request: Request, input_data: str = Form(...)):
         article_output = ArticleOutput(
             title=article['title'],
             explanation=explanation,
-            is_fake=interpretation,
+            interpretation=interpretation,
             confidence=confidence
         )
 
-        # sends data into output_data table for storage
-        # UNCOMMENT TO START SAVING INTO output_data table
-
+        # Uncomment the following lines to save data into the 'output_data' table
         # true = 0 if interpretation.lower() == "true" else 1
         # db.send("output_data", (article["text"], true))
 
-        return templates.TemplateResponse('main.html', context={'request': request, 'result': article_output, 'input_data': article})
-        # return article_output
-    except Exception as e:
-        # display exception msg to frontend
-        return templates.TemplateResponse('main.html', context={'request': request, 'result': e, 'input_data': article})
+        return templates.TemplateResponse('main.html', context={
+            'request': request,
+            'result': article_output,
+            'input_data': article
+        })
 
-        # raise HTTPException(status_code=400, detail=str(e))
-
-@app.post("/ocr/")
-async def ocr_endpoint(image: ImageURL):
-    try:
-        extracted_text = azure_ocr_image_to_text(image.url)
-        return {"extracted_text": extracted_text}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        # Handle exceptions and display the error message on the frontend
+        return templates.TemplateResponse('main.html', context={
+            'request': request,
+            'result': str(e),
+            'input_data': {'url': url}
+        })
