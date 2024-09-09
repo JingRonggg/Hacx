@@ -5,14 +5,13 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.gzip import GZipMiddleware
 from pydantic import BaseModel
 from typing import Annotated, Optional
-from src.utils.LLMs.deBERTa_model import detect_fake_news, interpret_results
-from src.utils.LLMs.gpt_model import get_gpt_response, parse_gpt_response
-from src.utils.web_crawler import fetch_article
+from src.LLMs.Full_check_LLM import detect_fake_news_in_article
+from src.utils.image_checking import process_url
 import os
 from urllib.parse import unquote
 from src.db.db_access import DatabaseAccessAzure
 from dotenv import load_dotenv
-from src.utils.OCR import azure_ocr_image_to_text, is_url_image
+from src.utils.image_checking import process_url
 
 
 app = FastAPI()
@@ -42,7 +41,6 @@ app.mount(
     "/static", StaticFiles(directory="..\static"), name="static")
 app.add_middleware(GZipMiddleware)
 
-
 class ArticleInput(BaseModel):
     url: str
 
@@ -55,7 +53,6 @@ class ArticleOutput(BaseModel):
     interpretation: str
     confidence: Optional[float] = None
 
-
 @app.get("/")
 async def health(request: Request):
     """
@@ -67,7 +64,6 @@ async def health(request: Request):
     return templates.TemplateResponse("main.html", {"request": request, "messages": "Hello Hacx"})
     # return {"messages": "Hello Hacx!"}
 
-
 @app.post("/")
 # @app.post("/check-article/", response_model=ArticleOutput)
 async def check_article(request: Request, input_data: str = Form(...)):
@@ -76,39 +72,17 @@ async def check_article(request: Request, input_data: str = Form(...)):
         # Decode any special characters in the URL
         url = unquote(input_data)
 
-        if is_url_image(url):
-            # The input URL is an image
-            extracted_text = azure_ocr_image_to_text(url)
-            print(extracted_text)
-            article_text = extracted_text.replace('\n', ' ').replace('\r', ' ').replace('\t', ' ') \
-                .replace('\xa0', ' ').replace('\u200b', ' ').replace('\u200e', ' ').replace('\u200f', ' ')
-            article = {
-                'title': 'Text Extracted from Image',
-                'text': article_text
-            }
-        else:
-            # The input URL is a web link
-            article = fetch_article(url)
-            article['text'] = article['text'].replace('\n', ' ').replace('\r', ' ').replace('\t', ' ') \
-                .replace('\xa0', ' ').replace('\u200b', ' ').replace('\u200e', ' ').replace('\u200f', ' ')
-
-        # Perform fake news detection, Layer 1 (ChatGPT)
-        response = get_gpt_response(article['text'])
-        gpt_response = response['choices'][0]['message']['content'].strip()
-        interpretation, confidence, explanation = parse_gpt_response(gpt_response)
-
-        if confidence == "Unknown" or confidence < 50:
-            # Perform fake news detection, Layer 2 (Hugging Face LLM)
-            detection_result = detect_fake_news(article['text'])
-            interpretation = interpret_results(detection_result)
-            confidence = max(detection_result.values())
-
-        article_output = ArticleOutput(
-            title=article['title'],
-            explanation=explanation,
-            interpretation=interpretation,
-            confidence=confidence
-        )
+        # Process the URL to extract the article text
+        article = process_url(url)
+        if hasattr(article, 'interpretation') and article.interpretation == "Propaganda":
+            return templates.TemplateResponse('main.html', context={
+                'request': request,
+                'result': article,
+                'input_data': {'url': url}
+            })
+        
+        # Perform fake news detection
+        article_output = detect_fake_news_in_article(article)
 
         # Uncomment the following lines to save data into the 'output_data' table
         # true = 0 if interpretation.lower() == "true" else 1
