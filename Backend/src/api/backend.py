@@ -74,7 +74,13 @@ async def check_article(request: Request, input_data: str = Form(...)):
 
         # Process the URL to extract the article text
         article = process_url(url)
-
+        if hasattr(article, 'interpretation') and article.interpretation == "Propaganda":
+            return templates.TemplateResponse('main.html', context={
+                'request': request,
+                'result': article,
+                'input_data': {'url': url}
+            })
+        
         # Perform fake news detection
         article_output = detect_fake_news_in_article(article)
 
