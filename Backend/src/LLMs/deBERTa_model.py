@@ -32,18 +32,3 @@ def interpret_results(scores):
         return "LIKELY TRUE"
     else:
         return "Unsure (Neutral)"
-
-def main():
-    
-    while True:
-        text = input("Enter the news text to check (or 'quit' to exit): ")
-        if text.lower() == 'quit':
-            break
-        
-        scores = detect_fake_news(text)
-        interpretation = interpret_results(scores)
-        
-        print("\nResults:")
-        for label, score in scores.items():
-            print(f"{label}: {score:.2f}")
-        print(f"\nInterpretation: {interpretation}\n")
