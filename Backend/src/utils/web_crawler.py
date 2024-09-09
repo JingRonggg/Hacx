@@ -94,7 +94,7 @@ def parse_html(html, base_url):
 
     return page_data
 
-def crawl(limit=15):
+def crawl(limit=30):
     """Crawl websites starting from the root URLs with a limit on the number of URLs."""
     global queue, visited_urls, results
     while queue and len(visited_urls) < limit:
@@ -113,7 +113,7 @@ def crawl(limit=15):
                     if link not in visited_urls and link not in queue and len(visited_urls) < limit:
                         queue.append(link)  # Use append to enqueue at the back
     
-    return results
+    return save_to_json(results, output_file)
 
 def save_to_json(data, filename):
     """Save data to a JSON file."""
@@ -131,15 +131,35 @@ def save_to_json(data, filename):
         if new_data:
             existing_data.extend(new_data)
             json.dump(existing_data, file, indent=4)
+            print(f"Data saved to {output_file}")
         else:
             print("No new data to add.")
 
-if __name__ == "__main__":
-    # Start crawling from the root URLs with a limit of 15 links
+def fetch_article():
+    """Fetch articles from the URLs stored in the output.json file, excluding root URLs, and crawl data."""
+    # Start crawling from the root URLs with a limit of 30 links
     print("Starting crawl...")
-    crawled_data = crawl(limit=15)
-    print("Crawl completed.")
-    
-    # Save the output to a JSON file
-    save_to_json(crawled_data, output_file)
-    print(f"Data saved to {output_file}")
+    crawled_data = crawl(limit=30)
+
+    # Fetch and print the URLs stored in the JSON file
+    try:
+        with open(output_file, 'r') as file:
+            existing_data = json.load(file)
+
+        # Extract URLs and print them, excluding root URLs
+        root_urls_set = set(root_urls)  # Convert root_urls list to a set for faster lookup
+        urls = [entry['url'] for entry in existing_data]
+        print("Fetched URLs (excluding root URLs) from the JSON file:")
+        for url in urls:
+            if url not in root_urls_set:  # Skip root URLs
+                print(url)
+
+    except FileNotFoundError:
+        print("The output.json file was not found.")
+    except json.JSONDecodeError:
+        print("Error decoding JSON from the output.json file.")
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
+# Now you can call fetch_article to crawl and fetch all articles
+fetch_article()
