@@ -8,6 +8,7 @@ class DatabaseAccessAzure:
             f"DATABASE={database_name};"
             f"UID={username};"
             f"PWD={password};"
+            "Connection Timeout=60;"
         )
 
     # Send function to insert data into Azure SQL Database
@@ -16,7 +17,7 @@ class DatabaseAccessAzure:
         cursor = conn.cursor()
 
         if table_name == "input_data":
-            cursor.execute("INSERT INTO dbo.input_data (title, maintext, author, description) VALUES (?, ?, ?, ?)", data)
+            cursor.execute("INSERT INTO dbo.input_data (title, maintext, author, description, url) VALUES (?, ?, ?, ?, ?)", data)
         elif table_name == "pre_processed_data":
             cursor.execute("INSERT INTO dbo.pre_processed_data (statement, label) VALUES (?, ?)", data)
         elif table_name == "output_data":
@@ -36,10 +37,10 @@ class DatabaseAccessAzure:
         query = f"SELECT * FROM dbo.{table_name}"
         
         if conditions:
-            # Convert TEXT data type columns to VARCHAR for comparison
             conditions = conditions.replace('author', 'CAST(author AS VARCHAR(MAX))')
             conditions = conditions.replace('maintext', 'CAST(maintext AS VARCHAR(MAX))')
             conditions = conditions.replace('description', 'CAST(description AS VARCHAR(MAX))')
+            conditions = conditions.replace('url', 'CAST(url AS VARCHAR(MAX))')
             query += f" WHERE {conditions}"
 
         cursor.execute(query)
@@ -57,10 +58,10 @@ class DatabaseAccessAzure:
         query = f"DELETE FROM dbo.{table_name}"
         
         if conditions:
-            # Use CAST to convert any TEXT column to VARCHAR for comparison
             conditions = conditions.replace('author', 'CAST(author AS VARCHAR(MAX))')
             conditions = conditions.replace('maintext', 'CAST(maintext AS VARCHAR(MAX))')
             conditions = conditions.replace('description', 'CAST(description AS VARCHAR(MAX))')
+            conditions = conditions.replace('url', 'CAST(url AS VARCHAR(MAX))')  
             query += f" WHERE {conditions}"
 
         cursor.execute(query)
@@ -68,4 +69,3 @@ class DatabaseAccessAzure:
 
         cursor.close()
         conn.close()
-        
