@@ -94,7 +94,7 @@ def parse_html(html, base_url):
 
     return page_data
 
-def crawl(limit=30):
+def crawl(limit=10):
     """Crawl websites starting from the root URLs with a limit on the number of URLs."""
     global queue, visited_urls, results
     while queue and len(visited_urls) < limit:
@@ -139,7 +139,7 @@ def fetch_article():
     """Fetch articles from the URLs stored in the output.json file, excluding root URLs, and crawl data."""
     # Start crawling from the root URLs with a limit of 30 links
     print("Starting crawl...")
-    crawled_data = crawl(limit=30)
+    crawled_data = crawl(limit=10)
 
     # Fetch and print the URLs stored in the JSON file
     try:
