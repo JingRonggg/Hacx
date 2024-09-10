@@ -136,23 +136,21 @@ def save_to_json(data, filename):
             print("No new data to add.")
 
 def fetch_article():
-    """Fetch articles from the URLs stored in the output.json file, excluding root URLs, and crawl data."""
+    """Yield articles URLs from the JSON file, excluding root URLs, and crawl data."""
     # Start crawling from the root URLs with a limit of 30 links
     print("Starting crawl...")
-    crawled_data = crawl(limit=10)
+    crawl(limit=10)
 
-    # Fetch and print the URLs stored in the JSON file
     try:
         with open(output_file, 'r') as file:
             existing_data = json.load(file)
 
-        # Extract URLs and print them, excluding root URLs
+        # Extract URLs and yield them one by one, excluding root URLs
         root_urls_set = set(root_urls)  # Convert root_urls list to a set for faster lookup
-        urls = [entry['url'] for entry in existing_data]
-        print("Fetched URLs (excluding root URLs) from the JSON file:")
-        for url in urls:
+        for entry in existing_data:
+            url = entry['url']
             if url not in root_urls_set:  # Skip root URLs
-                print(url)
+                yield url  # Yield each URL one by one
 
     except FileNotFoundError:
         print("The output.json file was not found.")
@@ -161,5 +159,8 @@ def fetch_article():
     except Exception as e:
         print(f"An error occurred: {e}")
 
+
+
 # Now you can call fetch_article to crawl and fetch all articles
-fetch_article()
+for url in fetch_article():
+    print(url)
