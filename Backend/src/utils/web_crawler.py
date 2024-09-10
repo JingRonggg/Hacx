@@ -5,6 +5,7 @@ from urllib.parse import urljoin, urlparse
 import re
 from collections import deque
 from datetime import datetime, timedelta
+from newspaper import Article
 
 # Set the root URLs and output file path
 root_urls = ["https://abcnews.go.com/", "https://www.channelnewsasia.com/", "https://www.straitstimes.com/"]
@@ -135,11 +136,12 @@ def save_to_json(data, filename):
         else:
             print("No new data to add.")
 
-def fetch_article():
+def fetch_articles():
     """Yield articles URLs from the JSON file, excluding root URLs, and crawl data."""
     # Start crawling from the root URLs with a limit of 30 links
     print("Starting crawl...")
     crawl(limit=10)
+    article_list = []
 
     try:
         with open(output_file, 'r') as file:
@@ -150,17 +152,27 @@ def fetch_article():
         for entry in existing_data:
             url = entry['url']
             if url not in root_urls_set:  # Skip root URLs
-                yield url  # Yield each URL one by one
-
+                article_list.append(url)  # Yield each URL one by one
+        
     except FileNotFoundError:
         print("The output.json file was not found.")
     except json.JSONDecodeError:
         print("Error decoding JSON from the output.json file.")
     except Exception as e:
         print(f"An error occurred: {e}")
+    return article_list
 
 
+def fetch_article(url):
+    article = Article(url)
+    article.download()
+    article.parse()
+    return {
+        'title': article.title,
+        'text': article.text,
+        'authors': article.authors,
+        'publish_date': article.publish_date,
+        'top_image': article.top_image,
+    }
 
 # Now you can call fetch_article to crawl and fetch all articles
-for url in fetch_article():
-    print(url)

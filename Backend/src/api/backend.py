@@ -7,7 +7,7 @@ from pydantic import BaseModel
 from typing import Annotated, Optional
 from src.LLMs.Full_check_LLM import detect_fake_news_in_article
 from src.utils.image_checking import process_url
-from src.utils.web_crawler import fetch_article
+from src.utils.web_crawler import fetch_articles
 import os
 from urllib.parse import unquote
 from src.db.db_access import DatabaseAccessAzure
@@ -62,38 +62,47 @@ async def health(request: Request):
     Returns:
         dict: A dictionary containing a welcome message.
     """
-    return templates.TemplateResponse("main.html", {"request": request, "messages": "Hello Hacx"})
+    return templates.TemplateResponse("home.html", {"request": request, "messages": "Hello Hacx"})
     # return {"messages": "Hello Hacx!"}
 
 @app.post("/")
-async def check_article(request: Request):
-    url = None
+# async def check_article(request: Request):
+async def check_article(request: Request, input_data: str = Form(...)):
+    print(input)
+    urls = fetch_articles()
+    output_reliability = []
+    propaganda = []
+    print(urls)
     try:
         # Loop through the URLs returned by fetch_article one by one
-        for url in fetch_article():
+        for url in urls:
             # Process the URL to extract the article text
             article = process_url(url)
 
             # Check for "Propaganda" interpretation
             if hasattr(article, 'interpretation') and article.interpretation == "Propaganda":
-                return templates.TemplateResponse('main.html', context={
-                    'request': request,
-                    'result': article,
-                    'input_data': {'url': url}
-                })
+                propaganda.append(article)
+                # return templates.TemplateResponse('main.html', context={
+                #     'request': request,
+                #     'result': article,
+                #     'input_data': {'url': url}
+                # })
             
             # Perform fake news detection
             article_output = detect_fake_news_in_article(article)
+            output_reliability.append(article_output)
 
-            return templates.TemplateResponse('main.html', context={
-                'request': request,
-                'result': article_output,
-                'input_data': {'url': url}
-            })
+
+        return templates.TemplateResponse('home.html', context={
+            'request': request,
+            'result': article_output,
+            'output_data' : {'o': output_reliability, 'p': propaganda}
+            # 'input_data': {'url': url}
+        })
 
     except Exception as e:
         # Handle exceptions and display the error message on the frontend
-        return templates.TemplateResponse('main.html', context={
+        return templates.TemplateResponse('home.html', context={
             'request': request,
             'result': str(e),
             'input_data': {'url': None}
