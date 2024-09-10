@@ -1,40 +1,63 @@
-# This file contains how the function call should work :)
-
 from db_access import DatabaseAccessAzure
 import os
 from dotenv import load_dotenv
 
-
+# Load environment variables from .env file
 load_dotenv()
 
 # Configuration
-API_KEY = os.getenv("OPENAI_API_KEY")
-ENDPOINT = os.getenv("OPENAI_API_ENDPOINT")
 SERVER_NAME = os.getenv("SERVER_NAME")
 DATABASE_NAME = os.getenv("DATABASE_NAME")
 SERVER_USERNAME = os.getenv("SERVER_USERNAME")
 SERVER_PASSWORD = os.getenv("SERVER_PASSWORD")
 
+
+# Check if environment variables are loaded correctly
+if not all([SERVER_NAME, DATABASE_NAME, SERVER_USERNAME, SERVER_PASSWORD]):
+    print("Error: One or more environment variables are missing.")
+    exit(1)
+
 # Initialize the DatabaseAccess class with your Azure SQL Database connection details
 db = DatabaseAccessAzure(
-    server_name=SERVER_NAME,  
-    database_name=DATABASE_NAME, 
-    username=SERVER_USERNAME, 
-    password=SERVER_PASSWORD  
+    server_name=SERVER_NAME,
+    database_name=DATABASE_NAME,
+    username=SERVER_USERNAME,
+    password=SERVER_PASSWORD
 )
 
 # # Example of inserting data into the input_data table
-# db.send("input_data", ("Sample Title", "Sample Main Text", "John", "Sample Description"))
-# db.send("input_data", ("Sample Title", "Sample Main Text1", "John", "Sample Description"))
+# try:
+#     print("Inserting data into input_data table...")
+#     db.send("input_data", ("Sample Title", "Sample Main Text", "John", "Sample Description", "http://example1.com"))
+#     db.send("input_data", ("Sample Title 2", "Sample Main Text 2", "John", "Sample Description 2", "http://example2.com"))
+#     print("Data inserted successfully.")
+# except Exception as e:
+#     print(f"An error occurred while inserting data: {e}")
 
-# # # Example of extracting data from the input_data table
-data = db.extract("input_data", "author = 'John'")
-print(data)
+# # Example of extracting data from the input_data table
+# try:
+#     print("Extracting data from input_data table where author is 'John'...")
+#     data = db.extract("input_data", "author = 'John'")
+#     print("Extracted data:")
+#     for row in data:
+#         print(row)
+# except Exception as e:
+#     print(f"An error occurred while extracting data: {e}")
 
-# # Example of deleting data from the input_data table
-db.delete("input_data", "maintext = 'Sample Main Text1'")
+# Example of deleting data from the input_data table
+try:
+    print("Deleting data from input_data table where maintext is 'Sample Main Text 2'...")
+    db.delete("input_data", "maintext = 'Sample Main Text '")
+    print("Data deleted successfully.")
+except Exception as e:
+    print(f"An error occurred while deleting data: {e}")
 
-
-data = db.extract("input_data", "author = 'John'")
-print(data)
-
+# Extract data again to verify deletion
+try:
+    print("Extracting data again to verify deletion...")
+    data = db.extract("input_data", "author = 'John'")
+    print("Data after deletion:")
+    for row in data:
+        print(row)
+except Exception as e:
+    print(f"An error occurred while extracting data after deletion: {e}")
