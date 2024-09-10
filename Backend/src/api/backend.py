@@ -7,6 +7,7 @@ from pydantic import BaseModel
 from typing import Annotated, Optional
 from src.LLMs.Full_check_LLM import detect_fake_news_in_article
 from src.utils.image_checking import process_url
+from src.utils.web_crawler import fetch_article
 import os
 from urllib.parse import unquote
 from src.db.db_access import DatabaseAccessAzure
@@ -65,39 +66,36 @@ async def health(request: Request):
     # return {"messages": "Hello Hacx!"}
 
 @app.post("/")
-# @app.post("/check-article/", response_model=ArticleOutput)
-async def check_article(request: Request, input_data: str = Form(...)):
-    # input_data gets the URL link from the textbox
+async def check_article(request: Request):
+    url = None
     try:
-        # Decode any special characters in the URL
-        url = unquote(input_data)
+        # Loop through the URLs returned by fetch_article one by one
+        for url in fetch_article():
+            # Process the URL to extract the article text
+            article = process_url(url)
 
-        # Process the URL to extract the article text
-        article = process_url(url)
-        if hasattr(article, 'interpretation') and article.interpretation == "Propaganda":
+            # Check for "Propaganda" interpretation
+            if hasattr(article, 'interpretation') and article.interpretation == "Propaganda":
+                return templates.TemplateResponse('main.html', context={
+                    'request': request,
+                    'result': article,
+                    'input_data': {'url': url}
+                })
+            
+            # Perform fake news detection
+            article_output = detect_fake_news_in_article(article)
+
             return templates.TemplateResponse('main.html', context={
                 'request': request,
-                'result': article,
+                'result': article_output,
                 'input_data': {'url': url}
             })
-        
-        # Perform fake news detection
-        article_output = detect_fake_news_in_article(article)
-
-        # Uncomment the following lines to save data into the 'output_data' table
-        # true = 0 if interpretation.lower() == "true" else 1
-        # db.send("output_data", (article["text"], true))
-
-        return templates.TemplateResponse('main.html', context={
-            'request': request,
-            'result': article_output,
-            'input_data': article
-        })
 
     except Exception as e:
         # Handle exceptions and display the error message on the frontend
         return templates.TemplateResponse('main.html', context={
             'request': request,
             'result': str(e),
-            'input_data': {'url': url}
+            'input_data': {'url': None}
         })
+
