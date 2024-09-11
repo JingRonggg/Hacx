@@ -14,6 +14,7 @@ from src.db.db_access import DatabaseAccessAzure
 from dotenv import load_dotenv
 from src.utils.image_checking import process_url
 from src.db.testingDB import readtable
+from src.db.testingDB import createinput
 
 
 app = FastAPI()
@@ -71,12 +72,41 @@ async def health(request: Request):
 @app.post("/")
 # async def check_article(request: Request):
 async def check_article(request: Request, input_data: str = Form(...)):
-    print(input)
-    urls = fetch_articles()
+    # print(input)
+    # urls = fetch_articles()
     output_reliability = []
     propaganda = []
-    print(urls)
+    # print(urls)
     try:
+        # Decode any special characters in the URL
+        url = unquote(input_data)
+
+        # Process the URL to extract the article text
+        article = process_url(url)
+
+        if hasattr(article, 'interpretation') and article.interpretation == "Propaganda":
+            # send output to db table
+            createinput("output_data", )
+            
+            return templates.TemplateResponse('main.html', context={
+                'request': request,
+                'result': article,
+                'input_data': {'url': url}
+            })
+        
+        # Perform fake news detection
+        article_output = detect_fake_news_in_article(article)
+
+        # Uncomment the following lines to save data into the 'output_data' table
+        # true = 0 if interpretation.lower() == "true" else 1
+        # db.send("output_data", (article["text"], true))
+
+        return templates.TemplateResponse('main.html', context={
+            'request': request,
+            'result': article_output,
+            'input_data': article
+        })
+
         # Loop through the URLs returned by fetch_article one by one
         for url in urls:
             # Process the URL to extract the article text
