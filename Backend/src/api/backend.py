@@ -13,6 +13,7 @@ from urllib.parse import unquote
 from src.db.db_access import DatabaseAccessAzure
 from dotenv import load_dotenv
 from src.utils.image_checking import process_url
+from src.db.testingDB import readtable
 
 
 app = FastAPI()
@@ -62,7 +63,9 @@ async def health(request: Request):
     Returns:
         dict: A dictionary containing a welcome message.
     """
-    return templates.TemplateResponse("home.html", {"request": request, "messages": "Hello Hacx"})
+    # loads the things from the database 
+    crawled_articles = readtable("input_data")
+    return templates.TemplateResponse("home.html", {"request": request, "crawled": crawled_articles})
     # return {"messages": "Hello Hacx!"}
 
 @app.post("/")
@@ -82,11 +85,6 @@ async def check_article(request: Request, input_data: str = Form(...)):
             # Check for "Propaganda" interpretation
             if hasattr(article, 'interpretation') and article.interpretation == "Propaganda":
                 propaganda.append(article)
-                # return templates.TemplateResponse('main.html', context={
-                #     'request': request,
-                #     'result': article,
-                #     'input_data': {'url': url}
-                # })
             
             # Perform fake news detection
             article_output = detect_fake_news_in_article(article)
@@ -108,3 +106,10 @@ async def check_article(request: Request, input_data: str = Form(...)):
             'input_data': {'url': None}
         })
 
+
+@app.get("/articles")
+async def articles(request: Request):
+    # loads the things from the database 
+    crawled_articles = readtable("input_data")
+    return templates.TemplateResponse("home.html", {"request": request, "crawled": crawled_articles})
+    # return {"messages": "Hello Hacx!"}
