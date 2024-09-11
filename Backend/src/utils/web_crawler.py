@@ -155,7 +155,8 @@ def fetch_articles():
             if url not in root_urls_set:  # Skip root URLs
                 article_list.append(url)  # Yield each URL one by one
                 article = fetch_article(url)
-                createinput("input_data", (article["title"], article["test"], article["authors"], "", url))
+                # data = (article["title"], article["text"], article["authors"][0], "", url)
+                createinput("input_data", (article["title"], article["text"], article["authors"][0], "", url))
 
     except FileNotFoundError:
         print("The output.json file was not found.")

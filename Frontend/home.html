@@ -4,17 +4,60 @@
 
 {% block content %}
 <div class="container-lg">
-    <form method="post">
-        <div class="mb-3">
-            <label for="formGroupExampleInput" class="form-label">News Article URL </label>
-            <input type="text" id="input_data" name="input_data" class="form-control" placeholder="URL Link" value="">
+    <div class="row p-3">
+        <div class="card col-9 p-3">
+            <h2 class="card-title">Crawled articles</h2>
+            <div class="card-body">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">URL</th>
+                            <th scope="col">Title</th>
+                            <th scope="col">Main Text</th>
+                            <th scope="col">Author</th>
+                            <th scope="col">Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if crawled %}
+                        {% for article in crawled %}
+                        <tr>
+                            <th scope="row"></th>
+                            <td><a>{{article['url']}}</a></td>
+                            <td>{{article['title']}}</td>
+                            <td>{{article['maintext']}}</td>
+                            <td>{{article['author']}}</td>
+                            <td>{{article['description']}}</td>
+                        </tr>
+                        {% endfor %}
+                        {% endif %}
+                    </tbody>
+                </table>
+
+            </div>
         </div>
-        <input id="submitButton" class="btn btn-primary" type="submit" value="Check">
-    </form>
 
-    <p>Result: <br> {{ result }}</p>
+        <!-- card for the url check input  -->
+        <div class="card col-3 p-3">
+            <h2 class="card-title">Crawled articles</h2>
+            <div class="card-body">
+                <form method="post">
+                    <div class="mb-3">
+                        <label for="formGroupExampleInput" class="form-label">News Article URL </label>
+                        <input type="text" id="input_data" name="input_data" class="form-control" placeholder="URL Link"
+                            value="">
+                    </div>
+                    <input id="submitButton" class="btn btn-primary" type="submit" value="Check">
+                </form>
 
-    <p>output_data below</p>
+                {% if result %}
+                    <p>Result: <br> {{ result }}</p>
+                {% endif %}    
+            </div>
+        </div>
+    </div>
+    
     {% if output_data %}
         <table class="table">
             <thead>

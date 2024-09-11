@@ -1,4 +1,4 @@
-from db_access import DatabaseAccessAzure
+from src.db.db_access import DatabaseAccessAzure
 import os
 from dotenv import load_dotenv
 
@@ -28,6 +28,7 @@ db = DatabaseAccessAzure(
 
 
 def createinput(tablename, data):
+    print(data)
     try:
         '''print("Inserting data into input_data table...")
         for url in urls: 
@@ -72,12 +73,13 @@ def deleterecord():
         print(f"An error occurred while deleting data: {e}")
 
 # Extract data again to verify deletion
-def readtable():
+def readtable(tablename):
     try:
-        print("Extracting data again to verify deletion...")
-        data = db.extract("input_data", "author = 'John'")
-        print("Data after deletion:")
-        for row in data:
-            print(row)
+        # print("Extracting data again to verify deletion...")
+        data = db.extract(tablename)
+        return data
+        # print("Data after deletion:")
+        # for row in data:
+        #     print(row)
     except Exception as e:
         print(f"An error occurred while extracting data after deletion: {e}")
