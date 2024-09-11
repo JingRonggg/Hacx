@@ -4,42 +4,9 @@
 
 {% block content %}
 <div class="container-lg">
-    <div class="row p-3">
-        <div class="card col-9 p-3">
-            <h2 class="card-title">Crawled articles</h2>
-            <div class="card-body">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">URL</th>
-                            <th scope="col">Title</th>
-                            <th scope="col">Main Text</th>
-                            <th scope="col">Author</th>
-                            <th scope="col">Description</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% if crawled %}
-                        {% for article in crawled %}
-                        <tr>
-                            <th scope="row"></th>
-                            <td><a>{{article['url']}}</a></td>
-                            <td>{{article['title']}}</td>
-                            <td>{{article['maintext']}}</td>
-                            <td>{{article['author']}}</td>
-                            <td>{{article['description']}}</td>
-                        </tr>
-                        {% endfor %}
-                        {% endif %}
-                    </tbody>
-                </table>
-
-            </div>
-        </div>
-
+    <div class="row">
         <!-- card for the url check input  -->
-        <div class="card col-3 p-3">
+        <div class="card col-12 p-3">
             <h2 class="card-title">Crawled articles</h2>
             <div class="card-body">
                 <form method="post">
@@ -52,44 +19,44 @@
                 </form>
 
                 {% if result %}
-                    <p>Result: <br> {{ result }}</p>
-                {% endif %}    
+                <p>Result: <br> {{ result }}</p>
+                {% endif %}
             </div>
         </div>
     </div>
-    
+
     {% if output_data %}
-        <table class="table">
-            <thead>
-                <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">title</th>
-                    <th scope="col">explanation</th>
-                    <th scope="col">interpretation</th>
-                    <th scope="col">confidence</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% if result %}
-                <tr>
-                    <th scope="row">1</th>
-                    <td>{{result['title']}}</td>
-                    <td>{{result['explanation']}}</td>
-                    <td>{{result['interpretation']}}</td>
-                    <td>{{result['confidence']}}</td>
-                </tr>
-                {% endif %}
-                {% for output in output_data.o %}
-                    <tr>
-                        <th scope="row"></th>
-                        <td>{{output['title']}}</td>
-                        <td>{{output['explanation']}}</td>
-                        <td>{{output['interpretation']}}</td>
-                        <td>{{output['confidence']}}</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% endif %}    
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">title</th>
+                <th scope="col">explanation</th>
+                <th scope="col">interpretation</th>
+                <th scope="col">confidence</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if result %}
+            <tr>
+                <th scope="row">1</th>
+                <td>{{result['title']}}</td>
+                <td>{{result['explanation']}}</td>
+                <td>{{result['interpretation']}}</td>
+                <td>{{result['confidence']}}</td>
+            </tr>
+            {% endif %}
+            {% for output in output_data.o %}
+            <tr>
+                <th scope="row"></th>
+                <td>{{output['title']}}</td>
+                <td>{{output['explanation']}}</td>
+                <td>{{output['interpretation']}}</td>
+                <td>{{output['confidence']}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
 </div>
 {% endblock %}
