@@ -1,5 +1,6 @@
 import requests
 from bs4 import BeautifulSoup, SoupStrainer
+import json
 from urllib.parse import urljoin, urlparse
 import re
 from collections import deque
@@ -7,8 +8,9 @@ from datetime import datetime, timedelta
 from newspaper import Article
 from src.db.testingDB import createinput
 
-# Set the root URLs
+# Set the root URLs and output file path
 root_urls = ["https://abcnews.go.com/", "https://www.channelnewsasia.com/", "https://www.straitstimes.com/"]
+output_file = "output.json"
 
 # Store visited URLs and the queue of URLs to process
 visited_urls = set()
@@ -112,20 +114,58 @@ def crawl(limit=10):
                 for link in page_data['links']:
                     if link not in visited_urls and link not in queue and len(visited_urls) < limit:
                         queue.append(link)  # Use append to enqueue at the back
+    
+    return save_to_json(results, output_file)
+
+def save_to_json(data, filename):
+    """Save data to a JSON file."""
+    with open(filename, 'w') as file, open(filename, 'r+') as existing_file:
+        # Load existing data to avoid duplicates across runs
+        try:
+            existing_data = json.load(existing_file)
+            existing_urls = {entry['url'] for entry in existing_data}
+        except json.JSONDecodeError:
+            existing_data = []
+            existing_urls = set()
+
+        # Add only new results to the existing data
+        new_data = [entry for entry in data if entry['url'] not in existing_urls]
+        if new_data:
+            existing_data.extend(new_data)
+            json.dump(existing_data, file, indent=4)
+            print(f"Data saved to {output_file}")
+        else:
+            print("No new data to add.")
 
 def fetch_articles():
-    """Extract article URLs from the crawled data and process each article."""
+    """Yield articles URLs from the JSON file, excluding root URLs, and crawl data."""
+    # Start crawling from the root URLs with a limit of 30 links
     print("Starting crawl...")
     crawl(limit=10)
     article_list = []
 
-    for entry in results:
-        url = entry['url']
-        article_list.append(url)
-        article = fetch_article(url)
-        createinput("input_data", (article["title"], article["text"], article["authors"], "", url))
+    try:
+        with open(output_file, 'r') as file:
+            existing_data = json.load(file)
 
+        # Extract URLs and yield them one by one, excluding root URLs
+        root_urls_set = set(root_urls)  # Convert root_urls list to a set for faster lookup
+        for entry in existing_data:
+            url = entry['url']
+            if url not in root_urls_set:  # Skip root URLs
+                article_list.append(url)  # Yield each URL one by one
+                article = fetch_article(url)
+                # data = (article["title"], article["text"], article["authors"][0], "", url)
+                createinput("input_data", (article["title"], article["text"], article["authors"][0], "", url))
+
+    except FileNotFoundError:
+        print("The output.json file was not found.")
+    except json.JSONDecodeError:
+        print("Error decoding JSON from the output.json file.")
+    except Exception as e:
+        print(f"An error occurred: {e}")
     return article_list
+
 
 def fetch_article(url):
     article = Article(url)
@@ -138,3 +178,5 @@ def fetch_article(url):
         'publish_date': article.publish_date,
         'top_image': article.top_image,
     }
+
+# Now you can call fetch_article to crawl and fetch all articles
