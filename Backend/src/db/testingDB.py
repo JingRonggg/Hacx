@@ -2,6 +2,7 @@ from db_access import DatabaseAccessAzure
 import os
 from dotenv import load_dotenv
 
+
 # Load environment variables from .env file
 load_dotenv()
 
@@ -25,14 +26,31 @@ db = DatabaseAccessAzure(
     password=SERVER_PASSWORD
 )
 
+
+def createinput(tablename, data):
+    try:
+        '''print("Inserting data into input_data table...")
+        for url in urls: 
+        article_data = fetch_article(url)
+        title = article_data["title"]
+        maintext = article_data["text"]
+        author = article_data["authors"]
+        date = article_data["publish_date"]'''
+        print("Inserting data into input_data table...")
+        db.send(tablename, data)
+        print("Done inserting")
+    except Exception as e:
+        print(f"An error occurred while inserting data: {e}")
+
+
 # # Example of inserting data into the input_data table
-# try:
-#     print("Inserting data into input_data table...")
-#     db.send("input_data", ("Sample Title", "Sample Main Text", "John", "Sample Description", "http://example1.com"))
-#     db.send("input_data", ("Sample Title 2", "Sample Main Text 2", "John", "Sample Description 2", "http://example2.com"))
-#     print("Data inserted successfully.")
-# except Exception as e:
-#     print(f"An error occurred while inserting data: {e}")
+'''try:
+     print("Inserting data into input_data table...")
+     db.send("input_data", ("Sample Title", "Sample Main Text", "John", "Sample Description", "http://example1.com"))
+     db.send("input_data", ("Sample Title 2", "Sample Main Text 2", "John", "Sample Description 2", "http://example2.com"))
+     print("Data inserted successfully.")
+except Exception as e:
+     print(f"An error occurred while inserting data: {e}")'''
 
 # # Example of extracting data from the input_data table
 # try:
@@ -45,19 +63,21 @@ db = DatabaseAccessAzure(
 #     print(f"An error occurred while extracting data: {e}")
 
 # Example of deleting data from the input_data table
-try:
-    print("Deleting data from input_data table where maintext is 'Sample Main Text 2'...")
-    db.delete("input_data", "maintext = 'Sample Main Text '")
-    print("Data deleted successfully.")
-except Exception as e:
-    print(f"An error occurred while deleting data: {e}")
+def deleterecord():
+    try:
+        print("Deleting data from input_data table where maintext is 'Sample Main Text 2'...")
+        db.delete("input_data", "maintext = 'Sample Main Text'")
+        print("Data deleted successfully.")
+    except Exception as e:
+        print(f"An error occurred while deleting data: {e}")
 
 # Extract data again to verify deletion
-try:
-    print("Extracting data again to verify deletion...")
-    data = db.extract("input_data", "author = 'John'")
-    print("Data after deletion:")
-    for row in data:
-        print(row)
-except Exception as e:
-    print(f"An error occurred while extracting data after deletion: {e}")
+def readtable():
+    try:
+        print("Extracting data again to verify deletion...")
+        data = db.extract("input_data", "author = 'John'")
+        print("Data after deletion:")
+        for row in data:
+            print(row)
+    except Exception as e:
+        print(f"An error occurred while extracting data after deletion: {e}")

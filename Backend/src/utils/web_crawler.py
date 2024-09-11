@@ -6,6 +6,7 @@ import re
 from collections import deque
 from datetime import datetime, timedelta
 from newspaper import Article
+from src.db.testingDB import createinput
 
 # Set the root URLs and output file path
 root_urls = ["https://abcnews.go.com/", "https://www.channelnewsasia.com/", "https://www.straitstimes.com/"]
@@ -153,7 +154,9 @@ def fetch_articles():
             url = entry['url']
             if url not in root_urls_set:  # Skip root URLs
                 article_list.append(url)  # Yield each URL one by one
-        
+                article = fetch_article(url)
+                createinput("input_data", (article["title"], article["test"], article["authors"], "", url))
+
     except FileNotFoundError:
         print("The output.json file was not found.")
     except json.JSONDecodeError:
