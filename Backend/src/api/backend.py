@@ -109,7 +109,19 @@ async def check_article(request: Request, input_data: str = Form(...)):
 
 @app.get("/articles")
 async def articles(request: Request):
-    # loads the things from the database 
+    # loads the articles from the database 
     crawled_articles = readtable("input_data")
-    return templates.TemplateResponse("home.html", {"request": request, "crawled": crawled_articles})
-    # return {"messages": "Hello Hacx!"}
+    return templates.TemplateResponse(
+        "articles.html", 
+        {"request": request, "crawled": crawled_articles}
+    )
+
+@app.post("/articles")
+async def check_crawled_articles(request: Request):
+    urls = fetch_articles()
+    crawled_articles = readtable("input_data")
+
+    return templates.TemplateResponse(
+        "articles.html", 
+        {"request": request, "crawled": crawled_articles}
+    )

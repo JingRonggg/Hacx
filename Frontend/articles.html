@@ -1,0 +1,63 @@
+{% extends "main.html" %}
+
+{% block title %}Articles{% endblock %}
+{% block head%}
+
+<style>
+    /* Limit the height of the cell to make it scrollable */
+    .scrollable-cell {
+        max-height: 150px;
+        /* Set a maximum height for the cell */
+        overflow: auto;
+        /* Enable scrollbars if the content overflows */
+        display: block;
+        /* Make the td act as a block element to apply height */
+        word-wrap: break-word;
+        /* Wrap long words to prevent breaking the layout */
+    }
+</style>
+{% endblock%}
+
+{% block content %}
+<div class="container-lg p-3">
+    <div class="container-lg p-3 row">
+        <div class="col">
+            <h2>Crawled Articles</h2>
+        </div>
+        <div class="col d-flex flex-row-reverse">
+            <form method="post">
+                <input id="submitButton" class="btn btn-primary" type="submit" value="Crawl Articles">
+            </form>
+        </div>
+    </div>
+
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col" style="width: 15%;">URL</th>
+                <th scope="col" style="width: 15%;">Title</th>
+                <th scope="col" style="width: 30%;">Main Text</th>
+                <th scope="col">Author</th>
+                <th scope="col">Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if crawled %}
+            {% for article in crawled %}
+            <tr>
+                <th scope="row">{{ loop.index }}</th>
+                <td><a href="{{article['url']}}">{{article['url']}}</a></td>
+                <td>{{article['title']}}</td>
+                <td class="scrollable-cell text-wrap">
+                    {{article['maintext']}}
+                </td>
+                <td>{{article['author']}}</td>
+                <td>{{article['description']}}</td>
+            </tr>
+            {% endfor %}
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

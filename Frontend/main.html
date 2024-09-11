@@ -13,12 +13,12 @@
 
 <body>
     {% block navbar %}
-        {% include 'includes/_navbar.html' %}
+    {% include 'includes/_navbar.html' %}
     {% endblock %}
 
     <!-- body -->
-     {% block content %}
-     {% endblock %}
+    {% block content %}
+    {% endblock %}
 
 
     {% block footer %}
@@ -27,6 +27,20 @@
 
 
     <!-- Full bundle -->
+    <script>
+        // Get the current URL path
+        const currentPath = window.location.pathname;
+
+        // Select all the nav-link elements
+        const navLinks = document.querySelectorAll('.navbar-nav .nav-link');
+
+        // Loop through the nav-links and add the "active" class to the link that matches the current path
+        navLinks.forEach(link => {
+            if (link.getAttribute('href') === currentPath) {
+                link.classList.add('active');
+            }
+        });
+    </script>
     {% block script %}
     {% endblock %}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
