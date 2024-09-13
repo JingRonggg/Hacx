@@ -1,0 +1,488 @@
+[
+    {
+        "url": "https://abcnews.go.com/",
+        "links": [
+            "https://abcnews.go.com/US/wireStory/apples-upcoming-iphone-catapult-tech-trendsetter-age-ai-113508677",
+            "https://abcnews.go.com/Entertainment/wireStory/king-charles-attends-church-prayers-anniversary-queen-elizabeths-113493658",
+            "https://abcnews.go.com/US/wireStory/2-young-sisters-apparently-drowned-long-island-pond-113496043",
+            "https://abcnews.go.com/International/wireStory/venezuela-opposition-presidential-candidate-gonzlez-left-country-asylum-113491257",
+            "https://abcnews.go.com/International/wireStory/nato-member-romania-russian-drone-violated-airspace-113492999",
+            "https://abcnews.go.com/International/wireStory/bridge-collapses-rain-falls-vietnam-storm-deaths-rise-113508119",
+            "https://abcnews.go.com/US/wireStory/new-hampshire-governor-helps-save-man-choking-lobster-113511072",
+            "https://abcnews.go.com/International/wireStory/official-sudans-war-killed-20000-people-113495188",
+            "https://abcnews.go.com/International/wireStory/roadside-bomb-hits-vehicle-carrying-police-guarding-anti-113510184",
+            "https://abcnews.go.com/Weird/wireStory/cowabunga-new-england-town-celebrates-birthplace-teenage-mutant-113480275",
+            "https://abcnews.go.com/Sports/photos/best-photos-paris-2024-summer-olympics-112104167",
+            "https://abcnews.go.com/Technology/wireStory/google-faces-new-antitrust-trial-after-ruling-declaring-113507624",
+            "https://abcnews.go.com/International/photos/memoriam-notable-people-died-2024-106041772",
+            "https://abcnews.go.com/International/wireStory/van-apparently-packed-migrants-veers-off-road-croatia-113508871",
+            "https://abcnews.go.com/US/wireStory/pope-arrives-east-timor-trip-deeply-catholic-country-113507709",
+            "https://abcnews.go.com/International/photos/2024-wildlife-photographer-year-select-entries-113351541",
+            "https://abcnews.go.com/Business/wireStory/wynn-resorts-paying-130m-letting-illegal-money-reach-113488192",
+            "https://abcnews.go.com/International/wireStory/filipino-preacher-run-sexual-abuse-charges-arrested-113495033",
+            "https://abcnews.go.com/International/wireStory/south-korean-truth-commission-found-evidence-forced-adoptions-113508672",
+            "https://abcnews.go.com/International/wireStory/oman-state-run-oil-firm-oq-make-initial-113509910",
+            "https://abcnews.go.com/Entertainment/wireStory/beetlejuice-beetlejuice-jolts-box-office-110-million-opening-113497652",
+            "https://abcnews.go.com/International/wireStory/israeli-strikes-gaza-kill-dozen-health-workers-press-113480173",
+            "https://abcnews.go.com/Business/wireStory/waffle-house-ceo-walt-ehmer-died-age-58-113500266",
+            "https://abcnews.go.com/US/line-fire-updates-southern-california-wildfire-surpasses-20000/story?id=113507911",
+            "https://abcnews.go.com/Sports/wireStory/palestinian-team-chile-offers-soccer-heavy-dose-protest-113507073",
+            "https://abcnews.go.com/US/wireStory/suspect-arrested-after-police-involved-shooting-santa-fe-113500400",
+            "https://abcnews.go.com/US/wireStory/us-believes-iran-transferred-short-range-ballistic-missiles-113486526",
+            "https://abcnews.go.com/International/photos/israel-gaza-conflict-slideshow-103808214",
+            "https://abcnews.go.com/International/wireStory/golden-eagle-attacks-toddler-3-norway-expert-suspects-113511425",
+            "https://abcnews.go.com/International/wireStory/pope-bring-ton-humanitarian-aid-remote-papua-new-113489208",
+            "https://abcnews.go.com/Business/wireStory/ai-industry-light-lobbying-touch-educate-congress-corporate-113493849",
+            "https://abcnews.go.com/Politics/photos/photos-2024-democratic-national-convention-112889747",
+            "https://abcnews.go.com/Politics/photos/photos-2024-republican-national-convention-111960196",
+            "https://abcnews.go.com/Sports/wireStory/los-angeles-2028-moment-paralympics-conquer-america-113509203",
+            "https://abcnews.go.com/Business/wireStory/black-caucus-issues-new-guidelines-dei-policies-urges-113509587"
+        ]
+    },
+    {
+        "url": "https://www.channelnewsasia.com/",
+        "links": [
+            "https://www.channelnewsasia.com/listen/deep-dive/gep-changes-signal-fundamental-shift-developing-our-children-chan-chun-sing-4576336",
+            "https://www.channelnewsasia.com/sport/valencia-begin-disciplinary-action-over-mir-sexual-assault-allegations-4596451",
+            "https://www.channelnewsasia.com/singapore/amir-hamza-bangladeshi-preacher-singapore-border-security-shanmugam-4595216",
+            "https://www.channelnewsasia.com/commentary/singapore-tourist-attraction-unique-travel-experience-best-food-4590911",
+            "https://www.channelnewsasia.com/world/kremlin-report-missile-supplies-iran-says-tehran-its-partner-4595866",
+            "https://www.channelnewsasia.com/cna-insider/danelle-tan-professional-australia-borussia-dortmund-german-football-4505371",
+            "https://www.channelnewsasia.com/asia/plane-skids-indonesia-papua-runway-trigana-air-passengers-injured-4595651",
+            "https://www.channelnewsasia.com/east-asia/china-says-top-diplomat-wang-yi-visit-russia-week-4595856",
+            "https://www.channelnewsasia.com/asia/thailand-distribute-first-us42-billion-handout-scheme-starting-month-4595656",
+            "https://www.channelnewsasia.com/world/jordanian-gunman-kills-3-israelis-west-bank-crossing-gaza-war-rages-4594656",
+            "https://www.channelnewsasia.com/cna-insider/beatheheat-singapore-without-air-conditioning-4475191",
+            "https://www.channelnewsasia.com/singapore/team-singapore-paris-2024-paralympics-bus-parade-4596301",
+            "https://www.channelnewsasia.com/commentary/china-coal-consumption-peak-emissions-stockpile-waste-4591111",
+            "https://www.channelnewsasia.com/east-asia/spain-prime-minister-sanchez-china-boost-economic-ties-eu-trade-tensions-4595196",
+            "https://www.channelnewsasia.com/commentary/singapore-urban-resilience-infrastructure-climate-economy-uncertainties-4590831",
+            "https://www.channelnewsasia.com/business/battery-maker-northvolt-cut-costs-explore-partnerships-4596276",
+            "https://www.channelnewsasia.com/cna-insider/hyper-realistic-reborn-baby-dolls-lifelike-creator-andrea-lee-4491051",
+            "https://www.channelnewsasia.com/singapore/marine-parade-hawker-stall-record-rental-bid-not-norm-parliament-4595231",
+            "https://www.channelnewsasia.com/world/israeli-strikes-syria-kill-least-16-people-syrian-state-media-4595526",
+            "https://www.channelnewsasia.com/singapore/jobseeker-support-scheme-unemployment-jobless-benefits-personal-responsibility-4595206",
+            "https://www.channelnewsasia.com/singapore/mobile-guardian-moe-contract-terminated-cybersecurity-breach-4595056",
+            "https://www.channelnewsasia.com/news/healthmatters",
+            "https://www.channelnewsasia.com/singapore/traffic-police-officer-jailed-speeding-while-duty-causing-death-58-year-old-pedestrian-4595601",
+            "https://www.channelnewsasia.com/sport/superb-nissanka-leads-sri-lanka-consolation-test-win-over-england-4596256",
+            "https://www.channelnewsasia.com/buyers-guide/best-99-deals-4595076",
+            "https://www.channelnewsasia.com/commentary/exercise-physical-activity-motivator-health-cash-reward-spa-fine-dining-4591001",
+            "https://www.channelnewsasia.com/singapore/maxwell-food-centre-murder-man-charged-4593791",
+            "https://www.channelnewsasia.com/singapore/founders-memorial-gardens-bay-east-development-cost-million-edwin-tong-4596241",
+            "https://www.channelnewsasia.com/entertainment/jennie-blackpink-signs-columbia-records-solo-music-4595606",
+            "https://www.channelnewsasia.com/east-asia/china-russia-joint-military-drills-pacific-ocean-4595436",
+            "https://www.channelnewsasia.com/asia/pope-francis-timor-leste-arrival-asia-tour-indonesia-singapore-papua-new-guinea-4595471",
+            "https://www.channelnewsasia.com/singapore/pritam-singh-workers-party-lying-high-court-criminal-motion-4595006",
+            "https://www.mediacorp.sg/en/privacy-policy-5933440",
+            "https://www.channelnewsasia.com/singapore/pope-francis-visit-singapore-holy-mass-students-perform-elderly-home-4595701",
+            "https://www.channelnewsasia.com/asia/teresa-kok-dap-mp-halal-food-certification-anwar-comments-4595331",
+            "https://www.channelnewsasia.com/singapore/courier-hub-scheme-delivery-companies-reserve-parking-lots-hdb-car-parks-4595286",
+            "https://www.channelnewsasia.com/singapore/public-transport-fare-hike-10-cents-bus-trains-inflation-4595541",
+            "https://www.channelnewsasia.com/east-asia/hong-kong-woo-southeast-asia-muslim-tourists-diversify-mainland-4581351",
+            "https://www.channelnewsasia.com/singapore/singapore-elections-ban-deepfakes-candidates-advertising-4585686",
+            "https://www.channelnewsasia.com/world/ukraine-demographic-crisis-young-men-enlist-soldiers-birth-rate-military-war-russia-4595356",
+            "https://www.channelnewsasia.com/listen/work-it/gen-zs-internship-race-fear-missing-out-path-success-work-it-podcast-4580761",
+            "https://www.channelnewsasia.com/listen/cna-correspondent/reviving-dying-endangered-languages-japan-and-south-korea-cna-correspondent-podcast-4584756",
+            "https://www.channelnewsasia.com/east-asia/north-korea-kim-jong-un-naval-power-importance-strengthen-4593776",
+            "https://www.channelnewsasia.com/sustainability/indonesia-mangrove-conservation-programme-climate-change-temasek-foundation-4590901",
+            "https://www.channelnewsasia.com/listen/deep-dive/able-bodied-errant-users-personal-mobility-pmas-pmds-deep-dive-podcast-4590161",
+            "https://www.channelnewsasia.com/listen/work-it/why-did-hr-suddenly-withdraw-indicative-job-offer-4585601",
+            "https://www.channelnewsasia.com/business/progress-buy-cloud-software-unit-sharefile-875-million-4596201",
+            "https://www.channelnewsasia.com/news/businessblueprint",
+            "https://www.channelnewsasia.com/wellness/mooncake-sugar-health-calories-carb-protein-fat-cholesterol-sodium-4587916",
+            "https://www.channelnewsasia.com/singapore/integrated-shield-plans-study-findings-portability-shared-end-2024-moh-4595481",
+            "https://www.channelnewsasia.com/world/harris-trump-effectively-tied-final-stretch-2024-race-poll-shows-4594526",
+            "https://www.channelnewsasia.com/listen/work-it/normalise-family-friendly-practices-workplace-or-risk-losing-talent-indranee-rajah-4595191",
+            "https://www.channelnewsasia.com/cna-insider/life-limiting-illness-muscular-dystrophy-wheelchair-cosplayer-hca-hospice-4489066",
+            "https://www.channelnewsasia.com/singapore/power-rationing-clean-energy-transition-fund-4595791",
+            "https://www.channelnewsasia.com/listen/cna-correspondent/teachers-east-asia-have-reached-breaking-point-4571136",
+            "https://www.channelnewsasia.com/east-asia/china-train-3000-overseas-cops-police-chief-4595801",
+            "https://www.channelnewsasia.com/entertainment/jj-lin-mum-indomie-instant-noodles-4595266",
+            "https://www.channelnewsasia.com/singapore/e-bike-rider-accidents-pang-sua-park-connector-injuries-jail-4595751",
+            "https://www.channelnewsasia.com/singapore/food-delivery-rider-who-doubled-religious-teacher-admits-sexual-offences-against-15-year-old-girl-4595381",
+            "https://www.channelnewsasia.com/listen/money-talks/costs-raising-special-needs-children-money-talks-podcast-4582471",
+            "https://www.channelnewsasia.com/commentary/south-korea-electric-vehicles-ev-china-competition-mercedes-garage-fire-4588341",
+            "https://www.channelnewsasia.com/listen/climate-conversations/un-antonio-guterres-worried-climate-change-rising-temperatures-sea-levels-climate-conversations-podcast-4587286",
+            "https://www.channelnewsasia.com/news/theasiantraveller",
+            "https://www.channelnewsasia.com/singapore/public-transport-fare-hike-student-concession-support-government-4595706",
+            "https://www.channelnewsasia.com/singapore/china-nationals-housebreaking-bukit-timah-chinese-foreign-syndicate-immigration-social-visit-pass-4595321",
+            "https://www.channelnewsasia.com/world/israel-operations-worsening-west-bank-situation-un-4595991",
+            "https://www.channelnewsasia.com/listen/climate-conversations/can-medical-industry-reduce-its-staggering-carbon-footprint-4573666",
+            "https://www.channelnewsasia.com/women/taylor-clinical-health-ovarian-reserve-screening-ivf-egg-freezing-fertility-check-4385646",
+            "https://www.channelnewsasia.com/commentary/south-korea-nuclear-weapons-debate-defence-north-threat-4590881",
+            "https://www.channelnewsasia.com/asia/india-trainee-doctor-rape-murder-worldwide-protests-workplace-safety-diaspora-4594581",
+            "https://www.channelnewsasia.com/buyers-guide/best-microwave-ovens-4593176",
+            "https://www.channelnewsasia.com/asia/typhoon-yagi-vietnam-lg-factory-bridge-collapse-buildings-damaged-4595101",
+            "https://www.channelnewsasia.com/commentary/philippines-south-china-sea-tension-second-thomas-shoal-4591101",
+            "https://www.channelnewsasia.com/commentary/singapore-no-taxi-grab-ride-hail-transport-4592636",
+            "https://www.channelnewsasia.com/asia/pope-francis-timor-leste-leaders-act-youth-abuse-4596126",
+            "https://www.channelnewsasia.com/asia/apollo-quiboloy-philippines-not-looking-extradite-united-states-child-sex-trafficking-4595181",
+            "https://www.channelnewsasia.com/dining/sugar-butter-tree-japanese-cookies-singapore-4595456",
+            "https://www.channelnewsasia.com/asia/pakistan-tech-sector-struggle-work-unreliable-internet-4595741",
+            "https://www.channelnewsasia.com/singapore/platform-workers-food-delivery-riders-protections-faq-4595416",
+            "https://www.channelnewsasia.com/business/chinas-consumer-prices-rise-august-ppi-stuck-deflation-4595061",
+            "https://www.channelnewsasia.com/business/workers-samsung-india-plant-strike-partly-hitting-production-4596401"
+        ]
+    },
+    {
+        "url": "https://www.straitstimes.com/",
+        "links": [
+            "https://www.straitstimes.com/singapore/courts-crime/man-sexually-exploited-15-year-old-girl-who-was-sent-to-attend-his-religious-classes",
+            "https://www.straitstimes.com/singapore/courts-crime/seven-months-jail-for-traffic-police-officer-who-hit-and-caused-the-death-of-pedestrian",
+            "https://www.straitstimes.com/singapore/politics/mpox-likely-to-be-more-troublesome-than-disruptive-ong-ye-kung",
+            "https://www.straitstimes.com/singapore/about-the-straits-times-leadership",
+            "https://www.straitstimes.com/singapore/parenting-education",
+            "https://www.straitstimes.com/singapore/transport",
+            "https://www.straitstimes.com/singapore/politics/higher-percentage-of-travellers-refused-entry-into-singapore-with-automated-lanes",
+            "https://www.straitstimes.com/singapore/courts-crime/man-charged-over-maxwell-food-centre-murder",
+            "https://www.straitstimes.com/sport/basketball",
+            "https://www.straitstimes.com/sport/schools",
+            "https://www.straitstimes.com/singapore/emirates-to-stop-flights-between-singapore-and-melbourne",
+            "https://www.straitstimes.com/singapore/jobs",
+            "https://www.straitstimes.com/sport/football",
+            "https://www.straitstimes.com/sport/tennis",
+            "https://www.straitstimes.com/singapore/health/the-war-on-salt-and-saturated-fats",
+            "https://www.straitstimes.com/singapore/transport/mrt-bus-fares-to-go-up-by-10-cents-for-adults-who-pay-by-card-from-dec-28",
+            "https://www.straitstimes.com/sport/combat-sports",
+            "https://www.straitstimes.com/singapore/politics/all-hdb-dwellers-can-qualify-for-job-seeker-support-if-they-meet-other-criteria-tan-see-leng",
+            "https://www.straitstimes.com/singapore/parenting-education/fun-with-kids-singapore-polo-club-s-carnival-donald-duck-themed-light-up",
+            "https://www.straitstimes.com/business/invest/why-divorcing-couple-could-not-hide-their-12m-from-creditors",
+            "https://www.straitstimes.com/singapore/politics",
+            "https://www.straitstimes.com/singapore/moh-will-do-more-to-help-people-choose-the-right-ip-insurance-for-their-needs",
+            "https://www.straitstimes.com/business/weekly-money-fm-podcasts-forget-ai-what-value-stocks-should-you-be-looking-at-today",
+            "https://www.straitstimes.com/singapore/housing/former-redhill-close-sers-site-could-yield-about-2000-new-flats-property-analysts",
+            "https://www.straitstimes.com/singapore/courts-crime/singaporean-who-incurred-gambling-debt-ordered-to-repay-australian-casino-s336m",
+            "https://www.straitstimes.com/business/property",
+            "https://www.straitstimes.com/business/banking",
+            "https://www.straitstimes.com/business/invest/young-savvy-breaking-away-from-the-pack-and-working-out-solo",
+            "https://www.straitstimes.com/business/smiggle-boss-john-cheston-fired-for-serious-misconduct",
+            "https://www.straitstimes.com/singapore/more-than-100000-lost-in-days-to-singtel-sms-scam",
+            "https://www.straitstimes.com/singapore/courts-crime/opposition-leader-pritam-singh-fails-in-bid-for-high-court-trial-over-alleged-lies",
+            "https://www.straitstimes.com/singapore/schools-in-s-pore-impose-phone-bans-to-reduce-distractions-rekindle-social-interaction",
+            "https://www.straitstimes.com/business/me-my-money-cryptocurrency-as-a-route-to-escape-the-rat-race",
+            "https://www.straitstimes.com/singapore/cancel-culture-in-singapore-when-the-internet-turns-against-you-and-harassment-ensues",
+            "https://www.straitstimes.com/business/economy",
+            "https://www.straitstimes.com/singapore/parenting-education/taking-leave-to-help-your-child-study-for-year-end-exams-support-them-in-these-ways-instead",
+            "https://www.straitstimes.com/singapore/courts-crime",
+            "https://www.straitstimes.com/business/invest",
+            "https://www.straitstimes.com/singapore/politics/bill-to-combat-digitally-manipulated-content-deepfakes-during-elections-tabled-in-parliament",
+            "https://www.straitstimes.com/business/singapore-business-confidence-hits-2-year-high-though-manufacturing-outlook-still-muted-survey",
+            "https://www.straitstimes.com/singapore/parenting-education/viewpoint-my-grandmother-bought-and-ran-a-school-in-sembawang-in-1948",
+            "https://www.straitstimes.com/singapore/housing",
+            "https://www.straitstimes.com/singapore/enhanced-security-checks-at-all-checkpoints-in-singapore-from-sept-9-to-14-ica",
+            "https://www.straitstimes.com/business/companies-markets",
+            "https://www.straitstimes.com/world/united-states",
+            "https://www.straitstimes.com/singapore/askst-my-house-is-slowly-killing-me-what-can-i-do",
+            "https://www.straitstimes.com/singapore/community",
+            "https://www.straitstimes.com/life/entertainment/don-t-cry-butterfly-made-with-singapore-participation-wins-two-awards-at-venice-film-festival",
+            "https://www.straitstimes.com/singapore/transport/graduating-students-can-pay-concessionary-fares-for-4-months-after-studies-from-dec-28",
+            "https://www.straitstimes.com/business/invest/the-perils-of-using-quickie-divorces-to-escape-debt",
+            "https://www.straitstimes.com/singapore/politics/electricity-prices-could-go-up-to-recover-costs-of-energy-security-measures-under-changes-to-law",
+            "https://www.straitstimes.com/world/europe",
+            "https://www.straitstimes.com/singapore/consumer",
+            "https://www.straitstimes.com/singapore/environment",
+            "https://www.straitstimes.com/sport/formula-one",
+            "https://www.straitstimes.com/singapore/politics/what-you-need-to-know-about-the-new-platform-workers-bill",
+            "https://www.straitstimes.com/singapore/bnpl-buying-power-or-financial-trouble",
+            "https://www.straitstimes.com/world/middle-east",
+            "https://www.straitstimes.com/singapore/doctor-on-way-to-work-saves-man-who-suffered-heart-attack-at-yishun-mrt-station-and-had-no-pulse",
+            "https://www.straitstimes.com/sport/golf",
+            "https://www.straitstimes.com/singapore/health"
+        ]
+    },
+    {
+        "url": "https://abcnews.go.com/US/wireStory/apples-upcoming-iphone-catapult-tech-trendsetter-age-ai-113508677",
+        "links": [
+            "https://abcnews.go.com/US/wireStory/apples-upcoming-iphone-catapult-tech-trendsetter-age-ai-113508677",
+            "https://abcnews.go.com/US/wireStory/us-believes-iran-transferred-short-range-ballistic-missiles-113486526",
+            "https://abcnews.go.com/Sports/wireStory/tyreek-hill-briefly-detained-traffic-violation-ahead-dolphins-113496777",
+            "https://apnews.com/article/samsung-galaxy-smartphones-ai-apple-google-7e0a8d8d7aea1efc5b54c9301e53b684",
+            "https://abcnews.go.com/Entertainment/wireStory/beetlejuice-beetlejuice-jolts-box-office-110-million-opening-113497652",
+            "https://apnews.com/article/apple-quarterly-earnings-iphone-artificial-intelligence-112e9d950a3f842ce32a4b86d0bdc0e7",
+            "https://apnews.com/article/google-pixel-phone-artificial-intelligence-apple-iphone-706f612f4d1b0d6ed06431026e9afcbe",
+            "https://abcnews.go.com/US/wireStory/georgia-school-shooting-highlights-fears-classroom-cellphone-bans-113493372",
+            "https://apnews.com/article/apple-artificial-intelligence-siri-iphone-software-conference-4217d67977f95ead880835a71ecce098"
+        ]
+    },
+    {
+        "url": "https://abcnews.go.com/Entertainment/wireStory/king-charles-attends-church-prayers-anniversary-queen-elizabeths-113493658",
+        "links": [
+            "https://abcnews.go.com/Entertainment/wireStory/king-charles-attends-church-prayers-anniversary-queen-elizabeths-113493658",
+            "https://apnews.com/article/king-charles-britain-cancer-d646b835180e903c2d6c773e22f5dae1",
+            "https://apnews.com/article/kate-middleton-health-cancer-16a5eb5facb79fb1226def11931d41d8",
+            "https://apnews.com/article/queen-elizabeth-ii-funeral-bfe59d9c8f31d339f2cec2f8479cc3ce"
+        ]
+    },
+    {
+        "url": "https://abcnews.go.com/US/wireStory/2-young-sisters-apparently-drowned-long-island-pond-113496043",
+        "links": [
+            "https://abcnews.go.com/US/wireStory/2-young-sisters-apparently-drowned-long-island-pond-113496043",
+            "https://abcnews.go.com/International/wireStory/filipino-preacher-run-sexual-abuse-charges-arrested-113495033"
+        ]
+    },
+    {
+        "url": "https://abcnews.go.com/International/wireStory/venezuela-opposition-presidential-candidate-gonzlez-left-country-asylum-113491257",
+        "links": [
+            "https://abcnews.go.com/Politics/wireStory/trumps-heads-deep-red-part-swing-state-wisconsin-113477790",
+            "https://abcnews.go.com/International/wireStory/filipino-preacher-run-sexual-abuse-charges-arrested-113495033",
+            "https://abcnews.go.com/International/wireStory/venezuela-opposition-presidential-candidate-gonzlez-left-country-asylum-113491257",
+            "https://abcnews.go.com/International/wireStory/nato-member-romania-russian-drone-violated-airspace-113492999",
+            "https://apnews.com/article/venezuela-election-maduro-machado-gonzalez-tally-voting-362e844cd8ee5a706586e868bbe4c4b5",
+            "https://apnews.com/article/venezuela-edmundo-gonzalez-arrest-warrant-d34272422cddb42c1dde9166539a85d5",
+            "https://apnews.com/article/venezuela-presidential-election-maduro-machado-edmundo-results-3ec88b273cabfee8e5696ff67d24186d",
+            "https://abcnews.go.com/International/wireStory/yemens-houthi-rebels-claim-shot-us-mq-9-113490247",
+            "https://apnews.com/article/venezuela-presidential-election-maduro-opposition-machado-edmundo-dbb31ef798966698ce2792b1cec74f54"
+        ]
+    },
+    {
+        "url": "https://abcnews.go.com/International/wireStory/nato-member-romania-russian-drone-violated-airspace-113492999",
+        "links": [
+            "https://apnews.com/article/germany-ukraine-scholz-peace-conference-4c9d7112e77f6965be9dc20404e62f17",
+            "https://abcnews.go.com/International/wireStory/nato-member-romania-russian-drone-violated-airspace-113492999",
+            "https://apnews.com/article/romania-drone-fragments-russia-ukraine-3c9322b0e24a2128da84699a8a08910d",
+            "https://abcnews.go.com/International/wireStory/venezuela-opposition-presidential-candidate-gonzlez-left-country-asylum-113491257"
+        ]
+    },
+    {
+        "url": "https://abcnews.go.com/International/wireStory/bridge-collapses-rain-falls-vietnam-storm-deaths-rise-113508119",
+        "links": [
+            "https://apnews.com/article/yagi-typhoon-hainan-china-hong-kong-c18494f4878c2e8911149d118431050f",
+            "https://abcnews.go.com/International/wireStory/south-korean-truth-commission-found-evidence-forced-adoptions-113508672",
+            "https://apnews.com/article/tropical-storm-yagi-philippines-95604282315e6adade30a5a465a31562",
+            "https://abcnews.go.com/International/wireStory/bridge-collapses-rain-falls-vietnam-storm-deaths-rise-113508119",
+            "https://apnews.com/article/asia-typhoon-yagi-vietnam-8da74ac4ed2058b9eafa7e8227acd52c",
+            "https://abcnews.go.com/International/wireStory/pope-arrives-deeply-catholic-east-timor-encourage-recovery-113507799",
+            "https://abcnews.go.com/US/wireStory/pope-arrives-east-timor-trip-deeply-catholic-country-113507709",
+            "https://abcnews.go.com/International/wireStory/official-sudans-war-killed-20000-people-113495188"
+        ]
+    },
+    {
+        "url": "https://abcnews.go.com/US/wireStory/new-hampshire-governor-helps-save-man-choking-lobster-113511072",
+        "links": [
+            "https://abcnews.go.com/US/wireStory/new-hampshire-governor-helps-save-man-choking-lobster-113511072",
+            "https://www.wmur.com/article/sununu-saves-choking-contestant-lobster-roll-eating-competition/62105450?fbclid=IwY2xjawFLsb9leHRuA2FlbQIxMQABHW9e5uA-EPWPpnMnDxIfYv2ZUzkkJlXRFWxjhPypow5SgjJA66iWvZ_usg_aem_mSJtqjRG5xbG7QXTxs657A"
+        ]
+    },
+    {
+        "url": "https://abcnews.go.com/International/wireStory/official-sudans-war-killed-20000-people-113495188",
+        "links": [
+            "https://abcnews.go.com/International/wireStory/filipino-preacher-run-sexual-abuse-charges-arrested-113495033",
+            "https://abcnews.go.com/International/wireStory/nato-member-romania-russian-drone-violated-airspace-113492999",
+            "https://apnews.com/article/sudan-war-rapid-support-forces-war-crimes-75cf4d04a2a539a5e1b2d2f2250bf837",
+            "https://abcnews.go.com/International/wireStory/pope-bring-ton-humanitarian-aid-remote-papua-new-113489208",
+            "https://abcnews.go.com/International/wireStory/libyan-authorities-order-detention-militia-leader-killing-sanctioned-113492107",
+            "https://apnews.com/article/sudan-chad-refugees-conflict-children-women-9e4e7a5fab42a225bec7212ebdbbc536",
+            "https://abcnews.go.com/International/wireStory/protesters-rally-france-barniers-appointment-prime-minister-113481471",
+            "https://abcnews.go.com/International/wireStory/official-sudans-war-killed-20000-people-113495188"
+        ]
+    },
+    {
+        "url": "https://abcnews.go.com/International/wireStory/roadside-bomb-hits-vehicle-carrying-police-guarding-anti-113510184",
+        "links": [
+            "https://abcnews.go.com/International/wireStory/yemens-houthi-rebels-claim-shot-us-mq-9-113490247",
+            "https://abcnews.go.com/International/wireStory/israel-hamas-war-latest-israel-orders-evacuations-gaza-113510090",
+            "https://abcnews.go.com/International/wireStory/roadside-bomb-hits-vehicle-carrying-police-guarding-anti-113510184",
+            "https://abcnews.go.com/International/wireStory/china-announces-joint-naval-air-drills-russia-113509078",
+            "https://apnews.com/article/afghanistan-pakistan-taliban-united-nations-peshawar-c47410b0e9944ac98437272e3ef53640",
+            "https://abcnews.go.com/International/wireStory/israeli-medics-2-people-shot-wounded-west-bank-113492298"
+        ]
+    },
+    {
+        "url": "https://abcnews.go.com/Weird/wireStory/cowabunga-new-england-town-celebrates-birthplace-teenage-mutant-113480275",
+        "links": [
+            "https://abcnews.go.com/Weird/wireStory/cowabunga-new-england-town-celebrates-birthplace-teenage-mutant-113480275",
+            "https://abcnews.go.com/Entertainment/wireStory/beetlejuice-beetlejuice-jolts-box-office-110-million-opening-113497652",
+            "https://abcnews.go.com/US/wireStory/georgia-school-shooting-highlights-fears-classroom-cellphone-bans-113493372"
+        ]
+    },
+    {
+        "url": "https://abcnews.go.com/Sports/photos/best-photos-paris-2024-summer-olympics-112104167",
+        "links": [
+            "https://abcnews.go.com/Sports/photos/best-photos-paris-2024-summer-olympics-112104167"
+        ]
+    },
+    {
+        "url": "https://abcnews.go.com/Technology/wireStory/google-faces-new-antitrust-trial-after-ruling-declaring-113507624",
+        "links": [
+            "https://abcnews.go.com/Technology/wireStory/google-faces-new-antitrust-trial-after-ruling-declaring-113507624",
+            "https://apnews.com/article/google-antitrust-search-engine-verdict-apple-319a61f20fb11510097845a30abaefd8",
+            "https://apnews.com/article/google-antitrust-ad-tech-virginia-jury-94d196f4ae063333632fc5a818b9a976"
+        ]
+    },
+    {
+        "url": "https://abcnews.go.com/International/photos/memoriam-notable-people-died-2024-106041772",
+        "links": [
+            "https://abcnews.go.com/International/photos/memoriam-notable-people-died-2024-106041772"
+        ]
+    },
+    {
+        "url": "https://abcnews.go.com/International/wireStory/van-apparently-packed-migrants-veers-off-road-croatia-113508871",
+        "links": [
+            "https://abcnews.go.com/International/wireStory/van-apparently-packed-migrants-veers-off-road-croatia-113508871"
+        ]
+    },
+    {
+        "url": "https://abcnews.go.com/US/wireStory/pope-arrives-east-timor-trip-deeply-catholic-country-113507709",
+        "links": [
+            "https://abcnews.go.com/US/wireStory/trial-begins-texas-trump-train-highway-confrontation-113507620",
+            "https://abcnews.go.com/International/wireStory/bridge-collapses-rain-falls-vietnam-storm-deaths-rise-113508119",
+            "https://abcnews.go.com/US/wireStory/house-republican-unveil-bill-avoid-shutdown-senate-democrats-113474508",
+            "https://abcnews.go.com/US/wireStory/im-living-lie-streets-colorado-city-pregnant-migrants-113507894",
+            "https://abcnews.go.com/US/wireStory/pope-arrives-east-timor-trip-deeply-catholic-country-113507709"
+        ]
+    },
+    {
+        "url": "https://abcnews.go.com/International/photos/2024-wildlife-photographer-year-select-entries-113351541",
+        "links": [
+            "https://abcnews.go.com/International/photos/2024-wildlife-photographer-year-select-entries-113351541",
+            "https://abcnews.go.com/International/photos/2019-comedy-wildlife-competition-finalists-65601969",
+            "https://abcnews.go.com/GMA/photos/wildlife-photographer-year-peoples-choice-award-105241813",
+            "https://abcnews.go.com/International/photos/comedy-wildlife-photography-awards-finalists-91858301"
+        ]
+    },
+    {
+        "url": "https://abcnews.go.com/Business/wireStory/wynn-resorts-paying-130m-letting-illegal-money-reach-113488192",
+        "links": [
+            "https://apnews.com/article/cd0bf25309ea476e94189e83cf8a3d22",
+            "https://apnews.com/article/0eb7723534464af696620c9a92649834",
+            "https://abcnews.go.com/Business/wireStory/wynn-resorts-paying-130m-letting-illegal-money-reach-113488192",
+            "https://apnews.com/article/steve-wynn-casinos-nevada-regulators-settlement-e9bc383ad296902df1290a33e6284f2d"
+        ]
+    },
+    {
+        "url": "https://abcnews.go.com/International/wireStory/filipino-preacher-run-sexual-abuse-charges-arrested-113495033",
+        "links": [
+            "https://abcnews.go.com/US/wireStory/2-young-sisters-apparently-drowned-long-island-pond-113496043",
+            "https://abcnews.go.com/International/wireStory/filipino-preacher-run-sexual-abuse-charges-arrested-113495033",
+            "https://apnews.com/article/religion-los-angeles-united-states-indictments-philippines-388f95576ef401eaab12296bffc04399",
+            "https://abcnews.go.com/International/wireStory/venezuela-opposition-presidential-candidate-gonzlez-left-country-asylum-113491257",
+            "https://abcnews.go.com/International/wireStory/nato-member-romania-russian-drone-violated-airspace-113492999",
+            "https://apnews.com/article/philippines-raid-quiboloy-kingdom-jesus-christ-compound-26cdfd24582dcd516e0754dd266b2bf9"
+        ]
+    },
+    {
+        "url": "https://abcnews.go.com/International/wireStory/south-korean-truth-commission-found-evidence-forced-adoptions-113508672",
+        "links": [
+            "https://apnews.com/article/30648e5e2d854d0abedac29ee68c12fe",
+            "https://apnews.com/article/seoul-south-korea-busan-crime-business-176178a6eccdd0a0e4c0ee1d12872cf9",
+            "https://abcnews.go.com/International/wireStory/south-korean-truth-commission-found-evidence-forced-adoptions-113508672",
+            "https://apnews.com/article/seoul-adoption-south-korea-forced-labor-government-and-politics-2e9765d80a43341b9d89048f1661c873",
+            "https://apnews.com/article/south-korea-truth-commission-adoptions-dictatorships-69fa079a6dda51d4a3102546613035c0",
+            "https://apnews.com/article/south-korea-foreign-adoptions-investigation-e7b826ee4a54d3680fec8b64f07da951",
+            "https://abcnews.go.com/International/wireStory/yemens-houthi-rebels-claim-shot-us-mq-9-113490247"
+        ]
+    },
+    {
+        "url": "https://abcnews.go.com/International/wireStory/oman-state-run-oil-firm-oq-make-initial-113509910",
+        "links": [
+            "https://abcnews.go.com/International/wireStory/israel-hamas-war-latest-israel-orders-evacuations-gaza-113510090",
+            "https://abcnews.go.com/International/wireStory/spanish-prime-minister-visits-china-shore-trade-cultural-113506426",
+            "https://abcnews.go.com/International/wireStory/oman-state-run-oil-firm-oq-make-initial-113509910",
+            "https://abcnews.go.com/International/wireStory/east-timor-popes-visit-reward-after-20-years-113491811",
+            "https://abcnews.go.com/International/wireStory/china-announces-joint-naval-air-drills-russia-113509078",
+            "https://apnews.com/article/saudi-aramco-stock-offering-b76f407d4b2a6cba7fa55a1d1d5dd2d0",
+            "https://apnews.com/article/d5bb9597cc96b6ab7a6e73fd87d72f30",
+            "https://abcnews.go.com/International/wireStory/16s-arrived-ukraine-fight-russia-heres-impact-112466410"
+        ]
+    },
+    {
+        "url": "https://abcnews.go.com/Entertainment/wireStory/beetlejuice-beetlejuice-jolts-box-office-110-million-opening-113497652",
+        "links": [
+            "https://apnews.com/article/reagan-movie-review-ea29923fbc61a0997d5fb69eec5e7f6d",
+            "https://apnews.com/article/alien-romulus-cailee-spaeny-fede-alvarez-interview-b10f5ef76b6899c8f416ce8cbd2b01b2",
+            "https://apnews.com/article/it-ends-with-us-movie-review-blake-lively-035aa1becea86aa90a5f1aa982cf823c",
+            "https://abcnews.go.com/US/line-fire-updates-southern-california-wildfire-surpasses-20000/story?id=113507911",
+            "https://apnews.com/article/inside-out-2-box-office-ea1994cf48357c6c2e833ff470051bbc",
+            "https://apnews.com/entertainment/movies-dennis-quaid-417df5a88071f3422f07e9ddc266b620",
+            "https://abcnews.go.com/Entertainment/wireStory/beetlejuice-beetlejuice-jolts-box-office-110-million-opening-113497652",
+            "https://apnews.com/article/beetlejuice-movie-review-burton-keaton-ortega-d2c29ca4f14ba504488486d72e2cf65a",
+            "https://apnews.com/article/stephen-king-bill-skarsgard-jessica-chastain-movies-ca-state-wire-939643ade09b4e03a8f66254562be73a",
+            "https://abcnews.go.com/Sports/wireStory/taylor-swift-travis-kelce-attend-us-open-mens-113499987",
+            "https://apnews.com/article/deadpool-wolverine-box-office-2ff49d29c7aa3cf037fb2326abbecd6f",
+            "https://apnews.com/entertainment/movies-theater-general-news-2f53c8cf7ab86a75226858df9d4981c4",
+            "https://apnews.com/article/beetlejuice-venice-film-festival-ryder-ortega-8c7c94259c411231d6b73d81dbd47369",
+            "https://abcnews.go.com/Entertainment/wireStory/wicked-director-jon-chu-shooting-moon-casting-ariana-113483338"
+        ]
+    },
+    {
+        "url": "https://abcnews.go.com/International/wireStory/israeli-strikes-gaza-kill-dozen-health-workers-press-113480173",
+        "links": [
+            "https://apnews.com/article/israel-palestinians-netanyahu-sinwar-ceasefire-talks-c00b30d31ac8d25592ce63c2398097a5",
+            "https://abcnews.go.com/International/wireStory/libyas-coast-guard-intercepts-64-europe-bound-migrants-113479376",
+            "https://apnews.com/article/israel-palestinians-gaza-hamas-war-hostages-hersh-netanyahu-29496f50a9b1740bd3905035ffd23052",
+            "https://apnews.com/article/israel-palestinians-west-bank-jenin-hamas-militants-c1618cc024d8a5269486e266593b5434",
+            "https://abcnews.go.com/International/wireStory/algerias-aging-president-expected-breeze-term-saturdays-election-113479557",
+            "https://apnews.com/article/israel-palestinians-west-bank-raids-bc3383024400ee42518e41f3660acbd4",
+            "https://apnews.com/article/gaza-war-hamas-dead-graves-40000-988d16b648e06e222f04964dc9440da0",
+            "https://apnews.com/article/gaza-baby-polio-hamas-war-israel-who-59a09fbb2257dd9fcfaac0878dc3fe58",
+            "https://abcnews.go.com/International/wireStory/israeli-strikes-gaza-kill-dozen-health-workers-press-113480173",
+            "https://apnews.com/article/israel-hamas-gaza-polio-who-vaccinations-3acaa0dcf9744810c51032f45e609a2f",
+            "https://apnews.com/article/israel-palestinians-hamas-war-news-6-september-2024-29705c9c6cc59054d74b1dbcd29497df",
+            "https://apnews.com/article/west-bank-israel-palestinians-settler-violence-ffa6e84c39861c224f685e660c53a82d",
+            "https://apnews.com/article/american-shot-killed-west-bank-israel-palestinians-b2f1c741cea3d56eb1a339240dbf036e",
+            "https://abcnews.go.com/International/wireStory/yemens-houthi-rebels-claim-shot-us-mq-9-113490247",
+            "https://abcnews.go.com/International/wireStory/official-sudans-war-killed-20000-people-113495188"
+        ]
+    },
+    {
+        "url": "https://abcnews.go.com/Business/wireStory/waffle-house-ceo-walt-ehmer-died-age-58-113500266",
+        "links": [
+            "https://www.ajc.com/news/atlanta-news/waffle-house-ceo-walt-ehmer-dead-at-58/2HGJTC2K2JHPPAL76EGUBNHKIA/?fbclid=IwY2xjawFKyHBleHRuA2FlbQIxMQABHYIRaMUg1Ixg1KLVX1F0Vhkoh_lGMlHF19PBaPQB9VX4ZoYkgRZf03dXag_aem_gN-O27CsJDHZ61swMj2tFQ",
+            "https://abcnews.go.com/Business/wireStory/waffle-house-ceo-walt-ehmer-died-age-58-113500266"
+        ]
+    },
+    {
+        "url": "https://abcnews.go.com/US/line-fire-updates-southern-california-wildfire-surpasses-20000/story?id=113507911",
+        "links": [
+            "https://abcnews.go.com/US/line-fire-updates-southern-california-wildfire-surpasses-20000/story?id=113507911",
+            "https://abcnews.go.com/International/wireStory/bridge-collapses-rain-falls-vietnam-storm-deaths-rise-113508119",
+            "https://abcnews.go.com/International/wireStory/south-korean-truth-commission-found-evidence-forced-adoptions-113508672"
+        ]
+    },
+    {
+        "url": "https://abcnews.go.com/Sports/wireStory/palestinian-team-chile-offers-soccer-heavy-dose-protest-113507073",
+        "links": [
+            "https://abcnews.go.com/Sports/wireStory/palestinian-team-chile-offers-soccer-heavy-dose-protest-113507073",
+            "https://apnews.com/article/gaza-death-toll-hamas-war-israel-40000-32a79e03c8eb62669412dab23d03219e",
+            "https://apnews.com/article/israel-iran-hamas-latest-05-15-2024-b3f003838e374122f0547896fabae39b",
+            "https://apnews.com/article/israel-gaza-bombs-destruction-death-toll-scope-419488c511f83c85baea22458472a796",
+            "https://apnews.com/article/israel-bolivia-colombia-chile-argentina-brazil-4cc038c0dbe1de9b5e4118e2ceac2181",
+            "https://apnews.com/article/israel-palestinians-gaza-hamas-rockets-airstrikes-tel-aviv-11fb98655c256d54ecb5329284fc37d2",
+            "https://apnews.com/article/israel-hamas-war-palestinian-rights-rally-washington-b963f3e92b2e9be3220209d8e96970b7",
+            "https://apnews.com/article/israel-hostages-portraits-hamas-captives-e7213e6262cdb9c51ab174326874538c",
+            "https://apnews.com/article/immigration-middle-east-religion-europe-benjamin-netanyahu-72d0ec0223ab4cebaca4e044f12dd4c0",
+            "https://apnews.com/article/israel-hamas-war-palestinians-hunger-famine-42e404ec4ef3e2836a82a8d2b2315fd1",
+            "https://apnews.com/article/world-cup-soccer-sports-netherlands-europe-c0e2cc20f8b50ea1b2eaf2e866ec5090",
+            "https://apnews.com/article/democratic-convention-chicago-protests-israel-hamas-war-ea3bc9193cc99a5c95ebfd1a42db924f",
+            "https://apnews.com/article/nakba-gaza-israel-hamas-war-a58e1a4f7fd224e1adfedf0da9b3608e",
+            "https://apnews.com/article/genocide-israel-palestinians-gaza-court-fbd7fe4af10b542a1a4e2c7563029bfb",
+            "https://apnews.com/article/bolivia-israel-gaza-diplomatic-relations-f403fc27c9b2194a317fda829fb7ed08"
+        ]
+    },
+    {
+        "url": "https://abcnews.go.com/US/wireStory/suspect-arrested-after-police-involved-shooting-santa-fe-113500400",
+        "links": [
+            "https://www.santafenewmexican.com/news/",
+            "https://abcnews.go.com/US/wireStory/2-young-sisters-apparently-drowned-long-island-pond-113496043",
+            "https://abcnews.go.com/International/wireStory/filipino-preacher-run-sexual-abuse-charges-arrested-113495033",
+            "https://abcnews.go.com/US/wireStory/suspect-arrested-after-police-involved-shooting-santa-fe-113500400",
+            "https://abcnews.go.com/International/wireStory/nato-member-romania-russian-drone-violated-airspace-113492999"
+        ]
+    },
+    {
+        "url": "https://abcnews.go.com/US/wireStory/us-believes-iran-transferred-short-range-ballistic-missiles-113486526",
+        "links": [
+            "https://abcnews.go.com/International/wireStory/yemens-houthi-rebels-claim-shot-us-mq-9-113490247",
+            "https://abcnews.go.com/International/wireStory/ukraine-destroys-scores-russian-drones-continues-face-new-113479878",
+            "https://abcnews.go.com/US/wireStory/us-believes-iran-transferred-short-range-ballistic-missiles-113486526",
+            "https://abcnews.go.com/International/wireStory/protesters-rally-france-barniers-appointment-prime-minister-113481471",
+            "https://apnews.com/article/united-states-china-russia-ukraine-war-265df843be030b7183c95b6f3afca8ec",
+            "https://abcnews.go.com/International/wireStory/nato-member-romania-russian-drone-violated-airspace-113492999",
+            "https://abcnews.go.com/International/wireStory/israeli-strikes-gaza-kill-dozen-health-workers-press-113480173",
+            "https://apnews.com/article/russian-iran-ballistic-missiles-ukraine-f12dc454b04f7cbe671d2c401e31390c",
+            "https://apnews.com/article/cia-mi6-gaza-ceasefire-mideast-russia-2b81c6143f2a04ceebb2a98b2cdba7cd",
+            "https://apnews.com/article/biden-keir-starmer-britain-white-house-ee4b84bc5c1209827f14f4d91cc4f527"
+        ]
+    }
+]
