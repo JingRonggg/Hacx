@@ -62,19 +62,19 @@ def classify_statements(gpt_response):
 
     return classification_dict
 
-# Main function to process input data from the database and store processed data
-def main():
-    input_data = db.extract("input_data")
+# # Main function to process input data from the database and store processed data
+# def main():
+#     input_data = db.extract("input_data")
 
-    for record in input_data:
-        maintext = record[2]  # Only use the maintext field
+#     for record in input_data:
+#         maintext = record[2]  # Only use the maintext field
 
-        response = get_gpt_response(maintext)
-        gpt_response = response['choices'][0]['message']['content'].strip()
-        classified_dict = classify_statements(gpt_response)
+#         response = get_gpt_response(maintext)
+#         gpt_response = response['choices'][0]['message']['content'].strip()
+#         classified_dict = classify_statements(gpt_response)
 
-        # Store classified statements into the pre_processed_data table
-        for truth_value, statements in classified_dict.items():
-            label = 1 if truth_value == "True" else 0
-            for statement in statements:
-                db.send("pre_processed_data", (statement, label))
+#         # Store classified statements into the pre_processed_data table
+#         for truth_value, statements in classified_dict.items():
+#             label = 1 if truth_value == "True" else 0
+#             for statement in statements:
+#                 db.send("pre_processed_data", (statement, label))
