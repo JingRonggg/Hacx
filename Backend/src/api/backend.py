@@ -7,11 +7,14 @@ from pydantic import BaseModel
 from typing import Annotated, Optional
 from src.LLMs.Full_check_LLM import detect_fake_news_in_article
 from src.utils.image_checking import process_url
+from src.utils.web_crawler import fetch_articles
 import os
 from urllib.parse import unquote
 from src.db.db_access import DatabaseAccessAzure
 from dotenv import load_dotenv
 from src.utils.image_checking import process_url
+from src.db.testingDB import readtable
+from src.db.testingDB import createinput
 
 
 app = FastAPI()
@@ -61,20 +64,30 @@ async def health(request: Request):
     Returns:
         dict: A dictionary containing a welcome message.
     """
-    return templates.TemplateResponse("main.html", {"request": request, "messages": "Hello Hacx"})
+    # loads the things from the database 
+    crawled_articles = readtable("input_data")
+    return templates.TemplateResponse("home.html", {"request": request, "crawled": crawled_articles})
     # return {"messages": "Hello Hacx!"}
 
 @app.post("/")
-# @app.post("/check-article/", response_model=ArticleOutput)
+# async def check_article(request: Request):
 async def check_article(request: Request, input_data: str = Form(...)):
-    # input_data gets the URL link from the textbox
+    # print(input)
+    # urls = fetch_articles()
+    output_reliability = []
+    propaganda = []
+    # print(urls)
     try:
         # Decode any special characters in the URL
         url = unquote(input_data)
 
         # Process the URL to extract the article text
         article = process_url(url)
+
         if hasattr(article, 'interpretation') and article.interpretation == "Propaganda":
+            # send output to db table
+            createinput("output_data", )
+            
             return templates.TemplateResponse('main.html', context={
                 'request': request,
                 'result': article,
@@ -94,10 +107,51 @@ async def check_article(request: Request, input_data: str = Form(...)):
             'input_data': article
         })
 
+        # Loop through the URLs returned by fetch_article one by one
+        for url in urls:
+            # Process the URL to extract the article text
+            article = process_url(url)
+
+            # Check for "Propaganda" interpretation
+            if hasattr(article, 'interpretation') and article.interpretation == "Propaganda":
+                propaganda.append(article)
+            
+            # Perform fake news detection
+            article_output = detect_fake_news_in_article(article)
+            output_reliability.append(article_output)
+
+
+        return templates.TemplateResponse('home.html', context={
+            'request': request,
+            'result': article_output,
+            'output_data' : {'o': output_reliability, 'p': propaganda}
+            # 'input_data': {'url': url}
+        })
+
     except Exception as e:
         # Handle exceptions and display the error message on the frontend
-        return templates.TemplateResponse('main.html', context={
+        return templates.TemplateResponse('home.html', context={
             'request': request,
             'result': str(e),
-            'input_data': {'url': url}
+            'input_data': {'url': None}
         })
+
+
+@app.get("/articles")
+async def articles(request: Request):
+    # loads the articles from the database 
+    crawled_articles = readtable("input_data")
+    return templates.TemplateResponse(
+        "articles.html", 
+        {"request": request, "crawled": crawled_articles}
+    )
+
+@app.post("/articles")
+async def check_crawled_articles(request: Request):
+    urls = fetch_articles()
+    crawled_articles = readtable("input_data")
+
+    return templates.TemplateResponse(
+        "articles.html", 
+        {"request": request, "crawled": crawled_articles}
+    )

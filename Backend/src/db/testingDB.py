@@ -1,6 +1,7 @@
-from db_access import DatabaseAccessAzure
+from src.db.db_access import DatabaseAccessAzure
 import os
 from dotenv import load_dotenv
+
 
 # Load environment variables from .env file
 load_dotenv()
@@ -25,14 +26,37 @@ db = DatabaseAccessAzure(
     password=SERVER_PASSWORD
 )
 
+
+def createinput(tablename, data):
+    url = data[-1]
+    print(f"Checking for duplicates for URL: {url}")
+    try:
+        # Check if the URL already exists in the database 
+        query = f"SELECT COUNT(*) FROM [dbo].[input_data] WHERE URL = ?"
+        result = db.query(query, (url))
+
+        #If the URL exists (i.e. count > 0), skip insertion 
+        if result [0][0] > 0:
+            print(f"URL {url} already exists in the database. Skipping Insertion.")
+            return
+        
+        #If no duplicates are found, proceed to insert the new data 
+        print("Inserting data into input_data table...")
+        db.send(tablename, data)
+        print("Done inserting")
+
+    except Exception as e:
+        print(f"An error occurred while inserting data: {e}")
+
+
 # # Example of inserting data into the input_data table
-# try:
-#     print("Inserting data into input_data table...")
-#     db.send("input_data", ("Sample Title", "Sample Main Text", "John", "Sample Description", "http://example1.com"))
-#     db.send("input_data", ("Sample Title 2", "Sample Main Text 2", "John", "Sample Description 2", "http://example2.com"))
-#     print("Data inserted successfully.")
-# except Exception as e:
-#     print(f"An error occurred while inserting data: {e}")
+'''try:
+     print("Inserting data into input_data table...")
+     db.send("input_data", ("Sample Title", "Sample Main Text", "John", "Sample Description", "http://example1.com"))
+     db.send("input_data", ("Sample Title 2", "Sample Main Text 2", "John", "Sample Description 2", "http://example2.com"))
+     print("Data inserted successfully.")
+except Exception as e:
+     print(f"An error occurred while inserting data: {e}")'''
 
 # # Example of extracting data from the input_data table
 # try:
@@ -45,19 +69,22 @@ db = DatabaseAccessAzure(
 #     print(f"An error occurred while extracting data: {e}")
 
 # Example of deleting data from the input_data table
-try:
-    print("Deleting data from input_data table where maintext is 'Sample Main Text 2'...")
-    db.delete("input_data", "maintext = 'Sample Main Text '")
-    print("Data deleted successfully.")
-except Exception as e:
-    print(f"An error occurred while deleting data: {e}")
+def deleterecord():
+    try:
+        print("Deleting data from input_data table where maintext is 'Sample Main Text 2'...")
+        db.delete("input_data", "maintext = 'Sample Main Text'")
+        print("Data deleted successfully.")
+    except Exception as e:
+        print(f"An error occurred while deleting data: {e}")
 
 # Extract data again to verify deletion
-try:
-    print("Extracting data again to verify deletion...")
-    data = db.extract("input_data", "author = 'John'")
-    print("Data after deletion:")
-    for row in data:
-        print(row)
-except Exception as e:
-    print(f"An error occurred while extracting data after deletion: {e}")
+def readtable(tablename):
+    try:
+        # print("Extracting data again to verify deletion...")
+        data = db.extract(tablename)
+        return data
+        # print("Data after deletion:")
+        # for row in data:
+        #     print(row)
+    except Exception as e:
+        print(f"An error occurred while extracting data after deletion: {e}")

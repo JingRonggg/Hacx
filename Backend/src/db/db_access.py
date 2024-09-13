@@ -69,3 +69,21 @@ class DatabaseAccessAzure:
 
         cursor.close()
         conn.close()
+
+    # Query function to execute a custom SQL query 
+    def query(self, sql_query, params=None):
+        """Executes a SQL query and returns the results."""
+        conn = pyodbc.connect(self.conn_str)
+        cursor = conn.cursor()
+
+        # Execute the query with optional parameters
+        if params:
+            cursor.execute(sql_query, params)
+        else:
+            cursor.execute(sql_query)
+
+        rows = cursor.fetchall()  # Fetch all rows from the result set
+
+        cursor.close()
+        conn.close()
+        return rows
