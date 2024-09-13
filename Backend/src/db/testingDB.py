@@ -28,18 +28,23 @@ db = DatabaseAccessAzure(
 
 
 def createinput(tablename, data):
-    print(data)
+    url = data[-1]
+    print(f"Checking for duplicates for URL: {url}")
     try:
-        '''print("Inserting data into input_data table...")
-        for url in urls: 
-        article_data = fetch_article(url)
-        title = article_data["title"]
-        maintext = article_data["text"]
-        author = article_data["authors"]
-        date = article_data["publish_date"]'''
+        # Check if the URL already exists in the database 
+        query = f"SELECT COUNT(*) FROM [dbo].[input_data] WHERE URL = ?"
+        result = db.query(query, (url))
+
+        #If the URL exists (i.e. count > 0), skip insertion 
+        if result [0][0] > 0:
+            print(f"URL {url} already exists in the database. Skipping Insertion.")
+            return
+        
+        #If no duplicates are found, proceed to insert the new data 
         print("Inserting data into input_data table...")
         db.send(tablename, data)
         print("Done inserting")
+
     except Exception as e:
         print(f"An error occurred while inserting data: {e}")
 
