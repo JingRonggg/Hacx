@@ -22,7 +22,6 @@ def detect_fake_news(text):
     label_names = ["entailment", "neutral", "FAKE"]
     # Multiply by 100 and format to 2 decimal places
     scores = {name: round(float(pred) * 100, 2) for name, pred in zip(label_names, predictions[0])}
-    print(scores)
     return scores
 
 def interpret_results(scores):

@@ -34,6 +34,7 @@
                 <th scope="col">explanation</th>
                 <th scope="col">interpretation</th>
                 <th scope="col">confidence</th>
+                <th scope="col">deepfake</th>
             </tr>
         </thead>
         <tbody>
@@ -44,6 +45,7 @@
                 <td>{{result['explanation']}}</td>
                 <td>{{result['interpretation']}}</td>
                 <td>{{result['confidence']}}</td>
+                <td>{{result['deepfake']}}</td>
             </tr>
             {% endif %}
             {% for output in output_data.o %}
@@ -53,6 +55,7 @@
                 <td>{{output['explanation']}}</td>
                 <td>{{output['interpretation']}}</td>
                 <td>{{output['confidence']}}</td>
+                <td>{{output['deepfake']}}</td>
             </tr>
             {% endfor %}
         </tbody>

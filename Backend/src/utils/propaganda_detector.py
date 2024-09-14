@@ -10,6 +10,7 @@ class ArticleOutput(BaseModel):
     explanation: str
     interpretation: str
     confidence: Optional[float] = None
+    deepfake: Optional[float] = None
 
 # Load environment variables from the .env file
 load_dotenv()
@@ -86,7 +87,8 @@ def extract_propaganda_analysis_with_regex(response_text):
             title=title,
             explanation=explanation,
             interpretation=interpretation,
-            confidence=confidence
+            confidence=confidence,
+            deepfake=None
         )
     except (AttributeError, IndexError) as e:
         raise ValueError(f"Error processing the response: {e}")
