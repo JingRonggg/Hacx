@@ -1,6 +1,7 @@
 from src.utils.OCR import azure_ocr_image_to_text, is_url_image
 from src.utils.web_crawler import fetch_article
 from src.utils.propaganda_detector import analyze_image_for_propaganda, extract_propaganda_analysis_with_regex
+from src.LLMs.deepfake_detection import detect_deepfake_from_url
 
 def process_url(url):
     """
@@ -18,9 +19,11 @@ def process_url(url):
             .replace('\xa0', ' ').replace('\u200b', ' ').replace('\u200e', ' ').replace('\u200f', ' ')
 
     if is_url_image(url):
-        result = analyze_image_for_propaganda(url)
-        result = extract_propaganda_analysis_with_regex(result)
+        analysis = analyze_image_for_propaganda(url)
+        result = extract_propaganda_analysis_with_regex(analysis)
+        deepfakeScore = detect_deepfake_from_url(url)
         if result.interpretation == "Propaganda":
+            result.deepfake = deepfakeScore
             return result
         else:
             # The input URL is an image
@@ -28,10 +31,12 @@ def process_url(url):
             article_text = clean_text(extracted_text)
             article = {
                 'title': 'Text Extracted from Image',
-                'text': article_text
+                'text': article_text,
+                'deepfake': deepfakeScore
             }
     else:
         # The input URL is a web link
         article = fetch_article(url)
         article['text'] = clean_text(article['text'])
+
     return article
