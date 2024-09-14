@@ -6,10 +6,10 @@ from tensorflow.keras.applications import EfficientNetB0
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 
-dataset_path = '/Users/limmalcolm/Desktop/hacx/Hacx/data'
-train_dir = os.path.join(dataset_path, 'Train')
-val_dir = os.path.join(dataset_path, 'Validation')
-test_dir = os.path.join(dataset_path, 'Test')
+# dataset_path = '/Users/limmalcolm/Desktop/hacx/Hacx/data'
+# train_dir = os.path.join(dataset_path, 'Train')
+# val_dir = os.path.join(dataset_path, 'Validation')
+# test_dir = os.path.join(dataset_path, 'Test')
 
 
 train_datagen = ImageDataGenerator(
@@ -54,4 +54,4 @@ history = model.fit(
 )
 
 
-model.save('models/deepfake_detector.h5')
+model.save('./src/LLMs/models/deepfake_detector.h5')

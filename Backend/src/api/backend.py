@@ -16,7 +16,6 @@ from src.utils.image_checking import process_url
 from src.db.testingDB import readtable
 from src.db.testingDB import createinput
 
-
 app = FastAPI()
 BASE_DIR = os.path.dirname(os.getcwd())
 
@@ -55,6 +54,7 @@ class ArticleOutput(BaseModel):
     explanation: str
     interpretation: str
     confidence: Optional[float] = None
+    deepfake: Optional[float] = None
 
 @app.get("/")
 async def health(request: Request):
@@ -72,60 +72,33 @@ async def health(request: Request):
 @app.post("/")
 # async def check_article(request: Request):
 async def check_article(request: Request, input_data: str = Form(...)):
-    # print(input)
-    # urls = fetch_articles()
-    output_reliability = []
-    propaganda = []
-    # print(urls)
+
     try:
         # Decode any special characters in the URL
         url = unquote(input_data)
-
         # Process the URL to extract the article text
         article = process_url(url)
-
         if hasattr(article, 'interpretation') and article.interpretation == "Propaganda":
             # send output to db table
-            createinput("output_data", )
+            # createinput("output_data", )
             
-            return templates.TemplateResponse('main.html', context={
+            return templates.TemplateResponse('home.html', context={
                 'request': request,
                 'result': article,
                 'input_data': {'url': url}
             })
-        
         # Perform fake news detection
         article_output = detect_fake_news_in_article(article)
-
+        if('deepfake' in article):
+            article_output.deepfake = article['deepfake']
+            
         # Uncomment the following lines to save data into the 'output_data' table
         # true = 0 if interpretation.lower() == "true" else 1
         # db.send("output_data", (article["text"], true))
-
-        return templates.TemplateResponse('main.html', context={
-            'request': request,
-            'result': article_output,
-            'input_data': article
-        })
-
-        # Loop through the URLs returned by fetch_article one by one
-        for url in urls:
-            # Process the URL to extract the article text
-            article = process_url(url)
-
-            # Check for "Propaganda" interpretation
-            if hasattr(article, 'interpretation') and article.interpretation == "Propaganda":
-                propaganda.append(article)
-            
-            # Perform fake news detection
-            article_output = detect_fake_news_in_article(article)
-            output_reliability.append(article_output)
-
-
         return templates.TemplateResponse('home.html', context={
             'request': request,
             'result': article_output,
-            'output_data' : {'o': output_reliability, 'p': propaganda}
-            # 'input_data': {'url': url}
+            'input_data': article
         })
 
     except Exception as e:
