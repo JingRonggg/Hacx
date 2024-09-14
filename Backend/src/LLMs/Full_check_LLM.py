@@ -8,6 +8,7 @@ class ArticleOutput(BaseModel):
     explanation: str
     interpretation: str
     confidence: Optional[float] = None
+    deepfake: Optional[float] = None
 
 
 def detect_fake_news_in_article(article):
@@ -33,12 +34,13 @@ def detect_fake_news_in_article(article):
         detection_result = detect_fake_news(article['text'])
         interpretation = interpret_results(detection_result)
         confidence = max(detection_result.values())
-
+        
     article_output = ArticleOutput(
         title=article['title'],
         explanation=explanation,
         interpretation=interpretation,
-        confidence=confidence
+        confidence=confidence,
+        deepfake=None
     )
 
     return article_output
