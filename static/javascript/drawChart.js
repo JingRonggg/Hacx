@@ -8,21 +8,50 @@ var chart1 = new Chart(ctx1, {
             label: 'Dataset 1',
             data: [12, 19, 3, 5, 2, 3],
             borderColor: 'rgba(75, 192, 192, 1)',
-            borderWidth: 2
+            borderWidth: 2,
         }]
     },
     options: {
-        maintainAspectRatio: false,  // Allow custom width/height
-        responsive: true,
-        scales: {
-            y: {
-                beginAtZero: true
-            }
-        }
+      maintainAspectRatio: false,
+      responsive: true,
+      scales: {
+          y: {
+              beginAtZero: true,
+              ticks: {
+                  font: {
+                      weight: 'bold' // Make y-axis labels bold
+                      
+                  }
+              }
+          },
+          x: {
+              ticks: {
+                  font: {
+                      weight: 'bold' // Make x-axis labels bold
+                  }
+              }
+          }
+      },
+      plugins: {
+          title: {
+              display: true,
+              text: 'Dataset 1',
+              font: {
+                  weight: 'bold', // Make chart title bold
+                  size: 18 // Increase the font size for the title
+              }
+          },
+          legend: {
+              labels: {
+                  font: {
+                      weight: 'bold' // Make legend labels bold
+                  }
+              }
+          }
+      }
     }
 });
 
-// Initialize second chart (chart2)
 var ctx2 = document.getElementById('chart2').getContext('2d');
 var chart2 = new Chart(ctx2, {
     type: 'bar',
@@ -37,12 +66,79 @@ var chart2 = new Chart(ctx2, {
         }]
     },
     options: {
+      maintainAspectRatio: false,
+
+    }
+});
+
+var ctx3 = document.getElementById('chart3').getContext('2d');
+var chart3 = new Chart(ctx3, {
+    type: 'doughnut',
+    data: {
+        labels: [
+          'Red',
+          'Blue',
+          'Yellow'
+        ],
+        datasets: [{
+          label: 'My First Dataset',
+          data: [300, 50, 100],
+          backgroundColor: [
+            'rgb(255, 99, 132)',
+            'rgb(54, 162, 235)',
+            'rgb(255, 205, 86)'
+          ],
+          hoverOffset: 4
+        }]
+    },
+    options: {
         maintainAspectRatio: false,  // Allow custom width/height
         responsive: true,
-        scales: {
-            y: {
-                beginAtZero: true
-            }
-        }
+        borderColor: "rgba(20,20,20,0.3)"
     }
+});
+
+var ctx4 = document.getElementById('chart4').getContext('2d');
+var chart4 = new Chart(ctx4, {
+    type: 'radar',
+    data: {
+        labels: [
+          'Eating',
+          'Drinking',
+          'Sleeping',
+          'Designing',
+          'Coding',
+          'Cycling',
+          'Running'
+        ],
+        datasets: [{
+          label: 'My First Dataset',
+          data: [65, 59, 90, 81, 56, 55, 40],
+          fill: true,
+          backgroundColor: 'rgba(255, 99, 132, 0.2)',
+          borderColor: 'rgb(255, 99, 132)',
+          pointBackgroundColor: 'rgb(255, 99, 132)',
+          pointBorderColor: '#fff',
+          pointHoverBackgroundColor: '#fff',
+          pointHoverBorderColor: 'rgb(255, 99, 132)'
+        }, {
+          label: 'My Second Dataset',
+          data: [28, 48, 40, 19, 96, 27, 100],
+          fill: true,
+          backgroundColor: 'rgba(54, 162, 235, 0.2)',
+          borderColor: 'rgb(54, 162, 235)',
+          pointBackgroundColor: 'rgb(54, 162, 235)',
+          pointBorderColor: '#fff',
+          pointHoverBackgroundColor: '#fff',
+          pointHoverBorderColor: 'rgb(54, 162, 235)'
+        }]
+      },
+      options: {
+        maintainAspectRatio: false,
+        elements: {
+          line: {
+            borderWidth: 2,
+          }
+        }
+      }
 });
