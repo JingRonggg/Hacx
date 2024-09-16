@@ -86,7 +86,21 @@ async def check_article(request: Request, input_data: str = Form(...)):
         article = process_url(url)
         if hasattr(article, 'interpretation') and article.interpretation == "Propaganda":
             # send output to db table
-            # createinput("output_data", )
+            output = (
+            article.title,
+            article.explanation,
+            article.interpretation,
+            article.confidence,
+            article.deepfake,
+            article.sentiment,
+            article.sentiment_explanation,
+            article.disinformation,
+            article.disinformation_explanation,
+            article.target_Audience
+            )
+            print(output)
+            # insert into manual_data table
+            # createinput("manual_data", output)
             
             return templates.TemplateResponse('home.html', context={
                 'request': request,
@@ -106,10 +120,23 @@ async def check_article(request: Request, input_data: str = Form(...)):
 
         if('deepfake' in article):
             article_output.deepfake = article['deepfake']
-        
-        # Uncomment the following lines to save data into the 'output_data' table
-        # true = 0 if interpretation.lower() == "true" else 1
-        # db.send("output_data", (article["text"], true))
+            
+        output = (
+            article_output.title,
+            article_output.explanation,
+            article_output.interpretation,
+            article_output.confidence,
+            article_output.deepfake,
+            article_output.sentiment,
+            article_output.sentiment_explanation,
+            article_output.disinformation,
+            article_output.disinformation_explanation,
+            article_output.target_Audience
+        )
+        print(output)
+        # insert into manual_data table
+        # createinput("manual_data", output)
+
         return templates.TemplateResponse('home.html', context={
             'request': request,
             'result': article_output,
