@@ -39,8 +39,7 @@ db = DatabaseAccessAzure(
 # Set the correct path for Jinja2 templates directory
 templates = Jinja2Templates(directory="..\Frontend")
 # Set the correct path for static files directory
-app.mount(
-    "/static", StaticFiles(directory="..\static"), name="static")
+app.mount("/static", StaticFiles(directory="../static"), name="static")
 app.add_middleware(GZipMiddleware)
 
 class ArticleInput(BaseModel):
