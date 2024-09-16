@@ -1,23 +1,41 @@
 {% extends "main.html" %}
-
 {% block title %}Home{% endblock %}
 
 {% block content %}
 <div class="container-lg">
     <div class="row">
+        <!-- Flex container for 2x2 charts and Vertical box -->
+        <div class="d-flex flex-row">
+            <!-- 2x2 Chart Grid taking 2/3 of the row -->
+            <div class="col-8">
+                <div class="row chart-wrapper">
+                    <div class="col-6 chart-container">
+                        <canvas id="chart1"></canvas>
+                    </div>
+                    <div class="col-6 chart-container">
+                        <canvas id="chart2"></canvas>
+                    </div>
+                </div>
+                <div class="row chart-wrapper">
+                    <div class="col-6 chart-container">
+                        <canvas id="chart3"></canvas>
+                    </div>
+                    <div class="col-6 chart-container">
+                        <canvas id="chart4"></canvas>
+                    </div>
+                </div>
+            </div>
 
-        <!-- Chart.js Canvas -->
-            <div class="col-6">
-                <canvas id="chart1" style="width: 400px; height: 300px;"></canvas>
+            <!-- Vertical Container taking 1/3 of the row -->
+            <div class="col-4 d-flex justify-content-center align-items-center" style="height: 410px;">
+                <div id="verticalContainer" class="text-center text-white p-4" style="font-size: 24px; width: 100%;">
+                    <!-- Content for later use -->
+                </div>
             </div>
-    
-            <!-- Second Chart taking up the other half of the row (col-6) -->
-            <div class="col-6">
-                <canvas id="chart2" style="width: 400px; height: 300px;"></canvas>
-            </div>
-        
+        </div>
+
         <!-- Button to trigger the modal -->
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#urlModal">
+        <button type="button" class="btn btn-primary custom-button" data-bs-toggle="modal" data-bs-target="#urlModal">
             Add News Article URL
         </button>
     </div>
@@ -31,50 +49,35 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form method="post">
+                    <form id="urlForm" method="post" onsubmit="showLoadingOverlay();">
                         <div class="mb-3">
                             <label for="formGroupExampleInput" class="form-label">News Article URL</label>
                             <input type="text" id="input_data" name="input_data" class="form-control" placeholder="URL Link" value="">
                         </div>
-                        <input id="submitButton" class="btn btn-primary" type="submit" value="Check">
+                        <input id="submitButton" class="btn btn-primary custom-button" type="submit" value="Check">
                     </form>
                 </div>
-        <!-- card for the url check input  -->
-        <div class="card col-12 p-3">
-            <h2 class="card-title">Crawled articles</h2>
-            <div class="card-body"></div>
-                <form method="post">
-                    <div class="mb-3">
-                        <label for="formGroupExampleInput" class="form-label">News Article URL </label>
-                        <input type="text" id="input_data" name="input_data" class="form-control" placeholder="URL Link"
-                            value="">
-                    </div>
-                    <input id="submitButton" class="btn btn-primary" type="submit" value="Check">
-                </form>
-
-                {% if result %}
-                <p>Result: <br> {{ result }}</p>
-                {% endif %}
             </div>
         </div>
     </div>
 
     <div class="p-3"></div>
 
-    <table class="table table-bordered">
+    <!-- Table displaying the result -->
+    <table class="table table-bordered custom-table">
         <thead>
             <tr>
                 <th scope="col">#</th>
-                <th scope="col">title</th>
-                <th scope="col">explanation</th>
-                <th scope="col">interpretation</th>
-                <th scope="col">confidence</th>
-                <th scope="col">deepfake</th>
+                <th scope="col">Title</th>
+                <th scope="col">Explanation</th>
+                <th scope="col">Interpretation</th>
+                <th scope="col">Confidence</th>
+                <th scope="col">Deepfake</th>
             </tr>
         </thead>
         <tbody>
             {% if result %}
-            <tr>
+            <tr style="border-width: 3px">
                 <th scope="row">1</th>
                 <td>{{result['title']}}</td>
                 <td>{{result['explanation']}}</td>
@@ -82,14 +85,117 @@
                 <td>{{result['confidence']}}</td>
                 <td>{{result['deepfake']}}</td>
             </tr>
+            {% else %}
+            <tr>
+                <td colspan="6" style="text-align: center;">No data available</td>
+            </tr>
             {% endif %}
         </tbody>
     </table>
 </div>
 
-<!-- Include Chart.js from the CDN (make sure this comes first) -->
+<!-- Loading Screen -->
+<div id="loadingOverlay" class="loading-overlay" style="display: none;">
+    <div class="spinner-border text-light" role="status" style="width: 100px; height: 100px;">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<!-- Include your custom JavaScript file (make sure this comes second) -->
+<script>
+    var chartData = JSON.parse('{{ chartData }}');
+</script>
+
 <script src="{{ url_for('static', path='javascript/drawChart.js') }}"></script>
+
+<!-- styling for the page -->
+<style>
+
+    .chart-container {
+        padding: 5px;
+        background-color: rgb(203, 203, 203);
+        border-radius: 15px;
+        width: 400px;
+        height: 200px;
+        margin: 10px;
+    }
+
+    canvas {
+        width: 100%;
+        height: 100%;
+    }
+
+    .chart-wrapper {
+        padding-bottom: 5px;
+    }
+
+    .custom-button {
+        background-color: #007bff;
+        color: white;
+        border: none;
+    }
+
+    .custom-button:hover {
+        background-color: #0056b3;
+        color: white;
+    }
+
+    .custom-table {
+        background-color: #333333;
+        color: white;
+        border-color: #575656;
+        border-width: 3px;
+    }
+
+    .custom-table th {
+        background-color: #444444;
+        color: white;
+        border-width: 3px;
+    }
+
+    .custom-table td {
+        background-color: #444444;
+        color: white;
+        border-width: 3px;
+    }
+
+    .modal-header {
+        background-color: #444444;
+        color: white;
+    }
+
+    .loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
+
+</style>
+
+<!-- Script to handle the loading spinner and overlay -->
+<script>
+    function showLoadingOverlay() {
+        var modal = bootstrap.Modal.getInstance(document.getElementById('urlModal'));
+        modal.hide();
+        document.getElementById("loadingOverlay").style.display = "flex";
+    }
+</script>
+
+<script>
+    window.addEventListener("load", function () {
+        document.getElementById('urlForm').reset();
+
+        if (window.history.replaceState) {
+            window.history.replaceState(null, null, window.location.href);
+        }
+    });
+</script>
 {% endblock %}
