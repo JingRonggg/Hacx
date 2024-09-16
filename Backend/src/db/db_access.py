@@ -20,6 +20,8 @@ class DatabaseAccessAzure:
             cursor.execute("INSERT INTO dbo.input_data (title, maintext, author, description, url) VALUES (?, ?, ?, ?, ?)", data)
         elif table_name == "output_data":
             cursor.execute("INSERT INTO dbo.output_data (title, explanation, interpretation, confidence, deepfake, sentiment, sentiment_explanation, disinformation, disinformation_explanation, target_Audience) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", data)
+        elif table_name == "manual_data":
+            cursor.execute("INSERT INTO dbo.manual_data (title, explanation, interpretation, confidence, deepfake, sentiment, sentiment_explanation, disinformation, disinformation_explanation, target_Audience) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", data)
         else:
             raise ValueError("Table name not recognized.")
 
