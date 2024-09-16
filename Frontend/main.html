@@ -10,31 +10,27 @@
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     {% block head %}{% endblock %}
 </head>
-
-<body>
+git checkout -b your-branch-name
+<body class="d-flex flex-column min-vh-100">
     {% block navbar %}
     {% include 'includes/_navbar.html' %}
     {% endblock %}
-
-    <!-- body -->
-    {% block content %}
-    {% endblock %}
-
+    
+    <div class="flex-grow-1">
+        {% block content %}
+        {% endblock %}
+    </div>
 
     {% block footer %}
     {% include 'includes/_footer.html' %}
     {% endblock %}
-
-
-    <!-- Full bundle -->
+    
+    
     <script>
-        // Get the current URL path
         const currentPath = window.location.pathname;
-
-        // Select all the nav-link elements
+        
         const navLinks = document.querySelectorAll('.navbar-nav .nav-link');
-
-        // Loop through the nav-links and add the "active" class to the link that matches the current path
+        
         navLinks.forEach(link => {
             if (link.getAttribute('href') === currentPath) {
                 link.classList.add('active');

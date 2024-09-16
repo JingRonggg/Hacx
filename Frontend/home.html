@@ -5,25 +5,33 @@
 {% block content %}
 <div class="container-lg">
     <div class="row">
-        <!-- card for the url check input  -->
-        <div class="card col-12 p-3">
-            <h2 class="card-title">Crawled articles</h2>
-            <div class="card-body">
-                <form method="post">
-                    <div class="mb-3">
-                        <label for="formGroupExampleInput" class="form-label">News Article URL </label>
-                        <input type="text" id="input_data" name="input_data" class="form-control" placeholder="URL Link"
-                            value="">
-                    </div>
-                    <input id="submitButton" class="btn btn-primary" type="submit" value="Check">
-                </form>
-<!-- 
-                {% if result %}
-                <p>Result: <br> {{ result }}</p>
-                {% endif %} -->
+        <!-- Button to trigger the modal -->
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#urlModal">
+            Add News Article URL
+        </button>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="urlModal" tabindex="-1" aria-labelledby="urlModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="urlModalLabel">Crawled Articles</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="post">
+                        <div class="mb-3">
+                            <label for="formGroupExampleInput" class="form-label">News Article URL</label>
+                            <input type="text" id="input_data" name="input_data" class="form-control" placeholder="URL Link" value="">
+                        </div>
+                        <input id="submitButton" class="btn btn-primary" type="submit" value="Check">
+                    </form>
+                </div>
             </div>
         </div>
     </div>
+
     <div class="p-3"></div>
 
     <table class="table table-bordered">
