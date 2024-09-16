@@ -26,6 +26,7 @@ def get_gpt_response(article_text):
     Second, based on the sentiment and the content, evaluate if the article shows signs of disinformation. 
     Consider factors like exaggerated claims, lack of evidence, or biased perspectives. 
     Provide a 1 line explanation of your assessment.
+    With your analysis, provide me with the likely target audience of the article.
     Sentiment and Disinformation Assessment:
     Here is the article text:
     News article: {article_text}
@@ -33,6 +34,9 @@ def get_gpt_response(article_text):
     You should output your analysis in the following format:
     1. Overall Sentiment: [Sentiment classification]
     2. Explanation: [Brief explanation of the sentiment classification]
+    3. Potential for Disinformation: [Disinformation classification]
+    4. Explanation: [Brief explanation of the disinformation classification]
+    5. Likely Target Audience: [Target audience of the article]
 
     Response:
     """
@@ -51,7 +55,7 @@ def get_gpt_response(article_text):
         ],
         "temperature": 0.3,
         "top_p": 0.95,
-        "max_tokens": 1000
+        "max_tokens": 2000
     }
     # Send request
     try:
@@ -61,182 +65,128 @@ def get_gpt_response(article_text):
     except requests.RequestException as e:
         raise SystemExit(f"Failed to make the request. Error: {e}")
     
+
+import re
+
+def parse_text(text):
+    """
+    Extracts and parses specific pieces of information from a formatted text string.
+
+    The text is expected to be in a specific format with sections labeled as follows:
+    1. Overall Sentiment: [sentiment]
+    2. Explanation: [first explanation]
+    3. Potential for Disinformation: [disinformation level]
+    4. Explanation: [second explanation]
+    5. Likely Target Audience: [target audience]
+
+    Each section is expected to be on a new line and follows a specific pattern. The function 
+    extracts and returns the sentiment, the first explanation, the potential for disinformation, 
+    the second explanation, and the target audience from the text.
+
+    Args:
+        text (str): The input text string to be parsed. It should contain sections labeled 
+                    as "Overall Sentiment", "Explanation", "Potential for Disinformation", 
+                    and "Likely Target Audience" in the specified format.
+
+    Returns:
+        tuple: A tuple containing five elements:
+            - sentiment (str): The overall sentiment extracted from the text. Defaults to "Unclear"
+            if not found.
+            - explanation1 (str): The first explanation extracted from the text. Defaults to "No explanation provided."
+            if not found.
+            - disinformation (str): The potential for disinformation extracted from the text. Defaults to "Unknown"
+            if not found.
+            - explanation2 (str): The second explanation extracted from the text. Defaults to "No explanation provided."
+            if not found.
+            - target_audience (str): The target audience extracted from the text. Defaults to "Not specified"
+            if not found.
+    """
+
+    # Extract the overall sentiment
+    sentiment_match = re.search(r"1\.\s*Overall Sentiment:\s*(.+)", text, re.IGNORECASE)
+    sentiment = sentiment_match.group(1).strip() if sentiment_match else "Unclear"
+    
+    # Extract the first explanation
+    explanation1_match = re.search(r"2\.\s*Explanation:\s*(.+?)(?=\n\d+\.\s*|$)", text, re.DOTALL)
+    explanation1 = explanation1_match.group(1).strip() if explanation1_match else "No explanation provided."
+    
+    # Extract the potential for disinformation
+    disinformation_match = re.search(r"3\.\s*Potential for Disinformation:\s*(.+)", text, re.IGNORECASE)
+    disinformation = disinformation_match.group(1).strip() if disinformation_match else "Unknown"
+    
+    # Extract the second explanation
+    explanation2_match = re.search(r"4\.\s*Explanation:\s*(.+?)(?=\n5\.\s*Likely Target Audience:|$)", text, re.DOTALL)
+    explanation2 = explanation2_match.group(1).strip() if explanation2_match else "No explanation provided."
+    
+    # Extract the target audience
+    target_audience_match = re.search(r"5\.\s*Likely Target Audience:\s*(.+)", text, re.IGNORECASE)
+    target_audience = target_audience_match.group(1).strip() if target_audience_match else "Not specified"
+
+    return sentiment, explanation1, disinformation, explanation2, target_audience
+
+def sentimental_analysis(article_text):
+    response = get_gpt_response(article_text)
+    response = response['choices'][0]['message']['content'].strip()
+    return parse_text(response)
+
+
 # Test the function
 article_text = '''
-The narrow lane, a few hundred yards from his school, looks like an urban oasis, shaded by olive branches that reach across walls on either side. On a recent afternoon the cooing of doves and whine of cicadas amplified its stillness. Only the faded stain of Mahmoud/'s blood in the pavement and a stone, hand-lettered with his name, betrayed the illusion.
+Chinese President Xi Jinping put the national focus on cultural and environmental protection as part of a four-day trip to a historic heartland in the northwest.
+During his inspection tour of Gansu province from Tuesday to Friday, Xi called for improved conservation and management of the region's landscape, from mountain and forest areas, to farmland and water resources.
 
-“He didn/'t do anything. He didn/'t make a single mistake,” says Amjad Hamadneh, whose son, a buzz-cut devotee of computer games, was one of two teens killed that morning in the opening minutes of a raid by Israeli forces.
+In particular, he stressed the need to protect the Yellow River, China's second-longest waterway.
+Stopping in the provincial capital Lanzhou on Wednesday, Xi urged residents to “fulfil their duty in the joint protection of the Yellow River, so that the mother river will continue to benefit future generations”, according to state news agency Xinhua.
 
-“If he/'d been a freedom fighter or was carrying a weapon, I would not be so emotional,” says his father, an unemployed construction worker. “But he was taken just as easily as water going down your throat. He only had his books and a pencil case.”
+Inspection tours are a long-standing method used by Chinese political leaders to highlight policy priorities. Xi has made such trips to Gansu twice before – shortly before becoming president in 2013 and again in 2019.
 
-Jenin/'s refugee camp has long been notorious as a hotbed of Palestinian militancy, raided repeatedly by Israeli forces who have occupied the West Bank since seizing control in their 1967 war with neighboring Arab states. During the two-day raid that began the morning of May 21, Israeli troops traded fire with Palestinian gunmen. Militant groups said eight of the 12 Palestinians killed were their fighters.
 
-But the casualties that day, and many others in recent months, went beyond armed men engaged in the region/'s seemingly endless conflict. As the world/'s attention focuses on the far more deadly war in Gaza less than 80 miles away, scores of Palestinian teens have been killed, shot and arrested in the West Bank, where the Israeli military has waged a monthslong crackdown.
+08:25
 
-More than 150 teens and children 17 or younger have been killed in the embattled territory since Hamas/' brutal attack on communities in southern Israel set off the war last October. Most died in nearly daily raids by the Israeli army that Amnesty International says have used disproportionate and unlawful force.
+China's Yellow River: Taming the cradle of Chinese civilisation
 
-Youths represent almost a quarter of the nearly 700 Palestinians slain in the West Bank since the war began, the most since the violent uprising known as the Second Intifada in the early 2000s. More than 20 Israeli civilians and soldiers have been killed in the territory since October.
+China's Yellow River: Taming the cradle of Chinese civilisation
+In recent years, lower water levels and sediment build-up in sections of the Yellow River have affected flood control and agriculture.
 
-At the same time, Israel, which has long jailed Palestinians from the West Bank without charge, has extended that practice to many more teens. After October, food deprivation, overcrowding of cells and other mistreatment escalated sharply, the recently released and advocates say.
+The Yellow River is often described as the “mother river” in China, a reference to its place in early Chinese civilisation.
 
-It is clear from statements by the Israeli military, insurgents and families in the West Bank that a number of the Palestinian teens killed in recent months were members of militant groups.
+That historical importance was in focus earlier on Wednesday in the city of Tianshui.
 
-Many others were killed during protests or when they or someone nearby threw rocks or home-made explosives at military vehicles. Still others appear to have been random targets. Taken together, the killings raise troubling questions about the devaluation of young lives in pursuit of security and autonomy.
+Xi's trip to Gansu's No 2 city included a stop at the Maijishan Grottoes, a Unesco-listed heritage site that dates back about 1,600 years and is one of the most important Buddhist sites of its kind in the country. He also visited the Fuxi Temple, reputedly the biggest and best-preserved Ming dynasty temple and dedicated to the god Fuxi – a mythical emperor regarded as the ancestor of the Chinese people.
 
-Grief over those deaths has been shadowed by trepidation. Israeli raids won/'t eliminate militant groups, survivors say. Instead, some fear, the pain of losing so many youths risks the opposite – pulling siblings, friends and classmates left behind into the region/'s vortex of vengeance.
+Gansu was once part of the ancient Silk Road and is home to the western end of the Great Wall.
 
-An intense crackdown
-After Hamas killed 1,200 people in Israel last October and took 250 others hostage, long-smoldering tensions exploded.
+Xi, who has promoted a mix of Marxism and traditional culture to foster unity at home and to counter Western influences, highlighted the historical value of the grottoes. It was imperative to protect and conserve such places to pass on their cultural heritage to future generations, as well as to further expand cultural tourism, he said.
 
-Israel responded with a sweeping military campaign in Gaza that Palestinian authorities say has killed more than 40,000 people. That has fueled anger and insurgency in the West Bank, where Israeli forces police about 3 million Palestinians while assigned to protect 500,000 Jewish settlers.
+Xi also called for more support for the Dunhuang Academy, which oversees another set of Unesco-list Buddhist grottoes in Gansu, as well as the creation of national cultural parks dedicated to the Yellow River, Great Wall, and the Long March. The year-long march in the mid-1930s is regarded as a turning point for the ruling Communist Party and has been a rallying cry for the president.
+Xie Xiaorui, director of the Maijishan Scenic Area Management Committee, told Communist Party mouthpiece People's Daily: “We will promote the deep integration of culture and tourism and make the cultural tourism industry better and stronger.”
 
-The embattled territory was already seeing deadly clashes before the war began. But Israel/'s military has significantly stepped up raids in the months since, characterized by Prime Minister Benjamin Netanyahu as part of the larger battle in Gaza and along the border with Lebanon to permanently disable militant groups that have long threatened his country/'s security.
+President Xi Jinping visits a section of the Yellow River in Lanzhou, Gansu, on Wednesday. Photo: Xinhua
+President Xi Jinping visits a section of the Yellow River in Lanzhou, Gansu, on Wednesday. Photo: Xinhua
+Xi also called to speed up Gansu's green and low-carbon transition, including building a national manufacturing base for new energy equipment.
 
-“I can assure you one thing: What has been is not what will be,” he told commanders during a June meeting in the West Bank. “We will change this reality.”
+Gansu is among China's top provinces in wind and solar production, with renewable energy accounting for nearly 62 per cent of its power generation capacity, ranking second in the country.
 
-A military spokesman said the Israeli army makes great efforts to avoid harming civilians during raids and “does not target civilians, period.” He said human rights groups focus on a few outlier cases.
+Efforts should also be made to speed up upgrades for traditional industry upgrades, strengthen industries with distinctive advantages, and develop strategic emerging industries, Xi said.
 
-Military operations in the West Bank are fraught because forces are pursuing militants, many in their teens, who often hide among the civilian population, said the spokesman, Lt. Col. Nadav Shoshani.
+During a visit to an apple orchard in Tianshui, Xi spoke to farmers and encouraged them to optimise cultivation of the local Huaniu apple, and to use new marketing models to expand the industry.
 
-“In many cases many of them are 15, 16 years old who are not wearing uniforms and might surprise you with a gun, with a knife,” he said.
+Gansu is the second-largest province in terms of apple-planting area. Its 386,000 hectares (953,000 acres) of orchards produced 7.4 million tonnes of apples last year – an output value of 56 billion yuan (US$7.9 billion), according to ministry newspaper Science and Technology Daily.
 
-But critics say the crackdown is shaped by retribution, not only military strategy.
+Gansu apples are now exported to more than 20 countries around the world, with the largest percentage going to Vietnam, according to state media reports.
 
-“The pressure is similar to post-Second Intifada, but there/'s something different. And that something different is Oct. 7th,” says Nadav Weiman, a former Israeli army sniper who leads Breaking the Silence, an anti-occupation veterans/' group that gathers testimony from soldiers assigned to the West Bank and Gaza.
+Xi called on the provincial agriculture sector to make the most of the region's cold and arid climate and nurture competitive brands.
 
-Throughout the military ranks “there is a feeling of revenge,” he says. Many soldiers view Palestinians “as an entity. They are not individuals. So you unleash your anger everywhere.”
+President Xi Jinping visits an apple production base in Tianshui. Gansu is China's No 2 province in terms of apple-planting area. Photo: Xinhua
+President Xi Jinping visits an apple production base in Tianshui. Gansu is China's No 2 province in terms of apple-planting area. Photo: Xinhua
+While in Tianshui, Xi also visited a water diversion project whose construction site he had inspected in 2013. The project diverts water from the Taohe – a major tributary of the Yellow River – to ease shortages in central Gansu. Welcoming the news that it had benefited 6 million people, Xi stressed the need to prioritise projects that benefit the public.
 
-The crackdown extends to the military/'s treatment of jailed teens, says Ayed Abu Eqtaish of Defense for Children International-Palestine, an advocacy group. Israeli authorities have declared it a terrorist organization, alleging ties to a Palestinian nationalist faction.
+Officials were urged to deepen reform and expand opening up in Gansu, including integrating into the building of a “unified national market” and encouraging the development of the private sector, in a reference to crucial factors in Beijing's goal of “building a high-standard market economy” by 2035.
 
-With the military holding more teens without charge in grim conditions, while restricting communication, families are increasingly uncertain of their wellbeing, Eqtaish says.
+Xi further urged Gansu to expand cross-provincial cooperation, integrate itself into belt and road cooperation, and help to build a land-sea corridor from western China down to Southeast Asia.
 
-“After Oct. 7,” he says, “everything deteriorated.”
+He also called for expanding urbanisation, and urged local officials to improve the lives of residents, especially the children and elderly, and to improve livelihoods.
 
-War in an instant
-Even before Israel launched a major military operation in the West Bank in late August, its troops had raided Jenin dozens of times since the war began.
-
-Yet throughout the city/'s urbanized refugee camp, where concrete homes wedge against one another on streets ripped up by military bulldozers, there are many indicators that militants remain entrenched.
-
-Signs at the perimeter of the camp, opened in 1953 to house Palestinians who fled or were driven from what is now Israel in the war following its establishment, mark the territory of the Jenin Brigades, an umbrella organization of militant groups.
-
-Guards stop cars they don/'t recognize, especially those with Israeli plates. Posters of smiling young men armed with assault rifles – tributes to militants killed in clashes – decorate walls and utility poles.
-
-For years, Amjad Hamadneh and wife Kholoud planned for the day they would take their children away from all this. In the meantime, their home in the uppermost reaches of the camp – with a grandfather clock presiding over the living room and bedrooms filled with children/'s toys and son Mahmoud/'s beloved computer — kept them on the fringes of conflict.
-
-Most days Amjad, 46, left home around 3:30 a.m. to reach a construction job in northern Israel. That income was lost when Israel suspended work permits for Palestinians last October. By then, though, he/'d begun building a home on a plot near the city of Nablus.
-
-The couple envisioned a place that would last for decades, with apartments for their twin sons and daughter when they eventually married. To help pay for it, they moved the boys from a private academy to the public Al Karamah school at the base of the hill.
-
-“All of my work, all of my life was for them,” Amjad says.
-
-On the morning of May 21, a Tuesday, the Hamadneh brothers rushed off to make a scheduled final exam. Down the hillside, Osama Hajir, a former classmate who had dropped out of school to work, left home on his motorcycle to begin a day of deliveries. It was just after 7:30 a.m.
-
-In Jenin, though, any hour can see the camp morph into a war zone.
-
-It might start like it did one recent afternoon, when a guard outside the camp/'s Ottoman Era train depot mentioned that unmarked military vehicles had been spotted on the outskirts.
-
-A minute or two later sirens began screaming, warning that special forces were already in the camp. Shopkeepers yanked down their gates. Fleeing residents drove against one-way traffic. Many were still seeking shelter when the sound of gunfire sliced through the summer air.
-
-When the sirens erupted that morning in May, Amjad Hamadneh says, he called Mahmoud on his cellphone and was relieved to hear that the brothers had reached their school, behind walls painted with student murals.
-
-Then son Ahmed called back to say that the principal had dismissed classes. As students poured into the street, the brothers were separated in the chaos.
-
-Rushing for their electric bikes, classmate Karam Miazneh saw Mahmoud ahead of him. Both were still within a few hundred yards of the school when witnesses say a sniper in an upper floor window of a recently completed apartment building began firing at people and cars below.
-
-Karam veered into an alley, raising a textbook overhead to show he was a student, as four bullets ripped past him. Then a fifth exploded into his shoulder and he dropped to the ground.
-
-At the mouth of the next block, four bullets hit Mahmoud as he raced toward the alley walls, before another pierced his skull. He was the third student from his school killed in a raid since the war began.
-
-A few blocks away, his former classmate, Osama, lay fatally wounded on the pavement. The dead that morning also included a teacher from the primary school next to Mahmoud/'s and a doctor from the hospital down the street.
-
-“Now when I hear the sound of sirens I go to my room and stay there,” says Karam, showing the shrapnel and bone fragments doctors removed from his shoulder. “I/'m still in fear that they will come to shoot me and kill me.”
-
-The Israeli army said in a statement to the AP that it has stepped up raids since Oct. 7 to apprehend militants suspected of carrying out attacks in the West Bank and that “the absolute majority of those killed during this period were armed or involved in terrorist activities at the time of the incident.”
-
-Immediately after the May raid, a spokesman for the army said it had carried out the operation with Israeli border police and the country/'s internal security agency, destroying an explosive device laboratory and other structures used by militants. But police recently declined to comment, and three weeks after the AP asked the military to answer questions about the May raid, an army spokesman said he was unable to comment until he could confer with police.
-
-When Amjad Hamadneh heard his son had been wounded, he sped through Jenin/'s twisting streets, drawing gunfire as he neared the hospital. But Mahmoud was already gone. The grief was so intense, his father says, that he couldn/'t bear to remain in the building.
-
-“God has given and God has taken away,” he told his wife as he ushered her away.
-
-Nearby, Osama/'s father, Muhamad, broke down as he leaned over his son/'s body. Months earlier he/'d snapped a photo of the smiling teen beside graffiti touting Jenin as “the factory of men,” tirelessly cranking out fighters in the resistance against Israel. Now, he pressed that same, still-smooth face between his hands.
-
-“Oh, my son. Oh, my son,” he sobbed. “My beautiful son.”
-
-Punishing conditions
-In a village a half-hour/'s drive from Jenin, Qasam Masarweh recounts an odyssey that began months before the war. On that night, he lost his right hand to an Israeli stun grenade. But in the weeks after Oct. 7, the soft-spoken teen says, his encounter with the military turned even more punishing.
-
-“Before Oct. 7 there were six of us in the cell. Afterwards, there were 12,” says Masarweh, who was held for months without charge in Israel/'s Megiddo Prison. “There were beatings. There was no food. Our clothes were taken from us. There were so many ways of humiliation.”
-
-Since its war with Hamas began, Israel has more than doubled the number of Palestinians jailed without charge, known as administrative detention. The vast majority are men.
-
-But the number of teens in administrative detention has also increased sharply. Of more than 200 Palestinian youths 17 or younger in military prisons in June, 75 were in administrative detention, the most since watchdog groups began collecting figures. Last year at the same time, 18 youths were being held without charge.
-
-Like their adult counterparts, teens released recently report severe mistreatment following the October attack.
-
-“The big change is definitely in detention conditions. The gloves have really come off,” said Gerard Horton, co-founder of Military Court Watch, which gathers testimony from Palestinian prisoners.
-
-“We never used to document that much violence in relation to children. There was some, but it wasn/'t commonplace,” he says.
-
-Israeli officials have acknowledged toughening treatment of Palestinian prisoners since October, while still abiding by international law. A spokesperson for far-right National Security Minister Itamar Ben-Gvir, whose ministry oversees prisons, said that policy, intended to deter terrorism, does not provide any special conditions for prisoners 17 and under.
-
-“They are terrorists just like any other terrorists, there/'s no difference,” said the spokesman, Yedidya Grossman.
-
-Masarweh, who turned 18 late last year, says his odyssey began in June 2023, the night before his last high school exam. As he walked home from meeting friends, military vehicles entered his village of Rumannah, firing an object that landed at his feet. Assuming it contained tear gas, he reached down to throw it away.
-
-When the grenade exploded, it blew off most of his right hand. Discharged after nine days in a Jenin hospital, he stopped to visit an aunt in the refugee camp. When a raid began, soldiers stormed the house, beating the teen before taking him into custody.
-
-Masarweh, who says he hoped to become a veterinarian before losing his hand, was ordered held for four months without charge. After Oct. 7, treatment turned even harsher. Authorities immediately reduced food and took away blankets and soap. They packed his cell with prisoners, all 17 or younger, requiring half to sleep on the floor.
-
-A 17-year-old arrested in a raid on the Qalquilya refugee camp told Horton/'s group that after Oct. 7 guards confiscated all personal belongings from prisoners, denying them time outside or showers.
-
-Another said guards removed window panels, making cells uncomfortably chilly for prisoners left only with what they/'d been wearing at the time of their arrest.
-
-The mistreatment, Masarweh says, continued until late November when guards cuffed his remaining hand and took him from the cell for questioning. After telling an investigator he did not know why he had been arrested, he was transferred to another prison without explanation.
-
-Finally, after midnight, Red Cross officials entered to tell him he would be released in a deal trading Palestinian prisoners for Israeli hostages.
-
-Back at home, Masarweh says he still worries about the new arrivals that more seasoned prisoners called “cubs,” who he left behind. With the stump at the base of his arm wrapped in gauze, he is uncertain about how he will earn a living.
-
-“It/'s already hard enough to take care of yourself with two hands,” he says. “Imagine doing it with one.”
-
-Boys of war
-On the June afternoon that 17-year-old Issa Jallad was killed, video from a neighbor/'s security camera shows, he was on a friend/'s motorbike with an Israeli armored vehicle in close pursuit.
-
-Was the teen – declared a holy warrior on a poster outside his family/'s Jenin home showing him cradling an assault rifle – armed that day? Exactly what happened in the moments before he was shot?
-
-The grainy tape, reviewed by The Associated Press days after the June 6 raid, and others from nearby cameras, raise but do not fully answer difficult questions about where he fit in a conflict with no clear boundaries.
-
-“We were going to have one celebration and now we will have two,” says his sister, Rania, 24, whose marriage had long been planned for three days after the raid. “My wedding and the martyrdom of my brother.”
-
-It/'s clear that a number of Palestinian youths killed in recent months belonged to militant groups. Many others died in countless scenarios where lines between civilian and combatant are blurred. Some threw rocks or home-made explosives at military vehicles. Others served as lookouts. Some hung near militants, aspiring to one day join their ranks.
-
-“All of this generation, not only my son, if you ask them what they want to be, they will say /'I want to be a militant and defend my country/',” says Mawaheb Morei, the mother of a 15-year-old killed in an October drone attack. The family says he was hanging out in a cemetery where several militants were present.
-
-Two years before her son was killed, Morei says, she confiscated and dismantled a plastic rifle he used to play fighter. But that did nothing to dissuade him.
-
-The Israeli army, responding to questions from the AP about the killing of Jallad in the June raid, said that its soldiers had spotted two militants handling a powerful explosive device. When the pair tried to flee, troops opened fire and “neutralized them.” It said the circumstances of the incident are under review.
-
-But an Israeli human rights group, B/'Tselem, says its review of multiple security camera videos showed Jallad and his friend were well-removed from where troops and militants clashed, and that the pair posed no threat.
-
-Jallad/'s brother, Mousa, says the teen had gone out to move a car so it wouldn/'t be hit by a military vehicle. His sister said the family is proud of him and that when she has children they will carry on the resistance.
-
-“We all expected to be in this situation,” Mousa Jallad said as neighbors came to pay condolences. “I knew this could happen. It could happen to any of us.”
-
-Burying the young
-The old cemetery, with a water dispenser under shade trees for weary mourners, had run out of space. So last year residents cleared a lot across the road from an elementary school, turning it into a graveyard for Jenin/'s most recent casualties.
-
-It is filling fast.
-
-A row back from where the Hamadnehs buried their son in May rests a 14-year-old classmate who died in a November raid. Two graves over, a stone plastered with the photo of a smiling boy in a bowtie memorializes an 8-year-old killed days later while accompanying youths who threw rocks at military vehicles.
-
-Just beyond, banners picturing dead men and boys, many holding assault rifles, line a wall. One honors a 17-year-old militant. Another mourns 15-year-old Eid Morei, who told his mother he wanted to become one.
-
-Since Mahmoud Hamadneh was killed, his siblings ask frequently to visit his grave. His younger sister now sleeps in his bed so her surviving brother, Ahmed, will not be in the room alone. But there is no filling the emptiness of Mahmoud/'s absence.
-
-“I feel like I cannot breathe. We used to do everything together,” Ahmed says. His father listens closely, despairing later that such grief could drive the teen into militancy. If the risk is so clear to a Palestinian father, he says, why don/'t Israeli soldiers see it?
-
-“They think that if they kill us that people will be afraid and not do anything,” he says. “But when the Israelis kill someone, 10 fighters will be created in his place.'''
-response = get_gpt_response(article_text)
-response = response['choices'][0]['message']['content'].strip()
-print(response)
+Establishing common prosperity for all ethnic groups, pooling resources to address regional demands, alleviating poverty in rural areas, and advancing post-disaster recovery and reconstruction should all be a focus in the region, Xi said.
+'''
+print(sentimental_analysis(article_text))
