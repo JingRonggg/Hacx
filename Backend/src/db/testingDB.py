@@ -41,7 +41,7 @@ def createinput(tablename, data):
             return
         
         #If no duplicates are found, proceed to insert the new data 
-        print("Inserting data into input_data table...")
+        print("Inserting data into" + tablename + "table...")
         db.send(tablename, data)
         print("Done inserting")
 
@@ -59,14 +59,14 @@ except Exception as e:
      print(f"An error occurred while inserting data: {e}")'''
 
 # # Example of extracting data from the input_data table
-# try:
-#     print("Extracting data from input_data table where author is 'John'...")
-#     data = db.extract("input_data", "author = 'John'")
-#     print("Extracted data:")
-#     for row in data:
-#         print(row)
-# except Exception as e:
-#     print(f"An error occurred while extracting data: {e}")
+'''try:
+     print("Extracting data from input_data table where author is 'John'...")
+     data = db.extract("input_data", "author = 'John'")
+     print("Extracted data:")
+     for row in data:
+         print(row)
+except Exception as e:
+     print(f"An error occurred while extracting data: {e}")'''
 
 # Example of deleting data from the input_data table
 def deleterecord():
@@ -82,9 +82,10 @@ def readtable(tablename):
     try:
         # print("Extracting data again to verify deletion...")
         data = db.extract(tablename)
-        return data
+        # return data
         # print("Data after deletion:")
-        # for row in data:
-        #     print(row)
+        #for row in data:
+        #print(row)
     except Exception as e:
         print(f"An error occurred while extracting data after deletion: {e}")
+
