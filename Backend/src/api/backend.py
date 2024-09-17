@@ -98,7 +98,6 @@ async def check_article(request: Request, input_data: str = Form(...)):
             article.disinformation_explanation,
             article.target_Audience
             )
-            print(output)
             # insert into manual_data table
             # createinput("manual_data", output)
             
@@ -133,7 +132,6 @@ async def check_article(request: Request, input_data: str = Form(...)):
             article_output.disinformation_explanation,
             article_output.target_Audience
         )
-        print(output)
         # insert into manual_data table
         # createinput("manual_data", output)
 

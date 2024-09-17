@@ -22,6 +22,7 @@ def process_url(url):
         analysis = analyze_image_for_propaganda(url)
         result = extract_propaganda_analysis_with_regex(analysis)
         deepfakeScore = detect_deepfake_from_url(url)
+        
         if result.interpretation == "Propaganda":
             result.deepfake = deepfakeScore
             return result
