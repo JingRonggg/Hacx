@@ -15,6 +15,7 @@ from dotenv import load_dotenv
 from src.utils.image_checking import process_url
 from src.db.testingDB import readtable
 from src.db.testingDB import createinput
+from src.LLMs.sentimental_analysis import sentimental_analysis
 
 app = FastAPI()
 BASE_DIR = os.path.dirname(os.getcwd())
@@ -55,6 +56,11 @@ class ArticleOutput(BaseModel):
     interpretation: str
     confidence: Optional[float] = None
     deepfake: Optional[float] = None
+    sentiment: Optional[str] = None
+    sentiment_explanation: Optional[str] = None
+    disinformation: Optional[str] = None
+    disinformation_explanation: Optional[str] = None
+    target_Audience: Optional[str] = None
 
 @app.get("/")
 async def health(request: Request):
@@ -80,21 +86,63 @@ async def check_article(request: Request, input_data: str = Form(...)):
         article = process_url(url)
         if hasattr(article, 'interpretation') and article.interpretation == "Propaganda":
             # send output to db table
-            # createinput("output_data", )
+            output = (
+            article.title,
+            article.explanation,
+            article.interpretation,
+            article.confidence,
+            article.deepfake,
+            article.sentiment,
+            article.sentiment_explanation,
+            article.disinformation,
+            article.disinformation_explanation,
+            article.target_Audience
+            )
+            # insert into manual_data table
+            createinput("manual_data", output)
             
             return templates.TemplateResponse('home.html', context={
                 'request': request,
                 'result': article,
                 'input_data': {'url': url}
             })
+        
+        if hasattr(article, 'interpretation') and article.interpretation == "Not Propaganda":
+            return templates.TemplateResponse('home.html', context={
+                'request': request,
+                'result': article,
+                'input_data': {'url': url}
+            })
+        
         # Perform fake news detection
         article_output = detect_fake_news_in_article(article)
+
+        # Perform sentiment analysis
+        sentiment, sentiment_Explanation, disinformation, disinformation_Explanation, target_Audience = sentimental_analysis(article['text'])
+        article_output.sentiment = sentiment
+        article_output.sentiment_explanation = sentiment_Explanation
+        article_output.disinformation = disinformation
+        article_output.disinformation_explanation = disinformation_Explanation
+        article_output.target_Audience = target_Audience
+
         if('deepfake' in article):
             article_output.deepfake = article['deepfake']
             
-        # Uncomment the following lines to save data into the 'output_data' table
-        # true = 0 if interpretation.lower() == "true" else 1
-        # db.send("output_data", (article["text"], true))
+        output = (
+            article_output.title,
+            article_output.explanation,
+            article_output.interpretation,
+            article_output.confidence,
+            article_output.deepfake,
+            article_output.sentiment,
+            article_output.sentiment_explanation,
+            article_output.disinformation,
+            article_output.disinformation_explanation,
+            article_output.target_Audience
+        )
+        # insert into manual_data table
+        createinput("manual_data", output)
+
         return templates.TemplateResponse('home.html', context={
             'request': request,
             'result': article_output,

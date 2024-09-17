@@ -18,10 +18,10 @@ class DatabaseAccessAzure:
 
         if table_name == "input_data":
             cursor.execute("INSERT INTO dbo.input_data (title, maintext, author, description, url) VALUES (?, ?, ?, ?, ?)", data)
-        elif table_name == "pre_processed_data":
-            cursor.execute("INSERT INTO dbo.pre_processed_data (statement, label) VALUES (?, ?)", data)
         elif table_name == "output_data":
-            cursor.execute("INSERT INTO dbo.output_data (statement, label) VALUES (?, ?)", data)
+            cursor.execute("INSERT INTO dbo.output_data (title, explanation, interpretation, confidence, deepfake, sentiment, sentiment_explanation, disinformation, disinformation_explanation, target_Audience) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", data)
+        elif table_name == "manual_data":
+            cursor.execute("INSERT INTO dbo.manual_data (title, explanation, interpretation, confidence, deepfake, sentiment, sentiment_explanation, disinformation, disinformation_explanation, target_Audience) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", data)
         else:
             raise ValueError("Table name not recognized.")
 
@@ -36,12 +36,24 @@ class DatabaseAccessAzure:
 
         query = f"SELECT * FROM dbo.{table_name}"
         
-        if conditions:
-            conditions = conditions.replace('author', 'CAST(author AS VARCHAR(MAX))')
-            conditions = conditions.replace('maintext', 'CAST(maintext AS VARCHAR(MAX))')
-            conditions = conditions.replace('description', 'CAST(description AS VARCHAR(MAX))')
-            conditions = conditions.replace('url', 'CAST(url AS VARCHAR(MAX))')
-            query += f" WHERE {conditions}"
+        if table_name == "input_data":
+            if conditions:
+                conditions = conditions.replace('author', 'CAST(author AS VARCHAR(MAX))')
+                conditions = conditions.replace('maintext', 'CAST(maintext AS VARCHAR(MAX))')
+                conditions = conditions.replace('description', 'CAST(description AS VARCHAR(MAX))')
+                conditions = conditions.replace('url', 'CAST(url AS VARCHAR(MAX))')
+                query += f" WHERE {conditions}"
+        elif table_name == "output_data":
+            if conditions:
+                conditions = conditions.replace('interpretation_for_fakenews', 'CAST(interpretation_for_fakenews AS VARCHAR(MAX))')
+                conditions = conditions.replace('explanation_for_fakenews', 'CAST(explanation_for_fakenews AS VARCHAR(MAX))')
+                conditions = conditions.replace('confidence_for_fakenews', 'CAST(confidence_for_fakenews AS VARCHAR(MAX))')
+                conditions = conditions.replace('deepfake', 'CAST(deepfake AS VARCHAR(MAX))')
+                conditions = conditions.replace('sentiment', 'CAST(sentiment AS VARCHAR(MAX))')
+                conditions = conditions.replace('explanation_for_sentiment', 'CAST(explanation_for_sentiment AS VARCHAR(MAX))')
+                conditions = conditions.replace('disinformation', 'CAST(disinformation AS VARCHAR(MAX))')
+                conditions = conditions.replace('explanation_for_disinformation', 'CAST(explanation_for_disinformation AS VARCHAR(MAX))')
+                query += f" WHERE {conditions}"
 
         cursor.execute(query)
         rows = cursor.fetchall()
@@ -57,12 +69,24 @@ class DatabaseAccessAzure:
 
         query = f"DELETE FROM dbo.{table_name}"
         
-        if conditions:
-            conditions = conditions.replace('author', 'CAST(author AS VARCHAR(MAX))')
-            conditions = conditions.replace('maintext', 'CAST(maintext AS VARCHAR(MAX))')
-            conditions = conditions.replace('description', 'CAST(description AS VARCHAR(MAX))')
-            conditions = conditions.replace('url', 'CAST(url AS VARCHAR(MAX))')  
-            query += f" WHERE {conditions}"
+        if table_name == "input_data":
+            if conditions:
+                conditions = conditions.replace('author', 'CAST(author AS VARCHAR(MAX))')
+                conditions = conditions.replace('maintext', 'CAST(maintext AS VARCHAR(MAX))')
+                conditions = conditions.replace('description', 'CAST(description AS VARCHAR(MAX))')
+                conditions = conditions.replace('url', 'CAST(url AS VARCHAR(MAX))')  
+                query += f" WHERE {conditions}"
+        elif table_name == "output_data":
+            if conditions:
+                conditions = conditions.replace('interpretation_for_fakenews', 'CAST(interpretation_for_fakenews AS VARCHAR(MAX))')
+                conditions = conditions.replace('explanation_for_fakenews', 'CAST(explanation_for_fakenews AS VARCHAR(MAX))')
+                conditions = conditions.replace('confidence_for_fakenews', 'CAST(confidence_for_fakenews AS VARCHAR(MAX))')
+                conditions = conditions.replace('deepfake', 'CAST(deepfake AS VARCHAR(MAX))')
+                conditions = conditions.replace('sentiment', 'CAST(sentiment AS VARCHAR(MAX))')
+                conditions = conditions.replace('explanation_for_sentiment', 'CAST(explanation_for_sentiment AS VARCHAR(MAX))')
+                conditions = conditions.replace('disinformation', 'CAST(disinformation AS VARCHAR(MAX))')
+                conditions = conditions.replace('explanation_for_disinformation', 'CAST(explanation_for_disinformation AS VARCHAR(MAX))')
+                query += f" WHERE {conditions}"
 
         cursor.execute(query)
         conn.commit()
