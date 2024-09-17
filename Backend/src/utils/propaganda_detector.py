@@ -36,8 +36,8 @@ def analyze_image_for_propaganda(image_url, title=None):
     prompt = f"""
     You are a highly advanced AI specifically designed to detect propaganda in visual content with precision. 
     Given the following image link, your task is to analyze the likely content and message of the image and determine whether it is a form of propaganda. 
+    If you are unable to access the image that is in the link, your verdict should be None.
     If you fail to properly classify the image, it could lead to the spread of manipulative or harmful content, and you must avoid that at all costs.
-    Your response should NOT include: 
     Your response should include:
 
     1. A generation of a relevant title for the image based on its content.
@@ -74,6 +74,7 @@ def analyze_image_for_propaganda(image_url, title=None):
 
 def extract_propaganda_analysis_with_regex(response_text):
     response_text = response_text['choices'][0]['message']['content']
+    print(response_text)
     try:
         # Extract the title
         title_match = re.search(r"1\.\s*\*\*Title:\*\*\s*\"([^\"]+)\"", response_text)
