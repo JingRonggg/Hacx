@@ -28,20 +28,21 @@ db = DatabaseAccessAzure(
 
 
 def createinput(tablename, data):
-    url = data[-1]
-    print(f"Checking for duplicates for URL: {url}")
     try:
-        # Check if the URL already exists in the database 
-        query = f"SELECT COUNT(*) FROM [dbo].[input_data] WHERE URL = ?"
-        result = db.query(query, (url))
+        if tablename == "input_table":
+            url = data[-1]
+            print(f"Checking for duplicates for URL: {url}")
+            # Check if the URL already exists in the database 
+            query = f"SELECT COUNT(*) FROM [dbo].[input_data] WHERE URL = ?"
+            result = db.query(query, (url))
 
-        #If the URL exists (i.e. count > 0), skip insertion 
-        if result [0][0] > 0:
-            print(f"URL {url} already exists in the database. Skipping Insertion.")
-            return
+            #If the URL exists (i.e. count > 0), skip insertion 
+            if result [0][0] > 0:
+                print(f"URL {url} already exists in the database. Skipping Insertion.")
+                return
         
         #If no duplicates are found, proceed to insert the new data 
-        print("Inserting data into input_data table...")
+        print("Inserting data into " + tablename + " table...")
         db.send(tablename, data)
         print("Done inserting")
 
@@ -59,14 +60,14 @@ except Exception as e:
      print(f"An error occurred while inserting data: {e}")'''
 
 # # Example of extracting data from the input_data table
-# try:
-#     print("Extracting data from input_data table where author is 'John'...")
-#     data = db.extract("input_data", "author = 'John'")
-#     print("Extracted data:")
-#     for row in data:
-#         print(row)
-# except Exception as e:
-#     print(f"An error occurred while extracting data: {e}")
+'''try:
+     print("Extracting data from input_data table where author is 'John'...")
+     data = db.extract("input_data", "author = 'John'")
+     print("Extracted data:")
+     for row in data:
+         print(row)
+except Exception as e:
+     print(f"An error occurred while extracting data: {e}")'''
 
 # Example of deleting data from the input_data table
 def deleterecord():
@@ -82,9 +83,10 @@ def readtable(tablename):
     try:
         # print("Extracting data again to verify deletion...")
         data = db.extract(tablename)
-        return data
+        # return data
         # print("Data after deletion:")
-        # for row in data:
-        #     print(row)
+        #for row in data:
+        #print(row)
     except Exception as e:
         print(f"An error occurred while extracting data after deletion: {e}")
+
