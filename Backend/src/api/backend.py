@@ -99,13 +99,21 @@ async def check_article(request: Request, input_data: str = Form(...)):
             article.target_Audience
             )
             # insert into manual_data table
-            # createinput("manual_data", output)
+            createinput("manual_data", output)
             
             return templates.TemplateResponse('home.html', context={
                 'request': request,
                 'result': article,
                 'input_data': {'url': url}
             })
+        
+        if hasattr(article, 'interpretation') and article.interpretation == "Not Propaganda":
+            return templates.TemplateResponse('home.html', context={
+                'request': request,
+                'result': article,
+                'input_data': {'url': url}
+            })
+        
         # Perform fake news detection
         article_output = detect_fake_news_in_article(article)
 
@@ -133,7 +141,7 @@ async def check_article(request: Request, input_data: str = Form(...)):
             article_output.target_Audience
         )
         # insert into manual_data table
-        # createinput("manual_data", output)
+        createinput("manual_data", output)
 
         return templates.TemplateResponse('home.html', context={
             'request': request,

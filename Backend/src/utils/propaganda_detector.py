@@ -80,11 +80,11 @@ def extract_propaganda_analysis_with_regex(response_text):
         title_match = re.search(r"1\.\s*\*\*Title:\*\*\s*\"([^\"]+)\"", response_text)
         title = title_match.group(1) if title_match else "No title provided."
         # Extract the verdict
-        verdict_match = re.search(r"2\.\s*\*\*Verdict:\*\*\s*(\w+)", response_text)
+        verdict_match = re.search(r"2\.\s*\*\*Verdict:\*\*\s*(.+)", response_text)
         interpretation = verdict_match.group(1) if verdict_match else "Unclear"
         # Extract the confidence score
         confidence_match = re.search(r"3\.\s*\*\*Confidence Score:\*\*\s*(\d{1,3})", response_text)
-        confidence = int(confidence_match.group(1)) if confidence_match else "Unknown"
+        confidence = int(confidence_match.group(1)) if confidence_match else "None"
         # Extract the explanation
         explanation_match = re.search(r"4\.\s*\*\*Explanation:\*\*\s*(.+)", response_text, re.DOTALL)
         explanation = explanation_match.group(1).strip() if explanation_match else "No explanation provided."
