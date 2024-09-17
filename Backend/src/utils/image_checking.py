@@ -22,10 +22,15 @@ def process_url(url):
         analysis = analyze_image_for_propaganda(url)
         result = extract_propaganda_analysis_with_regex(analysis)
         deepfakeScore = detect_deepfake_from_url(url)
+
+        if result.interpretation == "Not Propaganda":
+            result.deepfake = deepfakeScore
+            return result
         
         if result.interpretation == "Propaganda":
             result.deepfake = deepfakeScore
             return result
+        
         else:
             # The input URL is an image
             extracted_text = azure_ocr_image_to_text(url)
