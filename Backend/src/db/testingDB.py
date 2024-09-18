@@ -26,6 +26,21 @@ db = DatabaseAccessAzure(
     password=SERVER_PASSWORD
 )
 
+def get_author(url):
+    try:
+        query = """
+        SELECT input_data.author 
+        FROM dbo.input_data 
+        INNER JOIN dbo.output_data 
+        ON input_data.url = output_data.url 
+        WHERE input_data.url = ?
+        """        
+
+        result = db.query(query, (url,))
+        print(f'author {result[0][0]}')
+        return result[0][0]
+    except Exception as e:
+        print(f"An error occurred while inserting data: {e}")
 
 def createinput(tablename, data):
     try:
@@ -42,9 +57,9 @@ def createinput(tablename, data):
                 return
 
         #If no duplicates are found, proceed to insert the new data 
-        print("Inserting data into " + tablename + " table...")
+        print(f"Inserting data into {tablename} table...")
         db.send(tablename, data)
-        print("Done inserting")
+        print(f"Done inserting data into {tablename}")
         return True
 
 

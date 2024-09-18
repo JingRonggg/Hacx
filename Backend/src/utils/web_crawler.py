@@ -4,6 +4,7 @@ from urllib.parse import urljoin, urlparse
 import re
 from collections import deque
 from datetime import datetime, timedelta
+from src.db.testingDB import get_author
 from src.db.testingDB import createinput
 from src.utils.image_checking import process_url, fetch_article
 from src.LLMs.Full_check_LLM import detect_fake_news_in_article
@@ -151,7 +152,6 @@ def fetch_articles():
                     article_output.deepfake = article['deepfake']
                 
                 output = (
-                    url,
                     article_output.title,
                     article_output.explanation,
                     article_output.interpretation,
@@ -161,9 +161,11 @@ def fetch_articles():
                     article_output.sentiment_explanation,
                     article_output.disinformation,
                     article_output.disinformation_explanation,
-                    article_output.target_Audience
+                    article_output.target_Audience,
+                    url
                 )
                 # insert into manual_data table
                 createinput("output_data", output)
-                print("done inserting into manual data")
+
+                get_author(url)
     return article_list
