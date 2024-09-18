@@ -26,10 +26,23 @@ db = DatabaseAccessAzure(
     password=SERVER_PASSWORD
 )
 
+def get_author(url):
+    try:
+        query = """
+        SELECT input_data.author 
+        FROM dbo.input_data 
+        INNER JOIN dbo.output_data 
+        ON input_data.url = output_data.url 
+        WHERE input_data.url = ?
+        """        
+        result = db.query(query, (url,))
+        return result[0][0]
+    except Exception as e:
+        print(f"An error occurred while inserting data: {e}")
 
 def createinput(tablename, data):
     try:
-        if tablename == "input_table":
+        if tablename == "input_data":
             url = data[-1]
             print(f"Checking for duplicates for URL: {url}")
             # Check if the URL already exists in the database 
@@ -40,11 +53,13 @@ def createinput(tablename, data):
             if result [0][0] > 0:
                 print(f"URL {url} already exists in the database. Skipping Insertion.")
                 return
-        
+
         #If no duplicates are found, proceed to insert the new data 
-        print("Inserting data into " + tablename + " table...")
+        print(f"Inserting data into {tablename} table...")
         db.send(tablename, data)
-        print("Done inserting")
+        print(f"Done inserting data into {tablename}")
+        return True
+
 
     except Exception as e:
         print(f"An error occurred while inserting data: {e}")
@@ -87,6 +102,7 @@ def readtable(tablename):
         # print("Data after deletion:")
         #for row in data:
         #print(row)
+        return data
     except Exception as e:
         print(f"An error occurred while extracting data after deletion: {e}")
 
