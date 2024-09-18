@@ -9,7 +9,8 @@ from src.LLMs.Full_check_LLM import detect_fake_news_in_article
 from src.utils.image_checking import process_url
 from src.utils.web_crawler import fetch_articles
 import os
-from urllib.parse import unquote
+from collections import Counter
+from urllib.parse import unquote, urlparse
 from src.db.db_access import DatabaseAccessAzure
 from dotenv import load_dotenv
 from src.db.testingDB import readtable
@@ -57,24 +58,53 @@ async def health(request: Request):
     data = readtable("output_data")
     crawled_articles = readtable("input_data")
 
-    chart_data = {
-        "title": [],
-        "explanation": [],
-        "interpretation": [],
-        "confidence": [],
-        "deepfake": [],
-    }
+    chart_data = { 
+        "title": [], 
+        "explanation": [], 
+        "interpretation": [], 
+        "confidence": [], 
+        "deepfake": [], 
+        "sentiment": [], 
+        "sentiment_explanation": [], 
+        "disinformation": [], 
+        "disinformation_explanation": [], 
+        "target_audience": [],
+        "url": []
+        } 
     
-    for entry in data:
-        chart_data["title"].append(entry[1])
-        chart_data["explanation"].append(entry[2])
-        chart_data["interpretation"].append(entry[3])
-        chart_data["confidence"].append(entry[4])
-        chart_data["deepfake"].append(entry[5])
+    url_domains = []
+
+    for entry in data: 
+        chart_data["title"].append(entry[0]) 
+        chart_data["explanation"].append(entry[1])
+        chart_data["interpretation"].append(entry[2])
+        chart_data["confidence"].append(entry[3])
+        chart_data["deepfake"].append(entry[4])
+        chart_data["sentiment"].append(entry[5])
+        chart_data["sentiment_explanation"].append(entry[6]) 
+        chart_data["disinformation"].append(entry[7])
+        chart_data["disinformation_explanation"].append(entry[8])
+        chart_data["target_audience"].append(entry[9])
+        
+        # Extract domain and update the counter
+        if entry[2].lower() == "fake":
+            parsed_url = urlparse(entry[10])
+            domain = parsed_url.netloc
+            url_domains.append(domain)
+
+        chart_data["url"].append(entry[10])
+
+        domain_counter = Counter(url_domains)
+        top_domains = dict(domain_counter.most_common(5))
 
     return templates.TemplateResponse(
         "home.html", 
-        {"request": request, "chartData": chart_data, "crawled": crawled_articles}
+        {
+            "request": request, 
+            "chartData": chart_data, 
+            "crawled": crawled_articles,
+            "top_domains": top_domains
+        }
     )
 
 @app.post("/")
