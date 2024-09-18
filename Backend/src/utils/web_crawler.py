@@ -166,6 +166,4 @@ def fetch_articles():
                 )
                 # insert into manual_data table
                 createinput("output_data", output)
-
-                get_author(url)
     return article_list
