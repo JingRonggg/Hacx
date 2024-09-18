@@ -1,22 +1,6 @@
 {% extends "main.html" %}
 
 {% block title %}Articles{% endblock %}
-{% block head%}
-
-<style>
-    /* Limit the height of the cell to make it scrollable */
-    .scrollable-cell {
-        max-height: 150px;
-        /* Set a maximum height for the cell */
-        overflow: auto;
-        /* Enable scrollbars if the content overflows */
-        display: block;
-        /* Make the td act as a block element to apply height */
-        word-wrap: break-word;
-        /* Wrap long words to prevent breaking the layout */
-    }
-</style>
-{% endblock%}
 
 {% block content %}
 <div class="container-lg p-3">
@@ -25,13 +9,13 @@
             <h2>Crawled Articles</h2>
         </div>
         <div class="col d-flex flex-row-reverse">
-            <form method="post">
+            <form id="crawlForm" method="post" onsubmit="showLoadingOverlay();">
                 <input id="submitButton" class="btn btn-primary" type="submit" value="Crawl Articles">
             </form>
         </div>
     </div>
 
-    <table class="table table-bordered">
+    <table class="table table-bordered custom-table">
         <thead>
             <tr>
                 <th scope="col">#</th>
@@ -47,7 +31,7 @@
             {% for article in crawled %}
             <tr>
                 <th scope="row">{{ loop.index }}</th>
-                <td><a href="{{article['url']}}">{{article['url']}}</a></td>
+                <td><a href="{{article['url']}}" target="_blank">{{article['url']}}</a></td>
                 <td>{{article['title']}}</td>
                 <td class="scrollable-cell text-wrap">
                     {{article['maintext']}}
@@ -60,4 +44,91 @@
         </tbody>
     </table>
 </div>
+
+<!-- Loading Screen -->
+<div id="loadingOverlay" class="loading-overlay" style="display: none;">
+    <div class="spinner-border text-light" role="status" style="width: 100px; height: 100px;">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+</div>
+
+<!-- Centralized CSS styling for the page -->
+<style>
+    /* Limit the height of the cell to make it scrollable */
+    .scrollable-cell {
+        max-height: 150px;
+        overflow: auto;
+        display: block;
+        word-wrap: break-word;
+    }
+
+    /* Dark Theme for the table */
+    .custom-table {
+        background-color: #333333;
+        color: white;
+        border-color: #575656;
+        border-width: 3px;
+    }
+
+    .custom-table th, .custom-table td {    
+        background-color: #444444;
+        color: white;
+        border-width: 3px;
+        font-weight: bold;
+    }
+
+    /* Style the table links */
+    .custom-table a {
+        color: #007bff;
+        text-decoration: none;
+    }
+
+    .custom-table a:hover {
+        color: #0056b3;
+        text-decoration: underline;
+    }
+
+    /* Button styling */
+    .btn-primary {
+        background-color: #007bff;
+        color: white;
+        border: none;
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+        color: white;
+    }
+
+    /* Page container styling */
+    body {
+        background-color: rgba(45, 44, 44, 0.901);
+    }
+
+    h2 {
+        color: white;
+    }
+
+    /* Loading overlay styling */
+    .loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
+</style>
+
+<!-- Script to handle the loading spinner and overlay -->
+<script>
+    function showLoadingOverlay() {
+        document.getElementById("loadingOverlay").style.display = "flex";
+    }
+</script>
+
 {% endblock %}
