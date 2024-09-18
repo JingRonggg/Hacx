@@ -29,7 +29,7 @@ db = DatabaseAccessAzure(
 
 def createinput(tablename, data):
     try:
-        if tablename == "input_table":
+        if tablename == "input_data":
             url = data[-1]
             print(f"Checking for duplicates for URL: {url}")
             # Check if the URL already exists in the database 
