@@ -9,6 +9,11 @@ class ArticleOutput(BaseModel):
     interpretation: str
     confidence: Optional[float] = None
     deepfake: Optional[float] = None
+    sentiment: Optional[str] = None
+    sentiment_explanation: Optional[str] = None
+    disinformation: Optional[str] = None
+    disinformation_explanation: Optional[str] = None
+    target_Audience: Optional[str] = None
 
 
 def detect_fake_news_in_article(article):

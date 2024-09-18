@@ -1,7 +1,8 @@
 from src.utils.OCR import azure_ocr_image_to_text, is_url_image
-from src.utils.web_crawler import fetch_article
 from src.utils.propaganda_detector import analyze_image_for_propaganda, extract_propaganda_analysis_with_regex
 from src.LLMs.deepfake_detection import detect_deepfake_from_url
+from newspaper import Article
+
 
 def process_url(url):
     """
@@ -22,9 +23,15 @@ def process_url(url):
         analysis = analyze_image_for_propaganda(url)
         result = extract_propaganda_analysis_with_regex(analysis)
         deepfakeScore = detect_deepfake_from_url(url)
+
+        if result.interpretation == "Not Propaganda":
+            result.deepfake = deepfakeScore
+            return result
+        
         if result.interpretation == "Propaganda":
             result.deepfake = deepfakeScore
             return result
+        
         else:
             # The input URL is an image
             extracted_text = azure_ocr_image_to_text(url)
@@ -40,3 +47,16 @@ def process_url(url):
         article['text'] = clean_text(article['text'])
 
     return article
+
+
+def fetch_article(url):
+    article = Article(url)
+    article.download()
+    article.parse()
+    return {
+        'title': article.title,
+        'text': article.text,
+        'authors': article.authors,
+        'publish_date': article.publish_date,
+        'top_image': article.top_image,
+    }
