@@ -4,8 +4,10 @@ from urllib.parse import urljoin, urlparse
 import re
 from collections import deque
 from datetime import datetime, timedelta
-from newspaper import Article
 from src.db.testingDB import createinput
+from src.utils.image_checking import process_url, fetch_article
+from src.LLMs.Full_check_LLM import detect_fake_news_in_article
+from src.LLMs.sentimental_analysis import sentimental_analysis
 
 # Set the root URLs
 root_urls = ["https://abcnews.go.com/", "https://www.channelnewsasia.com/", "https://www.straitstimes.com/"]
@@ -130,18 +132,38 @@ def fetch_articles():
             first_author = article["authors"][0] if article["authors"] else "Unknown"
 
             # Pass only the first author to createinput 
-            createinput("input_data", (article["title"], article["text"], first_author, "", url))
+            p = createinput("input_data", (article["title"], article["text"], first_author, "", url))
+            print(p)
+            if p:
+                article = process_url(url)
+                # Perform fake news detection
+                article_output = detect_fake_news_in_article(article)
 
+                # Perform sentiment analysis
+                sentiment, sentiment_Explanation, disinformation, disinformation_Explanation, target_Audience = sentimental_analysis(article['text'])
+                article_output.sentiment = sentiment
+                article_output.sentiment_explanation = sentiment_Explanation
+                article_output.disinformation = disinformation
+                article_output.disinformation_explanation = disinformation_Explanation
+                article_output.target_Audience = target_Audience
+
+                if('deepfake' in article):
+                    article_output.deepfake = article['deepfake']
+                
+                output = (
+                    url,
+                    article_output.title,
+                    article_output.explanation,
+                    article_output.interpretation,
+                    article_output.confidence,
+                    article_output.deepfake,
+                    article_output.sentiment,
+                    article_output.sentiment_explanation,
+                    article_output.disinformation,
+                    article_output.disinformation_explanation,
+                    article_output.target_Audience
+                )
+                # insert into manual_data table
+                createinput("output_data", output)
+                print("done inserting into manual data")
     return article_list
-
-def fetch_article(url):
-    article = Article(url)
-    article.download()
-    article.parse()
-    return {
-        'title': article.title,
-        'text': article.text,
-        'authors': article.authors,
-        'publish_date': article.publish_date,
-        'top_image': article.top_image,
-    }

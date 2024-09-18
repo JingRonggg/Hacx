@@ -40,11 +40,13 @@ def createinput(tablename, data):
             if result [0][0] > 0:
                 print(f"URL {url} already exists in the database. Skipping Insertion.")
                 return
-        
+
         #If no duplicates are found, proceed to insert the new data 
         print("Inserting data into " + tablename + " table...")
         db.send(tablename, data)
         print("Done inserting")
+        return True
+
 
     except Exception as e:
         print(f"An error occurred while inserting data: {e}")
@@ -87,6 +89,7 @@ def readtable(tablename):
         # print("Data after deletion:")
         #for row in data:
         #print(row)
+        return data
     except Exception as e:
         print(f"An error occurred while extracting data after deletion: {e}")
 
