@@ -14,7 +14,7 @@ from src.db.db_access import DatabaseAccessAzure
 from dotenv import load_dotenv
 from src.utils.image_checking import process_url
 from src.db.testingDB import readtable
-from src.db.testingDB import createinput
+from src.db.testingDB import createinput, get_author
 from src.LLMs.sentimental_analysis import sentimental_analysis
 
 app = FastAPI()
@@ -96,10 +96,11 @@ async def check_article(request: Request, input_data: str = Form(...)):
             article.sentiment_explanation,
             article.disinformation,
             article.disinformation_explanation,
-            article.target_Audience
+            article.target_Audience, 
+            url
             )
             # insert into manual_data table
-            createinput("manual_data", output)
+            createinput("output_data", output)
             
             return templates.TemplateResponse('home.html', context={
                 'request': request,
@@ -141,7 +142,9 @@ async def check_article(request: Request, input_data: str = Form(...)):
             article_output.target_Audience
         )
         # insert into manual_data table
-        createinput("manual_data", output)
+        createinput("output_data", output)
+
+        get_author(url)        
 
         return templates.TemplateResponse('home.html', context={
             'request': request,
