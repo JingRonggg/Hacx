@@ -139,12 +139,11 @@ async def check_article(request: Request, input_data: str = Form(...)):
             article_output.sentiment_explanation,
             article_output.disinformation,
             article_output.disinformation_explanation,
-            article_output.target_Audience
+            article_output.target_Audience,
+            url
         )
         # insert into manual_data table
         createinput("output_data", output)
-
-        get_author(url)        
 
         return templates.TemplateResponse('home.html', context={
             'request': request,
