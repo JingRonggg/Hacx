@@ -18,6 +18,12 @@ conda activate hacx
 ```
 - This should install and run the env for hacx
 
+```
+npm install chart.js
+```
+- This should install visualisation tools
+  
+
 ### Running the backend
 - run
 ```
