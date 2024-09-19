@@ -59,22 +59,20 @@ class ArticleOutput(BaseModel):
     disinformation_explanation: Optional[str] = None
     target_Audience: Optional[str] = None
 
-def calculate_top_domains(data, top_n=5):
-    domain_counter = Counter()
+def calculate_top_authors(data, top_n=5):
+    author_counter = Counter()
 
     for entry in data:
         # entry[3] is 'interpretation', entry[11] is the 'url'
         if entry[2].lower() == 'fake':  # Only count fake news articles
-            # Extract domain from the URL
-            parsed_url = urlparse(entry[10])
-            domain = parsed_url.netloc  # Get the domain (e.g., 'abcnews.go.com')
+            author = get_author(entry[10])
             
             # Increment the count for this domain
-            domain_counter[domain] += 1
+            author_counter[author] += 1
 
     # Return the top N domains as a dictionary (domain: count)
-    top_domains = dict(domain_counter.most_common(top_n))
-    return top_domains
+    top_authors = dict(author_counter.most_common(top_n))
+    return top_authors
 
 @app.get("/")
 async def health(request: Request):
@@ -95,7 +93,7 @@ async def health(request: Request):
         "url": []
         } 
     
-    url_domains = []
+    authors = []
 
     for entry in data: 
         chart_data["title"].append(entry[0]) 
@@ -111,14 +109,13 @@ async def health(request: Request):
         
         # Extract domain and update the counter
         if entry[2].lower() == "fake":
-            parsed_url = urlparse(entry[10])
-            domain = parsed_url.netloc
-            url_domains.append(domain)
+            author = get_author(entry[10])
+            authors.append(author)
 
         chart_data["url"].append(entry[10])
 
-        domain_counter = Counter(url_domains)
-        top_domains = dict(domain_counter.most_common(5))
+        author_counter = Counter(authors)
+        top_authors = dict(author_counter.most_common(5))
 
     return templates.TemplateResponse(
         "home.html", 
@@ -126,7 +123,7 @@ async def health(request: Request):
             "request": request,
             "chartData": chart_data,
             "crawled": crawled_articles,
-            "top_domains": top_domains
+            "top_authors": top_authors
         }
     )
 
@@ -135,7 +132,7 @@ async def check_article(request: Request, input_data: str = Form(...)):
     try:
         url = unquote(input_data)
         article = process_url(url)
-        top_domains = calculate_top_domains(readtable("output_data"))
+        top_authors = calculate_top_authors(readtable("output_data"))
 
         if hasattr(article, 'interpretation') and article.interpretation == "Propaganda":
             # send output to db table
@@ -159,7 +156,7 @@ async def check_article(request: Request, input_data: str = Form(...)):
                 'request': request,
                 'result': article,
                 'input_data': {'url': url},
-                'top_domains': top_domains
+                'top_authors': top_authors
             })
 
         if hasattr(article, 'interpretation') and article.interpretation == "Not Propaganda":
@@ -168,7 +165,7 @@ async def check_article(request: Request, input_data: str = Form(...)):
                 'request': request,
                 'result': article,
                 'input_data': {'url': url},
-                'top_domains': top_domains
+                'top_authors': top_authors
             })
 
         # Perform fake news detection
@@ -196,21 +193,17 @@ async def check_article(request: Request, input_data: str = Form(...)):
             'request': request,
             'result': article_output,
             'input_data': article,
-            'top_domains': top_domains
+            'top_authors': top_authors
         })
 
     except Exception as e:
-        top_domains = calculate_top_domains(readtable('output_data'))
+        top_authors = calculate_top_authors(readtable('output_data'))
         return templates.TemplateResponse('home.html', {
             'request': request,
             'result': str(e),
             'input_data': {'url': None},
-            'top_domains': top_domains
+            'top_authors': top_authors
         })
-
-
-
-
 
 @app.get("/articles")
 async def articles(request: Request):
@@ -229,3 +222,23 @@ async def check_crawled_articles(request: Request):
         "articles.html", 
         {"request": request, "crawled": crawled_articles}
     )
+
+@app.post("/get_related_articles")
+async def get_related_articles(author: str):
+    try:
+        # Assuming your `readtable` function can fetch all articles
+        articles = readtable("input_data")  # Example table storing article info
+
+        related_articles = []
+        for entry in articles:
+            article_author = get_author(entry[10])  # Example: get author using entry index 10
+            if article_author == author:
+                related_articles.append({
+                    "title": entry[0],  # Example: title
+                    "url": entry[10]   # Example: URL
+                })
+
+        return {"articles": related_articles}
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
