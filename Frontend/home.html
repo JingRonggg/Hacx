@@ -27,9 +27,9 @@
             </div>
 
             <!-- Top 5 occurrences -->
-            <div class="col-4 d-flex justify-content-center align-items-center" style="height: 410px;">
-                <div id="verticalContainer" class="text-center text-white p-4" style="font-size: 24px; width: 100%;">
-                    <h5 style="color: #f8c529">Most Detected Misinformation Sites</h5>
+            <div class="col-4 d-flex justify-content-center align-items-center" style="height: 450px;">
+                <div id="verticalContainer" class="text-center text-white p-1" style="font-size: 24px; width: 100%;">
+                    <h5 style="color: #f8c529; margin-top: 10px;">Most Detected Misinformation Sites</h5>
                     <table class="table table-bordered custom-domain-table">
                         <thead>
                             <tr>
@@ -57,11 +57,6 @@
                 </div>
             </div>
         </div>
-
-        <!-- Button to trigger the modal -->
-        <button type="button" class="btn btn-primary custom-button" data-bs-toggle="modal" data-bs-target="#urlModal">
-            Add News Article URL
-        </button>
     </div>
 
     <!-- Modal -->
@@ -204,6 +199,7 @@
 
     /* Custom styling for the domain table */
     .custom-domain-table {
+        margin-top: 30px;
         background-color: #333333; /* Dark background */
         color: white; /* White text */
         border-color: #575656; /* Lighter border */
@@ -211,12 +207,14 @@
     }
 
     .custom-domain-table th {
+        margin-top: 30px;
         background-color: #444444; /* Darker header */
         color: white;
         border-width: 3px;
     }
 
     .custom-domain-table td {
+        margin-top: 30px;
         background-color: #444444; /* Darker cells */
         color: white;
         border-width: 3px;
