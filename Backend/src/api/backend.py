@@ -59,6 +59,23 @@ class ArticleOutput(BaseModel):
     disinformation_explanation: Optional[str] = None
     target_Audience: Optional[str] = None
 
+def calculate_top_domains(data, top_n=5):
+    domain_counter = Counter()
+
+    for entry in data:
+        # entry[3] is 'interpretation', entry[11] is the 'url'
+        if entry[2].lower() == 'fake':  # Only count fake news articles
+            # Extract domain from the URL
+            parsed_url = urlparse(entry[10])
+            domain = parsed_url.netloc  # Get the domain (e.g., 'abcnews.go.com')
+            
+            # Increment the count for this domain
+            domain_counter[domain] += 1
+
+    # Return the top N domains as a dictionary (domain: count)
+    top_domains = dict(domain_counter.most_common(top_n))
+    return top_domains
+
 @app.get("/")
 async def health(request: Request):
     data = readtable("output_data")
@@ -106,8 +123,8 @@ async def health(request: Request):
     return templates.TemplateResponse(
         "home.html", 
         {
-            "request": request, 
-            "chartData": chart_data, 
+            "request": request,
+            "chartData": chart_data,
             "crawled": crawled_articles,
             "top_domains": top_domains
         }
@@ -118,45 +135,48 @@ async def check_article(request: Request, input_data: str = Form(...)):
     try:
         url = unquote(input_data)
         article = process_url(url)
+        top_domains = calculate_top_domains(readtable("output_data"))
 
         if hasattr(article, 'interpretation') and article.interpretation == "Propaganda":
             # send output to db table
             output = (
-            article.title,
-            article.explanation,
-            article.interpretation,
-            article.confidence,
-            article.deepfake,
-            article.sentiment,
-            article.sentiment_explanation,
-            article.disinformation,
-            article.disinformation_explanation,
-            article.target_Audience, 
-            url
+                article.title,
+                article.explanation,
+                article.interpretation,
+                article.confidence,
+                article.deepfake,
+                article.sentiment,
+                article.sentiment_explanation,
+                article.disinformation,
+                article.disinformation_explanation,
+                article.target_Audience, 
+                url
             )
-            # insert into manual_data table
             createinput("output_data", output)
             
+
             return templates.TemplateResponse('home.html', {
                 'request': request,
                 'result': article,
-                'input_data': {'url': url}
+                'input_data': {'url': url},
+                'top_domains': top_domains
             })
-        
-        
+
         if hasattr(article, 'interpretation') and article.interpretation == "Not Propaganda":
-            return templates.TemplateResponse('home.html', context={
+
+            return templates.TemplateResponse('home.html', {
                 'request': request,
                 'result': article,
-                'input_data': {'url': url}
+                'input_data': {'url': url},
+                'top_domains': top_domains
             })
-        
+
         # Perform fake news detection
         article_output = detect_fake_news_in_article(article)
 
         if 'deepfake' in article:
             article_output.deepfake = article['deepfake']
-            
+
         output = (
             article_output.title,
             article_output.explanation,
@@ -170,22 +190,27 @@ async def check_article(request: Request, input_data: str = Form(...)):
             article_output.target_Audience,
             url
         )
-        # insert into manual_data table
         createinput("output_data", output)
 
-        # return templates.TemplateResponse('home.html', context={
         return templates.TemplateResponse('home.html', {
             'request': request,
             'result': article_output,
-            'input_data': article
+            'input_data': article,
+            'top_domains': top_domains
         })
 
     except Exception as e:
+        top_domains = calculate_top_domains(readtable('output_data'))
         return templates.TemplateResponse('home.html', {
             'request': request,
             'result': str(e),
-            'input_data': {'url': None}
+            'input_data': {'url': None},
+            'top_domains': top_domains
         })
+
+
+
+
 
 @app.get("/articles")
 async def articles(request: Request):
