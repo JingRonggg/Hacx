@@ -36,18 +36,18 @@ var chart1 = new Chart(ctx1, {
             label: 'Interpretation Counts',
             data: Object.values(interpretationCounts),
             backgroundColor: [
-                'rgba(255, 99, 132, 0.2)',   
-                'rgba(54, 162, 235, 0.2)',   
-                'rgba(255, 206, 86, 0.2)',   
-                'rgba(75, 192, 192, 0.2)',  
-                'rgba(153, 102, 255, 0.2)'   
+                'rgba(255, 99, 132, 0.2)',   // Color for Fake
+                'rgba(54, 162, 235, 0.2)',   // Color for LIKELY TRUE
+                'rgba(255, 206, 86, 0.2)',   // Color for Real
+                'rgba(75, 192, 192, 0.2)',   // Color for Unclear
+                'rgba(153, 102, 255, 0.2)'   // Color for Unsure (Neutral)
             ],
             borderColor: [
-                'rgba(255, 99, 132, 1)',     
-                'rgba(54, 162, 235, 1)',     
-                'rgba(255, 206, 86, 1)',     
-                'rgba(75, 192, 192, 1)',     
-                'rgba(153, 102, 255, 1)'     
+                'rgba(255, 99, 132, 1)',     // Border color for Fake
+                'rgba(54, 162, 235, 1)',     // Border color for LIKELY TRUE
+                'rgba(255, 206, 86, 1)',     // Border color for Real
+                'rgba(75, 192, 192, 1)',     // Border color for Unclear
+                'rgba(153, 102, 255, 1)'     // Border color for Unsure (Neutral)
             ],
             borderWidth: 1
         }]
