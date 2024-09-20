@@ -28,17 +28,17 @@
 
             <!-- Top 5 occurrences -->
             <div class="col-4 d-flex justify-content-center align-items-center" style="height: 450px;">
-                <div id="verticalContainer" class="text-center text-white p-1" style="font-size: 24px; width: 100%;">
-                    <h5 style="color: #f8c529; margin-top: 10px;">Most Detected Misinformation Sites</h5>
+                <div id="verticalContainer" class="text-center text-white p-1" style="font-size: 18px; width: 100%;">
+                    <h5 style="color: #f8c529; margin-top: 10px; font-size: 25px;">Authors Spreading Most Disinformation</h5>
                     <table class="table table-bordered custom-domain-table">
                         <thead>
                             <tr>
-                                <th scope="col">Domain</th>
+                                <th scope="col">Author</th>
                                 <th scope="col">Frequency</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {% for domain, count in top_domains.items() %}
+                            {% for domain, count in top_authors.items() %}
                             <tr>
                                 <td>{{ domain }}</td>
                                 <td>{{ count }}</td>
@@ -46,7 +46,7 @@
                             {% endfor %}
             
                             <!-- Ensure there are always 5 rows -->
-                            {% for _ in range(5 - top_domains|length) %}
+                            {% for _ in range(5 - top_authors|length) %}
                             <tr>
                                 <td>&nbsp;</td> <!-- Empty cell -->
                                 <td>&nbsp;</td> <!-- Empty cell -->
@@ -55,28 +55,7 @@
                         </tbody>
                     </table>
                 </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal -->
-    <div class="modal fade" id="urlModal" tabindex="-1" aria-labelledby="urlModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="urlModalLabel">Check a News Article</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="urlForm" method="post" onsubmit="showLoadingOverlay();">
-                        <div class="mb-3">
-                            <label for="formGroupExampleInput" class="form-label">Insert a news article URL below:</label>
-                            <input type="text" id="input_data" name="input_data" class="form-control" placeholder="https://example.com" value="">
-                        </div>
-                        <input id="submitButton" class="btn btn-primary custom-button" type="submit" value="Check">
-                    </form>
-                </div>
-            </div>
+            </div>            
         </div>
     </div>
 
@@ -111,6 +90,54 @@
             {% endif %}
         </tbody>
     </table>
+
+    <!-- Modal -->
+    <div class="modal fade" id="urlModal" tabindex="-1" aria-labelledby="urlModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="urlModalLabel">Check a News Article</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="urlForm" method="post" onsubmit="showLoadingOverlay();">
+                        <div class="mb-3">
+                            <label for="input_data" class="form-label">Insert a news article URL below:</label>
+                            <input type="text" id="input_data" name="input_data" class="form-control" placeholder="https://example.com" value="">
+                        </div>
+                        <input id="submitButton" class="btn btn-primary custom-button" type="submit" value="Check">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Overlay HTML for displaying related articles -->
+    <div id="article-overlay" class="modal" tabindex="-1" style="display:none;">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Related Articles</h5>
+                    <button type="button" class="btn-close" id="overlay-close"></button>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th scope="col">Title</th>
+                                <th scope="col">URL</th>
+                            </tr>
+                        </thead>
+                        <tbody id="related-articles-table">
+                            <!-- Articles will be dynamically added here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
 </div>
 
 <!-- Loading Screen -->
@@ -132,13 +159,15 @@
 </script>
 
 <script>
-    var chartData = JSON.parse('{{ chartData | tojson | default({}) }}') || {};
+    var interpretationCounts = JSON.parse('{{ interpretationCounts | tojson | default({}) }}') || {};
+    console.log("Interpretation Counts: ", interpretationCounts);
 </script>
 
 <script src="{{ url_for('static', path='javascript/drawChart.js') }}"></script>
 
 <!-- styling for the page -->
 <style>
+
     .chart-container {
         padding: 5px;
         background-color: rgb(203, 203, 203);
@@ -203,6 +232,35 @@
         justify-content: center;
         align-items: center;
         z-index: 1000;
+    }
+
+    /* Custom styling for the domain table */
+    .custom-domain-table {
+        margin-top: 30px;
+        background-color: #333333; /* Dark background */
+        color: white; /* White text */
+        border-color: #575656; /* Lighter border */
+        border-width: 3px; /* Border width */
+    }
+
+    .custom-domain-table th {
+        margin-top: 30px;
+        background-color: #444444; /* Darker header */
+        color: white;
+        border-width: 3px;
+    }
+
+    .custom-domain-table td {
+        margin-top: 30px;
+        background-color: #444444; /* Darker cells */
+        color: white;
+        border-width: 3px;
+    }
+
+    /* Padding for cells to give more space */
+    .custom-domain-table td, .custom-domain-table th {
+        padding: 10px;
+        text-align: center;
     }
 
 </style>
