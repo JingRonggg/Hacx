@@ -30,7 +30,7 @@ var ctx1 = document.getElementById('chart1').getContext('2d');
 var chart1 = new Chart(ctx1, {
     type: 'doughnut',
     data: {
-        labels: Object.keys(interpretationCounts), 
+        labels: Object.keys(interpretationCounts),
         datasets: [{
             label: 'Interpretation Counts',
             data: Object.values(interpretationCounts),
@@ -80,27 +80,27 @@ console.log(interpretationCounts2);
 
 var ctx2 = document.getElementById('chart2').getContext('2d');
 var chart2 = new Chart(ctx2, {
-    type: 'line',
-    data: {
-        labels: Object.keys(interpretationCounts2),
-        datasets: [{
-          label: 'My First Dataset',
-          data: Object.values(interpretationCounts2),
-          fill: true,
-          backgroundColor: 'rgba(255, 99, 132, 0.2)',
-          borderColor: 'rgb(255, 99, 132)',
-          pointBackgroundColor: 'rgb(255, 99, 132)',
-          pointBorderColor: '#fff',
-          pointHoverBackgroundColor: '#fff',
-          pointHoverBorderColor: 'rgb(255, 99, 132)'
-        }]
-      },
-      options: {
-        maintainAspectRatio: false,
-        elements: {
-          line: {
-            borderWidth: 2,
-          }
+  type: 'line',
+  data: {
+      labels: Object.keys(interpretationCounts2),
+      datasets: [{
+        label: 'My First Dataset',
+        data: Object.values(interpretationCounts2),
+        fill: true,
+        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+        borderColor: 'rgb(255, 99, 132)',
+        pointBackgroundColor: 'rgb(255, 99, 132)',
+        pointBorderColor: '#fff',
+        pointHoverBackgroundColor: '#fff',
+        pointHoverBorderColor: 'rgb(255, 99, 132)'
+      }]
+    },
+    options: {
+      maintainAspectRatio: false,
+      elements: {
+        line: {
+          borderWidth: 2,
         }
       }
+    }
 });

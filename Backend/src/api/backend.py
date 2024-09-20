@@ -76,6 +76,9 @@ def calculate_top_authors(data, top_n=6):
     top_authors = dict(author_counter.most_common(top_n))
     return top_authors
 
+from fastapi import Request
+from typing import Optional
+
 @app.get("/")
 async def health(request: Request, page: int = 1, page_size: int = 5, category: Optional[str] = None):
     page = page if page else 1
@@ -115,12 +118,12 @@ async def health(request: Request, page: int = 1, page_size: int = 5, category: 
     interpretation_counts2 = {}
 
     interpretation_data = db.query(
-            "SELECT CAST(interpretation AS VARCHAR(MAX)), COUNT(*) FROM output_data GROUP BY CAST(interpretation AS VARCHAR(MAX))"
-        )
+        "SELECT CAST(interpretation AS VARCHAR(MAX)), COUNT(*) FROM output_data GROUP BY CAST(interpretation AS VARCHAR(MAX))"
+    )
     
     interpretation_data2 = db.query(
-            "SELECT CAST(CONVERT(DATE, added_time) AS VARCHAR(MAX)), COUNT(*) FROM output_data WHERE CAST(interpretation AS VARCHAR(MAX)) = 'Fake' GROUP BY CONVERT(DATE, added_time);"
-        )
+        "SELECT CAST(CONVERT(DATE, added_time) AS VARCHAR(MAX)), COUNT(*) FROM output_data WHERE CAST(interpretation AS VARCHAR(MAX)) = 'Fake' GROUP BY CONVERT(DATE, added_time);"
+    )
 
     
 
@@ -129,23 +132,10 @@ async def health(request: Request, page: int = 1, page_size: int = 5, category: 
         if row[0] in interpretation_counts:
             interpretation_counts[row[0]] = row[1]
 
-# Iterate over the rows in interpretation_data2
     for row in interpretation_data2:
-        # Extract the date and the label
-        date = row[0]  # Assuming row[0] is the date
-        label = row[1]  # Assuming row[1] is the label (e.g., 'Propaganda', 'Real', etc.)
-        print(date)
-        print(label)
-        # Only count fake news ('Propaganda')
-        
-        # If the date is already in the dictionary, increment its count
-        if date in interpretation_counts2:
-            interpretation_counts2[date] += 1
-        else:
-            # If the date is not in the dictionary, add it with a count of 1
-            interpretation_counts2[date] = 1
-
-    print(interpretation_counts2)
+        date = row[0]  
+        label = row[1] 
+        interpretation_counts2[date] = label
 
     return templates.TemplateResponse(
         "home.html", 
@@ -153,8 +143,13 @@ async def health(request: Request, page: int = 1, page_size: int = 5, category: 
             "request": request,
             "result": db_outputdata_items,
             "interpretationCounts": interpretation_counts,
-            "interpretationCounts2": interpretation_counts2,
+            "interpretationCounts2": interpretation_counts2 if interpretation_counts2 else {},  
             "crawled": crawled_articles,
+            "top_authors": top_authors,
+            "page": page,
+            "page_size": page_size,
+            "total_pages": total_pages,
+            "selected_category": category
             "top_authors": top_authors,
             "page": page,
             "page_size": page_size,
@@ -173,8 +168,7 @@ async def check_article(request: Request, input_data: str = Form(...)):
         url_exists = db.query(f"SELECT COUNT(*) FROM dbo.input_data WHERE url = '{url}'")
 
         if url_exists[0][0] == 0:
-            # Insert the URL into the input_data table if it doesn't exist
-            db.send("input_data", (None, None, None, None, url))  # Assuming input_data has these fields
+            db.send("input_data", (None, None, None, None, url))  
 
         # Process the URL to detect fake news
         article = process_url(url)
