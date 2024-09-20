@@ -89,15 +89,17 @@
         </thead>
         <tbody>
             {% if result %}
+            {% for i in result %}
             <tr style="border-width: 3px">
-                <th scope="row">1</th>
-                <td>{{ result['title'] }}</td>
-                <td>{{ result['interpretation'] }}</td>
-                <td>{{ result['confidence'] }}%</td>
-                <td>{{ result['deepfake'] }}</td>
-                <td>{{ result['sentiment_explanation'] }}</td>
-                <td>{{ result['target_Audience'] }}</td>
+                <th scope="row">{{ loop.index }}</th>
+                <td>{{ i['title'] }}</td>
+                <td>{{ i['interpretation'] }}</td>
+                <td>{{ i['confidence'] }}%</td>
+                <td>{{ i['deepfake'] }}</td>
+                <td>{{ i['sentiment_explanation'] }}</td>
+                <td>{{ i['target_Audience'] }}</td>
             </tr>
+            {% endfor %}
             {% else %}
             <tr>
                 <td colspan="7" style="text-align: center;">No data available</td>

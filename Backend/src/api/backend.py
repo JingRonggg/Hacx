@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException, Request, Form
 from fastapi.templating import Jinja2Templates
-from fastapi.responses import HTMLResponse
+from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.gzip import GZipMiddleware
 from pydantic import BaseModel
@@ -79,6 +79,7 @@ def calculate_top_authors(data, top_n=6):
 async def health(request: Request):
     top_authors = calculate_top_authors(readtable("output_data"))
     crawled_articles = readtable("input_data")
+    db_outputdata_items = readtable("output_data")
 
     interpretation_counts = {
             "Real": 0,
@@ -98,6 +99,7 @@ async def health(request: Request):
         "home.html", 
         {
             "request": request,
+            "result": db_outputdata_items,
             "interpretationCounts": interpretation_counts,
             "crawled": crawled_articles,
             "top_authors": top_authors
@@ -140,20 +142,9 @@ async def check_article(request: Request, input_data: str = Form(...)):
                 url
             )
             createinput("output_data", output)
-            return templates.TemplateResponse('home.html', {
-                'request': request,
-                'result': article,
-                'input_data': {'url': url},
-                'top_authors': top_authors
-            })
 
         if hasattr(article, 'interpretation') and article.interpretation == "Not Propaganda":
-            return templates.TemplateResponse('home.html', context={
-                'request': request,
-                'result': article,
-                'input_data': {'url': url},
-                'top_authors': top_authors
-            })
+            return RedirectResponse(url = "/", status_code=303)
 
         # Perform fake news detection
         article_output = detect_fake_news_in_article(article)
@@ -192,13 +183,8 @@ async def check_article(request: Request, input_data: str = Form(...)):
             if row[0] in interpretation_counts:
                 interpretation_counts[row[0]] = row[1]
 
-        return templates.TemplateResponse('home.html', {
-            'request': request,
-            'result': article_output,
-            'input_data': article,
-            'top_authors': top_authors,
-            'interpretationCounts': interpretation_counts
-        })
+
+        return RedirectResponse(url="/", status_code=303)
 
     except Exception as e:
         top_authors = calculate_top_authors(readtable('output_data'))
@@ -220,10 +206,10 @@ async def articles(request: Request):
 
 @app.post("/articles")
 async def check_crawled_articles(request: Request):
-    urls = fetch_articles()
-    crawled_articles = readtable("input_data")
+    fetch_articles()
 
-    return templates.TemplateResponse(
-        "articles.html", 
-        {"request": request, "crawled": crawled_articles}
-    )
+    return RedirectResponse(url="/articles", status_code=303)
+    # return templates.TemplateResponse(
+    #     "articles.html", 
+    #     {"request": request, "crawled": crawled_articles}
+    # )
