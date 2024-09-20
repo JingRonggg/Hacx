@@ -4,32 +4,26 @@
 {% block content %}
 <div class="container-lg">
     <div class="row">
-        <!-- Flex container for 2x2 charts and Vertical box -->
+        <!-- Flex container for 1x2 charts and Vertical box -->
         <div class="d-flex flex-row">
-            <!-- 2x2 Chart Grid taking 2/3 of the row -->
-            <div class="col-8">
+            <!-- 1x2 Chart Grid taking 1/3 of the row -->
+            <div class="col-4"  styles="margin: 3px;">
                 <div class="row chart-wrapper">
-                    <div class="col-6 chart-container">
+                    <div class="col chart-container ">
                         <canvas id="chart1"></canvas>
                     </div>
-                    <div class="col-6 chart-container">
-                        <canvas id="chart2"></canvas>
-                    </div>
                 </div>
-                <div class="row chart-wrapper">
-                    <div class="col-6 chart-container">
-                        <canvas id="chart3"></canvas>
-                    </div>
-                    <div class="col-6 chart-container">
-                        <canvas id="chart4"></canvas>
+                <div class="row chart-wrapper mt-3">
+                    <div class="col chart-container ">
+                        <canvas id="chart2"></canvas>
                     </div>
                 </div>
             </div>
 
-            <!-- Top 5 occurrences -->
-            <div class="col-4 d-flex justify-content-center align-items-center" style="height: 450px;">
-                <div id="verticalContainer" class="text-center text-white p-1" style="font-size: 18px; width: 100%;">
-                    <h5 style="color: #f8c529; margin-top: 10px; font-size: 25px;">Authors Spreading Most Disinformation</h5>
+            <!-- Top 5 occurrences taking 1/3 of the row -->
+            <div class="col-4 " styles="margin: 5px;">
+                <div id="verticalContainer" class="text-center text-white p-3 " style="font-size: 18px; width: 100%;">
+                    <h5 style="color: #f8c529; font-size: 25px;">Authors Spreading Most Disinformation</h5>
                     <table class="table table-bordered custom-domain-table">
                         <thead>
                             <tr>
@@ -46,7 +40,7 @@
                             {% endfor %}
             
                             <!-- Ensure there are always 5 rows -->
-                            {% for _ in range(5 - top_authors|length) %}
+                            {% for _ in range(6 - top_authors|length) %}
                             <tr>
                                 <td>&nbsp;</td> <!-- Empty cell -->
                                 <td>&nbsp;</td> <!-- Empty cell -->
@@ -55,7 +49,26 @@
                         </tbody>
                     </table>
                 </div>
-            </div>            
+            </div>    
+
+            <!-- Vertical container for explanation in the remaining 1/3 of the row -->
+            <div class="col-4 mb-5" style="background-color: #2d2d2d; border-radius: 15px; height:95%;">
+                <div id="explanationContainer" class="text-center text-white" style="font-size: 18px; width: 100%; height: 460px; border-radius: 10px;">
+                    <h5 style="color: #f8c529; margin-top: 30px; font-size: 25px; align-content: center;">Explanation</h5>
+                    <div class="text-wrapper" style="overflow-y: auto; height: 400px; padding: 30px; margin-top: 35px;">
+                        {% if result %}
+                            <p style="text-align: justify;">
+                                {{ result['explanation'] }}
+                            </p>
+                        {% else %}
+                            <p style="text-align: center;">
+                                No explanation available.
+                            </p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
         </div>
     </div>
 
@@ -67,25 +80,27 @@
             <tr>
                 <th scope="col">#</th>
                 <th scope="col">Title</th>
-                <th scope="col">Explanation</th>
                 <th scope="col">Interpretation</th>
-                <th scope="col">Confidence</th>
-                <th scope="col">Deepfake</th>
+                <th scope="col">Confidence Level ( % )</th>
+                <th scope="col">Is it Deep Fake?</th>
+                <th scope="col">Sentimental Analysis</th>
+                <th scope="col">Target Group</th>
             </tr>
         </thead>
         <tbody>
             {% if result %}
             <tr style="border-width: 3px">
                 <th scope="row">1</th>
-                <td>{{result['title']}}</td>
-                <td>{{result['explanation']}}</td>
-                <td>{{result['interpretation']}}</td>
-                <td>{{result['confidence']}}</td>
-                <td>{{result['deepfake']}}</td>
+                <td>{{ result['title'] }}</td>
+                <td>{{ result['interpretation'] }}</td>
+                <td>{{ result['confidence'] }}%</td>
+                <td>{{ result['deepfake'] }}</td>
+                <td>{{ result['sentiment_explanation'] }}</td>
+                <td>{{ result['target_Audience'] }}</td>
             </tr>
             {% else %}
             <tr>
-                <td colspan="6" style="text-align: center;">No data available</td>
+                <td colspan="7" style="text-align: center;">No data available</td>
             </tr>
             {% endif %}
         </tbody>
@@ -137,7 +152,6 @@
         </div>
     </div>
 
-
 </div>
 
 <!-- Loading Screen -->
@@ -149,121 +163,12 @@
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<!-- Move all JavaScript code after the data is fetched -->
-<script>
-    var interpretationCounts = JSON.parse('{{ interpretationCounts | tojson | default({}) }}') || {};
-
-    console.log("Chart Data: ", chartData);
-    console.log("Interpretation Counts: ", interpretationCounts);
-
-</script>
-
 <script>
     var interpretationCounts = JSON.parse('{{ interpretationCounts | tojson | default({}) }}') || {};
     console.log("Interpretation Counts: ", interpretationCounts);
 </script>
 
 <script src="{{ url_for('static', path='javascript/drawChart.js') }}"></script>
-
-<!-- styling for the page -->
-<style>
-
-    .chart-container {
-        padding: 5px;
-        background-color: rgb(203, 203, 203);
-        border-radius: 15px;
-        width: 400px;
-        height: 200px;
-        margin: 10px;
-    }
-
-    canvas {
-        width: 100%;
-        height: 100%;
-    }
-
-    .chart-wrapper {
-        padding-bottom: 5px;
-    }
-
-    .custom-button {
-        background-color: #007bff;
-        color: white;
-        border: none;
-    }
-
-    .custom-button:hover {
-        background-color: #0056b3;
-        color: white;
-    }
-
-    .custom-table {
-        background-color: #333333;
-        color: white;
-        border-color: #575656;
-        border-width: 3px;
-    }
-
-    .custom-table th {
-        background-color: #444444;
-        color: white;
-        border-width: 3px;
-    }
-
-    .custom-table td {
-        background-color: #444444;
-        color: white;
-        border-width: 3px;
-    }
-
-    .modal-header {
-        background-color: #444444;
-        color: white;
-    }
-
-    .loading-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.5);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 1000;
-    }
-
-    /* Custom styling for the domain table */
-    .custom-domain-table {
-        margin-top: 30px;
-        background-color: #333333; /* Dark background */
-        color: white; /* White text */
-        border-color: #575656; /* Lighter border */
-        border-width: 3px; /* Border width */
-    }
-
-    .custom-domain-table th {
-        margin-top: 30px;
-        background-color: #444444; /* Darker header */
-        color: white;
-        border-width: 3px;
-    }
-
-    .custom-domain-table td {
-        margin-top: 30px;
-        background-color: #444444; /* Darker cells */
-        color: white;
-        border-width: 3px;
-    }
-
-    /* Padding for cells to give more space */
-    .custom-domain-table td, .custom-domain-table th {
-        padding: 10px;
-        text-align: center;
-    }
-
-</style>
 
 <!-- Script to handle the loading spinner and overlay -->
 <script>
@@ -283,5 +188,4 @@
         }
     });
 </script>
-
 {% endblock %}

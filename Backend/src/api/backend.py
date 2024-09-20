@@ -60,7 +60,7 @@ class ArticleOutput(BaseModel):
     disinformation_explanation: Optional[str] = None
     target_Audience: Optional[str] = None
 
-def calculate_top_authors(data, top_n=5):
+def calculate_top_authors(data, top_n=6):
     author_counter = Counter()
 
     for entry in data:
@@ -119,6 +119,9 @@ async def check_article(request: Request, input_data: str = Form(...)):
 
         # Process the URL to detect fake news
         article = process_url(url)
+
+        print(article["title"])
+        
         top_authors = calculate_top_authors(readtable("output_data"))
 
         if hasattr(article, 'interpretation') and article.interpretation == "Propaganda":
@@ -133,21 +136,23 @@ async def check_article(request: Request, input_data: str = Form(...)):
                 article.sentiment_explanation,
                 article.disinformation,
                 article.disinformation_explanation,
-                article.target_Audience, 
+                article.target_Audience,
                 url
             )
             createinput("output_data", output)
             return templates.TemplateResponse('home.html', {
                 'request': request,
                 'result': article,
-                'input_data': {'url': url}
+                'input_data': {'url': url},
+                'top_authors': top_authors
             })
 
         if hasattr(article, 'interpretation') and article.interpretation == "Not Propaganda":
             return templates.TemplateResponse('home.html', context={
                 'request': request,
                 'result': article,
-                'input_data': {'url': url}
+                'input_data': {'url': url},
+                'top_authors': top_authors
             })
 
         # Perform fake news detection
@@ -157,7 +162,7 @@ async def check_article(request: Request, input_data: str = Form(...)):
             article_output.deepfake = article['deepfake']
 
         # Save the processed article to the output_data table
-        db.send("output_data", (
+        output = (
             article_output.title,
             article_output.explanation,
             article_output.interpretation,
@@ -169,7 +174,8 @@ async def check_article(request: Request, input_data: str = Form(...)):
             article_output.disinformation_explanation,
             article_output.target_Audience,
             url
-        ))
+        )
+
         createinput("output_data", output)
 
         interpretation_counts = {
