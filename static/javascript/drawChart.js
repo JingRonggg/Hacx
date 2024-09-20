@@ -1,54 +1,37 @@
-// Initialize first chart (chart1)
 var ctx1 = document.getElementById('chart1').getContext('2d');
+var prevalenceData = {
+    labels: ['Fake', 'Real'],
+    datasets: [{
+        data: [3, 4], // These will be dynamically populated
+        backgroundColor: ['rgba(255, 99, 132, 0.2)', 'rgba(54, 162, 235, 0.2)'],
+        borderColor: ['rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)'],
+        borderWidth: 1
+    }]
+};
+
 var chart1 = new Chart(ctx1, {
-    type: 'line',
-    data: {
-        labels: ['January', 'February', 'March', 'April', 'May', 'June'],
-        datasets: [{
-            label: 'Dataset 1',
-            data: [12, 19, 3, 5, 2, 3],
-            borderColor: 'rgba(75, 192, 192, 1)',
-            borderWidth: 2,
-        }]
-    },
+    type: 'pie',
+    data: prevalenceData,
     options: {
-      maintainAspectRatio: false,
-      responsive: true,
-      scales: {
-          y: {
-              beginAtZero: true,
-              ticks: {
-                  font: {
-                      weight: 'bold' // Make y-axis labels bold
-                      
-                  }
-              }
-          },
-          x: {
-              ticks: {
-                  font: {
-                      weight: 'bold' // Make x-axis labels bold
-                  }
-              }
-          }
-      },
-      plugins: {
-          title: {
-              display: true,
-              text: 'Dataset 1',
-              font: {
-                  weight: 'bold', // Make chart title bold
-                  size: 18 // Increase the font size for the title
-              }
-          },
-          legend: {
-              labels: {
-                  font: {
-                      weight: 'bold' // Make legend labels bold
-                  }
-              }
-          }
-      }
+        maintainAspectRatio: false,
+        responsive: true,
+        plugins: {
+            title: {
+                display: true,
+                text: 'Prevalence of Disinformation (Fake vs. Real)',
+                font: {
+                    weight: 'bold',
+                    size: 18
+                }
+            },
+            legend: {
+                labels: {
+                    font: {
+                        weight: 'bold'
+                    }
+                }
+            }
+        }
     }
 });
 
