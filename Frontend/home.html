@@ -102,7 +102,7 @@
                 <div class="modal-body">
                     <form id="urlForm" method="post" onsubmit="showLoadingOverlay();">
                         <div class="mb-3">
-                            <label for="formGroupExampleInput" class="form-label">Insert a news article URL below:</label>
+                            <label for="input_data" class="form-label">Insert a news article URL below:</label>
                             <input type="text" id="input_data" name="input_data" class="form-control" placeholder="https://example.com" value="">
                         </div>
                         <input id="submitButton" class="btn btn-primary custom-button" type="submit" value="Check">
@@ -150,7 +150,8 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
-    var chartData = JSON.parse('{{ chartData }}');
+    var interpretationCounts = JSON.parse('{{ interpretationCounts | tojson | default({}) }}') || {};
+    console.log("Interpretation Counts: ", interpretationCounts);
 </script>
 
 <script src="{{ url_for('static', path='javascript/drawChart.js') }}"></script>
@@ -173,5 +174,4 @@
         }
     });
 </script>
-
 {% endblock %}

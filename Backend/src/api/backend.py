@@ -16,6 +16,7 @@ from dotenv import load_dotenv
 from src.db.testingDB import readtable
 from src.db.testingDB import createinput, get_author
 from src.LLMs.sentimental_analysis import sentimental_analysis
+import json
 
 app = FastAPI()
 
@@ -76,52 +77,28 @@ def calculate_top_authors(data, top_n=5):
 
 @app.get("/")
 async def health(request: Request):
-    data = readtable("output_data")
+    top_authors = calculate_top_authors(readtable("output_data"))
     crawled_articles = readtable("input_data")
 
-    chart_data = { 
-        "title": [], 
-        "explanation": [], 
-        "interpretation": [], 
-        "confidence": [], 
-        "deepfake": [], 
-        "sentiment": [], 
-        "sentiment_explanation": [], 
-        "disinformation": [], 
-        "disinformation_explanation": [], 
-        "target_audience": [],
-        "url": []
-        } 
+    interpretation_counts = {
+            "Real": 0,
+            "Propaganda": 0,
+            "Unsure (Neutral)": 0
+        }
     
-    authors = []
+    interpretation_data = db.query(
+            "SELECT CAST(interpretation AS VARCHAR(MAX)), COUNT(*) FROM manual_data GROUP BY CAST(interpretation AS VARCHAR(MAX))"
+        )
 
-    for entry in data: 
-        chart_data["title"].append(entry[0]) 
-        chart_data["explanation"].append(entry[1])
-        chart_data["interpretation"].append(entry[2])
-        chart_data["confidence"].append(entry[3])
-        chart_data["deepfake"].append(entry[4])
-        chart_data["sentiment"].append(entry[5])
-        chart_data["sentiment_explanation"].append(entry[6]) 
-        chart_data["disinformation"].append(entry[7])
-        chart_data["disinformation_explanation"].append(entry[8])
-        chart_data["target_audience"].append(entry[9])
-        
-        # Extract domain and update the counter
-        if entry[2].lower() == "fake":
-            author = get_author(entry[10])
-            authors.append(author)
-
-        chart_data["url"].append(entry[10])
-
-        author_counter = Counter(authors)
-        top_authors = dict(author_counter.most_common(5))
+    for row in interpretation_data:
+            if row[0] in interpretation_counts:
+                interpretation_counts[row[0]] = row[1]
 
     return templates.TemplateResponse(
         "home.html", 
         {
             "request": request,
-            "chartData": chart_data,
+            "interpretationCounts": interpretation_counts,
             "crawled": crawled_articles,
             "top_authors": top_authors
         }
@@ -150,22 +127,17 @@ async def check_article(request: Request, input_data: str = Form(...)):
                 url
             )
             createinput("output_data", output)
-            
-
             return templates.TemplateResponse('home.html', {
                 'request': request,
                 'result': article,
-                'input_data': {'url': url},
-                'top_authors': top_authors
+                'input_data': {'url': url}
             })
 
         if hasattr(article, 'interpretation') and article.interpretation == "Not Propaganda":
-
-            return templates.TemplateResponse('home.html', {
+            return templates.TemplateResponse('home.html', context={
                 'request': request,
                 'result': article,
-                'input_data': {'url': url},
-                'top_authors': top_authors
+                'input_data': {'url': url}
             })
 
         # Perform fake news detection
@@ -189,11 +161,26 @@ async def check_article(request: Request, input_data: str = Form(...)):
         )
         createinput("output_data", output)
 
+        interpretation_counts = {
+            "Real": 0,
+            "Propaganda": 0,
+            "Unsure (Neutral)": 0
+        }
+
+        interpretation_data = db.query(
+            "SELECT CAST(interpretation AS VARCHAR(MAX)), COUNT(*) FROM manual_data GROUP BY CAST(interpretation AS VARCHAR(MAX))"
+        )
+        
+        for row in interpretation_data:
+            if row[0] in interpretation_counts:
+                interpretation_counts[row[0]] = row[1]
+
         return templates.TemplateResponse('home.html', {
             'request': request,
             'result': article_output,
             'input_data': article,
-            'top_authors': top_authors
+            'top_authors': top_authors,
+            'interpretationCounts': interpretation_counts
         })
 
     except Exception as e:
@@ -202,7 +189,8 @@ async def check_article(request: Request, input_data: str = Form(...)):
             'request': request,
             'result': str(e),
             'input_data': {'url': None},
-            'top_authors': top_authors
+            'top_authors': top_authors,
+            'interpretationCounts': {"Real": 0, "Propaganda": 0, "Unsure (Neutral)": 0}
         })
 
 @app.get("/articles")
@@ -222,23 +210,3 @@ async def check_crawled_articles(request: Request):
         "articles.html", 
         {"request": request, "crawled": crawled_articles}
     )
-
-@app.post("/get_related_articles")
-async def get_related_articles(author: str):
-    try:
-        # Assuming your `readtable` function can fetch all articles
-        articles = readtable("input_data")  # Example table storing article info
-
-        related_articles = []
-        for entry in articles:
-            article_author = get_author(entry[10])  # Example: get author using entry index 10
-            if article_author == author:
-                related_articles.append({
-                    "title": entry[0],  # Example: title
-                    "url": entry[10]   # Example: URL
-                })
-
-        return {"articles": related_articles}
-
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
