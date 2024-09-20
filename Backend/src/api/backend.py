@@ -38,7 +38,7 @@ db = DatabaseAccessAzure(
 )
 
 # Set the correct path for Jinja2 templates directory
-templates = Jinja2Templates(directory="..\Frontend")
+templates = Jinja2Templates(directory="../Frontend")
 
 # Set the correct path for static files directory
 app.mount("/static", StaticFiles(directory="../static"), name="static")
@@ -93,91 +93,81 @@ async def health(request: Request):
         "disinformation_explanation": [], 
         "target_audience": [],
         "url": []
-        } 
-    
-    url_domains = []
+    }
 
-    for entry in data: 
-        chart_data["title"].append(entry[0]) 
-        chart_data["explanation"].append(entry[1])
-        chart_data["interpretation"].append(entry[2])
-        chart_data["confidence"].append(entry[3])
-        chart_data["deepfake"].append(entry[4])
-        chart_data["sentiment"].append(entry[5])
-        chart_data["sentiment_explanation"].append(entry[6]) 
-        chart_data["disinformation"].append(entry[7])
-        chart_data["disinformation_explanation"].append(entry[8])
-        chart_data["target_audience"].append(entry[9])
+    # Populate chart_data from the output_data table
+    for entry in data:
+        chart_data["title"].append(entry[0] if entry[0] is not None else "No Title")
+        chart_data["explanation"].append(entry[1] if entry[1] is not None else "No Explanation")
+        chart_data["interpretation"].append(entry[2] if entry[2] is not None else "Unknown")
+        chart_data["confidence"].append(entry[3] if entry[3] is not None else 0.0)
+        chart_data["deepfake"].append(entry[4] if entry[4] is not None else 0.0)
+
+    print(f"Chart Data: {chart_data}")
+
+    # Calculate top domains for fake news articles
+    top_domains = calculate_top_domains(data)
+
+    # Initialize the interpretation counts for all categories from your output_data table
+    interpretation_counts = {
+        "Fake": 0,
+        "LIKELY TRUE": 0,
+        "Real": 0,
+        "Unclear": 0,
+        "Unsure (Neutral)": 0
+    }
+
+    # Fetch interpretation counts from the output_data table
+    try:
+        interpretation_data = db.query(
+            "SELECT CAST(interpretation AS VARCHAR(MAX)), COUNT(*) FROM output_data GROUP BY CAST(interpretation AS VARCHAR(MAX))"
+        )
         
-        # Extract domain and update the counter
-        if entry[2].lower() == "fake":
-            parsed_url = urlparse(entry[10])
-            domain = parsed_url.netloc
-            url_domains.append(domain)
+        # Populate interpretation counts with new categories
+        for row in interpretation_data:
+            if row[0] in interpretation_counts:
+                interpretation_counts[row[0]] = row[1]
 
-        chart_data["url"].append(entry[10])
+        print(f"Interpretation Counts: {interpretation_counts}")
 
-        domain_counter = Counter(url_domains)
-        top_domains = dict(domain_counter.most_common(5))
+    except Exception as e:
+        print(f"Failed to fetch interpretation data: {str(e)}")
 
     return templates.TemplateResponse(
         "home.html", 
         {
-            "request": request,
-            "chartData": chart_data,
-            "crawled": crawled_articles,
-            "top_domains": top_domains
+            "request": request, 
+            "chartData": chart_data,  
+            "top_domains": top_domains,  
+            "interpretationCounts": interpretation_counts, 
+            "crawled": crawled_articles  
         }
     )
 
 @app.post("/")
 async def check_article(request: Request, input_data: str = Form(...)):
     try:
+        # Process the URL and decode it
         url = unquote(input_data)
+        
+        # Check if the URL already exists in the input_data table
+        url_exists = db.query(f"SELECT COUNT(*) FROM dbo.input_data WHERE url = '{url}'")
+
+        if url_exists[0][0] == 0:
+            # Insert the URL into the input_data table if it doesn't exist
+            db.send("input_data", (None, None, None, None, url))  # Assuming input_data has these fields
+
+        # Process the URL to detect fake news
         article = process_url(url)
-        top_domains = calculate_top_domains(readtable("output_data"))
 
-        if hasattr(article, 'interpretation') and article.interpretation == "Propaganda":
-            # send output to db table
-            output = (
-                article.title,
-                article.explanation,
-                article.interpretation,
-                article.confidence,
-                article.deepfake,
-                article.sentiment,
-                article.sentiment_explanation,
-                article.disinformation,
-                article.disinformation_explanation,
-                article.target_Audience, 
-                url
-            )
-            createinput("output_data", output)
-            
-
-            return templates.TemplateResponse('home.html', {
-                'request': request,
-                'result': article,
-                'input_data': {'url': url},
-                'top_domains': top_domains
-            })
-
-        if hasattr(article, 'interpretation') and article.interpretation == "Not Propaganda":
-
-            return templates.TemplateResponse('home.html', {
-                'request': request,
-                'result': article,
-                'input_data': {'url': url},
-                'top_domains': top_domains
-            })
-
-        # Perform fake news detection
+        # Perform fake news detection and assign additional fields
         article_output = detect_fake_news_in_article(article)
 
         if 'deepfake' in article:
             article_output.deepfake = article['deepfake']
 
-        output = (
+        # Save the processed article to the output_data table
+        db.send("output_data", (
             article_output.title,
             article_output.explanation,
             article_output.interpretation,
@@ -188,26 +178,67 @@ async def check_article(request: Request, input_data: str = Form(...)):
             article_output.disinformation,
             article_output.disinformation_explanation,
             article_output.target_Audience,
-            url
-        )
-        createinput("output_data", output)
+            url  # Add the URL to the output
+        ))
 
+        # **Re-fetch chart and article data after inserting the new article**
+        data = db.readtable("output_data") or []
+        chart_data = {
+            "title": [],
+            "explanation": [],
+            "interpretation": [],
+            "confidence": [],
+            "deepfake": [],
+        }
+
+        # Update the chart data from the database
+        for entry in data:
+            chart_data["title"].append(entry[0] if entry[0] is not None else "No Title")
+            chart_data["explanation"].append(entry[1] if entry[1] is not None else "No Explanation")
+            chart_data["interpretation"].append(entry[2] if entry[2] is not None else "Unknown")
+            chart_data["confidence"].append(entry[3] if entry[3] is not None else 0.0)
+            chart_data["deepfake"].append(entry[4] if entry[4] is not None else 0.0)
+        
+        # Calculate top domains for fake news articles
+        top_domains = calculate_top_domains(data)
+
+        # Fetch interpretation counts from the output_data table and handle new categories
+        interpretation_counts = {
+            "Fake": 0,
+            "LIKELY TRUE": 0,
+            "Real": 0,
+            "Unclear": 0,
+            "Unsure (Neutral)": 0
+        }
+
+        # Fetch interpretation counts from the database
+        interpretation_data = db.query(
+            "SELECT CAST(interpretation AS VARCHAR(MAX)), COUNT(*) FROM output_data GROUP BY CAST(interpretation AS VARCHAR(MAX))"
+        )
+        
+        for row in interpretation_data:
+            if row[0] in interpretation_counts:
+                interpretation_counts[row[0]] = row[1]
+
+        # Now return the updated template with both the article and chart data
         return templates.TemplateResponse('home.html', {
             'request': request,
-            'result': article_output,
-            'input_data': article,
-            'top_domains': top_domains
+            'result': article_output,  # Article that was just added
+            'input_data': article,  # Original article data
+            'chartData': chart_data,  # Updated chart data
+            'top_domains': top_domains,  # Updated top domains
+            'interpretationCounts': interpretation_counts  # Updated interpretation counts with new categories
         })
 
     except Exception as e:
-        top_domains = calculate_top_domains(readtable('output_data'))
+        print(f"Error while processing article: {str(e)}")
         return templates.TemplateResponse('home.html', {
             'request': request,
-            'result': str(e),
+            'result': f"Error: {str(e)}",
             'input_data': {'url': None},
-            'top_domains': top_domains
+            'interpretationCounts': {"Fake": 0, "LIKELY TRUE": 0, "Real": 0, "Unclear": 0, "Unsure (Neutral)": 0},
+            'top_domains': {}
         })
-
 
 
 
