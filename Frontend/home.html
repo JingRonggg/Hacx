@@ -122,15 +122,23 @@
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+<!-- Move all JavaScript code after the data is fetched -->
 <script>
-    var chartData = JSON.parse('{{ chartData }}');
+    var interpretationCounts = JSON.parse('{{ interpretationCounts | tojson | default({}) }}') || {};
+
+    console.log("Chart Data: ", chartData);
+    console.log("Interpretation Counts: ", interpretationCounts);
+
+</script>
+
+<script>
+    var chartData = JSON.parse('{{ chartData | tojson | default({}) }}') || {};
 </script>
 
 <script src="{{ url_for('static', path='javascript/drawChart.js') }}"></script>
 
 <!-- styling for the page -->
 <style>
-
     .chart-container {
         padding: 5px;
         background-color: rgb(203, 203, 203);
@@ -197,35 +205,6 @@
         z-index: 1000;
     }
 
-    /* Custom styling for the domain table */
-    .custom-domain-table {
-        margin-top: 30px;
-        background-color: #333333; /* Dark background */
-        color: white; /* White text */
-        border-color: #575656; /* Lighter border */
-        border-width: 3px; /* Border width */
-    }
-
-    .custom-domain-table th {
-        margin-top: 30px;
-        background-color: #444444; /* Darker header */
-        color: white;
-        border-width: 3px;
-    }
-
-    .custom-domain-table td {
-        margin-top: 30px;
-        background-color: #444444; /* Darker cells */
-        color: white;
-        border-width: 3px;
-    }
-
-    /* Padding for cells to give more space */
-    .custom-domain-table td, .custom-domain-table th {
-        padding: 10px;
-        text-align: center;
-    }
-
 </style>
 
 <!-- Script to handle the loading spinner and overlay -->
@@ -246,4 +225,5 @@
         }
     });
 </script>
+
 {% endblock %}
