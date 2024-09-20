@@ -75,16 +75,14 @@
         </thead>
         <tbody>
             {% if result %}
-            {% for i in result %}
             <tr style="border-width: 3px">
-                <th scope="row">{{ loop.index }}</th>
-                <td>{{i['title']}}</td>
-                <td>{{i['explanation']}}</td>
-                <td>{{i['interpretation']}}</td>
-                <td>{{i['confidence']}}</td>
-                <td>{{i['deepfake']}}</td>
+                <th scope="row">1</th>
+                <td>{{result['title']}}</td>
+                <td>{{result['explanation']}}</td>
+                <td>{{result['interpretation']}}</td>
+                <td>{{result['confidence']}}</td>
+                <td>{{result['deepfake']}}</td>
             </tr>
-            {% endfor %}
             {% else %}
             <tr>
                 <td colspan="6" style="text-align: center;">No data available</td>
