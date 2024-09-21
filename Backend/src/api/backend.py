@@ -88,13 +88,40 @@ async def health(request: Request):
             "Unsure (Neutral)": 0
         }
     
+    interpretation_counts2 = {}
+    
     interpretation_data = db.query(
-            "SELECT CAST(interpretation AS VARCHAR(MAX)), COUNT(*) FROM manual_data GROUP BY CAST(interpretation AS VARCHAR(MAX))"
+            "SELECT CAST(interpretation AS VARCHAR(MAX)), COUNT(*) FROM output_data GROUP BY CAST(interpretation AS VARCHAR(MAX))"
         )
+    
+    interpretation_data2 = db.query(
+            "SELECT CAST(CONVERT(DATE, added_time) AS VARCHAR(MAX)), COUNT(*) FROM output_data WHERE CAST(interpretation AS VARCHAR(MAX)) = 'Fake' GROUP BY CONVERT(DATE, added_time);"
+        )
+
+    
+    print(interpretation_data2)
 
     for row in interpretation_data:
             if row[0] in interpretation_counts:
                 interpretation_counts[row[0]] = row[1]
+
+# Iterate over the rows in interpretation_data2
+    for row in interpretation_data2:
+        # Extract the date and the label
+        date = row[0]  # Assuming row[0] is the date
+        label = row[1]  # Assuming row[1] is the label (e.g., 'Propaganda', 'Real', etc.)
+        print(date)
+        print(label)
+        # Only count fake news ('Propaganda')
+        
+        # If the date is already in the dictionary, increment its count
+        if date in interpretation_counts2:
+            interpretation_counts2[date] += 1
+        else:
+            # If the date is not in the dictionary, add it with a count of 1
+            interpretation_counts2[date] = 1
+
+    print(interpretation_counts2)
 
     return templates.TemplateResponse(
         "home.html", 
@@ -102,6 +129,7 @@ async def health(request: Request):
             "request": request,
             "result": db_outputdata_items,
             "interpretationCounts": interpretation_counts,
+            "interpretationCounts2": interpretation_counts2,
             "crawled": crawled_articles,
             "top_authors": top_authors
         }
