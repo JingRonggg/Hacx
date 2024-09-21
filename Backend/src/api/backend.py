@@ -17,6 +17,7 @@ from src.db.testingDB import readtable
 from src.db.testingDB import createinput, get_author
 from src.LLMs.sentimental_analysis import sentimental_analysis
 import json
+import datetime
 
 app = FastAPI()
 
@@ -139,7 +140,8 @@ async def check_article(request: Request, input_data: str = Form(...)):
                 article.disinformation,
                 article.disinformation_explanation,
                 article.target_Audience,
-                url
+                url,
+                datetime.datetime.now()
             )
             createinput("output_data", output)
 
@@ -164,7 +166,8 @@ async def check_article(request: Request, input_data: str = Form(...)):
             article_output.disinformation,
             article_output.disinformation_explanation,
             article_output.target_Audience,
-            url
+            url,
+            datetime.datetime.now()
         )
 
         createinput("output_data", output)

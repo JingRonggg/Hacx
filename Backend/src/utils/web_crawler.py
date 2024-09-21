@@ -162,7 +162,8 @@ def fetch_articles():
                     article_output.disinformation,
                     article_output.disinformation_explanation,
                     article_output.target_Audience,
-                    url
+                    url,
+                    datetime.now()
                 )
                 # insert into manual_data table
                 createinput("output_data", output)
