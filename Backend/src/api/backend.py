@@ -76,8 +76,6 @@ def calculate_top_authors(data, top_n=6):
     top_authors = dict(author_counter.most_common(top_n))
     return top_authors
 
-from fastapi import Request
-from typing import Optional
 
 @app.get("/")
 async def health(request: Request, page: int = 1, page_size: int = 5, category: Optional[str] = None):
@@ -118,24 +116,39 @@ async def health(request: Request, page: int = 1, page_size: int = 5, category: 
     interpretation_counts2 = {}
 
     interpretation_data = db.query(
-        "SELECT CAST(interpretation AS VARCHAR(MAX)), COUNT(*) FROM output_data GROUP BY CAST(interpretation AS VARCHAR(MAX))"
-    )
+            "SELECT CAST(interpretation AS VARCHAR(MAX)), COUNT(*) FROM output_data GROUP BY CAST(interpretation AS VARCHAR(MAX))"
+        )
     
     interpretation_data2 = db.query(
-        "SELECT CAST(CONVERT(DATE, added_time) AS VARCHAR(MAX)), COUNT(*) FROM output_data WHERE CAST(interpretation AS VARCHAR(MAX)) = 'Fake' GROUP BY CONVERT(DATE, added_time);"
-    )
+            "SELECT CAST(CONVERT(DATE, added_time) AS VARCHAR(MAX)), COUNT(*) FROM output_data WHERE CAST(interpretation AS VARCHAR(MAX)) = 'Fake' GROUP BY CONVERT(DATE, added_time);"
+        )
 
     
 
+    print(interpretation_data)  # Should display something like {"Fake": 1, "Real": 5, ...}
+    print(interpretation_data2)  # Should display the time-based counts.
 
     for row in interpretation_data:
         if row[0] in interpretation_counts:
             interpretation_counts[row[0]] = row[1]
 
+# Iterate over the rows in interpretation_data2
     for row in interpretation_data2:
-        date = row[0]  
-        label = row[1] 
-        interpretation_counts2[date] = label
+        # Extract the date and the label
+        date = row[0]  # Assuming row[0] is the date
+        label = row[1]  # Assuming row[1] is the label (e.g., 'Propaganda', 'Real', etc.)
+        print(date)
+        print(label)
+        # Only count fake news ('Propaganda')
+        
+        # If the date is already in the dictionary, increment its count
+        if date in interpretation_counts2:
+            interpretation_counts2[date] += 1
+        else:
+            # If the date is not in the dictionary, add it with a count of 1
+            interpretation_counts2[date] = 1
+
+    print(interpretation_counts2)
 
     return templates.TemplateResponse(
         "home.html", 
@@ -143,13 +156,8 @@ async def health(request: Request, page: int = 1, page_size: int = 5, category: 
             "request": request,
             "result": db_outputdata_items,
             "interpretationCounts": interpretation_counts,
-            "interpretationCounts2": interpretation_counts2 if interpretation_counts2 else {},  
+            "interpretationCounts2": interpretation_counts2,
             "crawled": crawled_articles,
-            "top_authors": top_authors,
-            "page": page,
-            "page_size": page_size,
-            "total_pages": total_pages,
-            "selected_category": category
             "top_authors": top_authors,
             "page": page,
             "page_size": page_size,
