@@ -11,7 +11,6 @@ function updateTable(articles) {
       return;
   }
 
-  // Iterate over the filtered articles and add them as new rows
   articles.forEach((article, index) => {
       var row = `<tr style="border-width: 3px">
           <th scope="row">${index + 1}</th>
@@ -36,18 +35,18 @@ var chart1 = new Chart(ctx1, {
             label: 'Interpretation Counts',
             data: Object.values(interpretationCounts),
             backgroundColor: [
-                'rgba(255, 99, 132, 0.2)',   // Color for Fake
-                'rgba(54, 162, 235, 0.2)',   // Color for LIKELY TRUE
-                'rgba(255, 206, 86, 0.2)',   // Color for Real
-                'rgba(75, 192, 192, 0.2)',   // Color for Unclear
-                'rgba(153, 102, 255, 0.2)'   // Color for Unsure (Neutral)
+                'rgba(255, 99, 132, 0.2)',   
+                'rgba(54, 162, 235, 0.2)',  
+                'rgba(255, 206, 86, 0.2)',   
+                'rgba(75, 192, 192, 0.2)',   
+                'rgba(153, 102, 255, 0.2)'   
             ],
             borderColor: [
-                'rgba(255, 99, 132, 1)',     // Border color for Fake
-                'rgba(54, 162, 235, 1)',     // Border color for LIKELY TRUE
-                'rgba(255, 206, 86, 1)',     // Border color for Real
-                'rgba(75, 192, 192, 1)',     // Border color for Unclear
-                'rgba(153, 102, 255, 1)'     // Border color for Unsure (Neutral)
+                'rgba(255, 99, 132, 1)',     
+                'rgba(54, 162, 235, 1)',    
+                'rgba(255, 206, 86, 1)',     
+                'rgba(75, 192, 192, 1)',     
+                'rgba(153, 102, 255, 1)'     
             ],
             borderWidth: 1
         }]
@@ -60,12 +59,17 @@ var chart1 = new Chart(ctx1, {
                 var clickedIndex = elements[0].index;
                 var selectedCategory = chart1.data.labels[clickedIndex];
 
+                // Default pagination settings (page = 1, page_size = 5)
+                var page = 1;
+                var page_size = 5;
+
                 // Make an AJAX request to get filtered data based on the selected category
-                fetch(`/get_articles_by_category?category=${selectedCategory}`)
+                fetch(`/get_articles_by_category?category=${selectedCategory}&page=${page}&page_size=${page_size}`)
                 .then(response => response.json())
                 .then(data => {
                     // Call the function to update the table with the filtered data
                     updateTable(data.articles);
+                    updatePagination(data.total_pages, data.current_page);
                 })
                 .catch(error => console.error('Error fetching filtered data:', error));
             }
