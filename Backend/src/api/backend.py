@@ -78,6 +78,7 @@ def calculate_top_authors(data, top_n=6):
 
 @app.get("/")
 async def health(request: Request, page: int = 1, page_size: int = 5, category: Optional[str] = None):
+    page = page if page else 1
     # Get the top authors for display
     top_authors = calculate_top_authors(readtable("output_data"))
     crawled_articles = readtable("input_data")
@@ -122,7 +123,7 @@ async def health(request: Request, page: int = 1, page_size: int = 5, category: 
         )
 
     
-    print(interpretation_data2)
+
 
     for row in interpretation_data:
         if row[0] in interpretation_counts:
@@ -277,11 +278,19 @@ async def check_crawled_articles(request: Request):
 
 
 @app.get("/get_articles_by_category")
-async def get_articles_by_category(category: str):
+async def get_articles_by_category(category: str, page: int = 1, page_size: int = 5):
     try:
-        # Parameterized query to prevent SQL injection
-        articles = db.query("SELECT * FROM output_data WHERE CAST(interpretation AS VARCHAR(MAX)) = ?", (category,))
-        
+        # Calculate the offset for pagination
+        offset = (page - 1) * page_size
+
+        # Query to fetch filtered articles by category with pagination
+        query = """
+            SELECT * FROM output_data 
+            WHERE CAST(interpretation AS VARCHAR(MAX)) = ? 
+            ORDER BY added_time DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
+        """
+        articles = db.query(query, (category, offset, page_size))
+
         # Format the articles into a list of dictionaries
         articles_list = []
         for article in articles:
@@ -294,8 +303,20 @@ async def get_articles_by_category(category: str):
                 "sentiment_explanation": article[5],
                 "target_Audience": article[6]
             })
-        
-        return {"articles": articles_list}
-    
+
+        # Fetch total count of articles matching the category for pagination
+        total_articles_query = """
+            SELECT COUNT(*) FROM output_data WHERE CAST(interpretation AS VARCHAR(MAX)) = ?
+        """
+        total_articles = db.query(total_articles_query, (category,))[0][0]
+
+        total_pages = (total_articles + page_size - 1) // page_size
+
+        return {
+            "articles": articles_list,
+            "total_pages": total_pages,
+            "current_page": page,
+        }
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
