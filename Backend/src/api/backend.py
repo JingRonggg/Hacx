@@ -77,19 +77,40 @@ def calculate_top_authors(data, top_n=6):
     return top_authors
 
 @app.get("/")
-async def health(request: Request):
+async def health(request: Request, page: int = 1, page_size: int = 5, category: Optional[str] = None):
+    # Get the top authors for display
     top_authors = calculate_top_authors(readtable("output_data"))
     crawled_articles = readtable("input_data")
-    db_outputdata_items = readtable("output_data")
 
+    # Base query for fetching articles
+    query = "SELECT * FROM output_data"
+    
+    # If a category is selected, filter by category
+    if category:
+        query += f" WHERE interpretation = '{category}'"
+    
+    # Get the total number of articles (with or without category filter)
+    total_articles = len(db.query(query))
+    
+    # Calculate the offset for pagination
+    offset = (page - 1) * page_size
+
+    # Apply pagination with OFFSET and FETCH NEXT (with or without category filter)
+    paginated_query = f"{query} ORDER BY (SELECT NULL) OFFSET {offset} ROWS FETCH NEXT {page_size} ROWS ONLY"
+    db_outputdata_items = db.query(paginated_query)
+
+    # Calculate the total number of pages
+    total_pages = (total_articles + page_size - 1) // page_size
+
+    # Prepare interpretation counts for chart display
     interpretation_counts = {
-            "Real": 0,
-            "Propaganda": 0,
-            "Unsure (Neutral)": 0
-        }
-    
-    interpretation_counts2 = {}
-    
+        "Fake": 0,
+        "LIKELY TRUE": 0,
+        "Real": 0,
+        "Unclear": 0,
+        "Unsure (Neutral)": 0
+    }
+
     interpretation_data = db.query(
             "SELECT CAST(interpretation AS VARCHAR(MAX)), COUNT(*) FROM output_data GROUP BY CAST(interpretation AS VARCHAR(MAX))"
         )
@@ -102,8 +123,8 @@ async def health(request: Request):
     print(interpretation_data2)
 
     for row in interpretation_data:
-            if row[0] in interpretation_counts:
-                interpretation_counts[row[0]] = row[1]
+        if row[0] in interpretation_counts:
+            interpretation_counts[row[0]] = row[1]
 
 # Iterate over the rows in interpretation_data2
     for row in interpretation_data2:
@@ -131,7 +152,11 @@ async def health(request: Request):
             "interpretationCounts": interpretation_counts,
             "interpretationCounts2": interpretation_counts2,
             "crawled": crawled_articles,
-            "top_authors": top_authors
+            "top_authors": top_authors,
+            "page": page,
+            "page_size": page_size,
+            "total_pages": total_pages,
+            "selected_category": category  # Pass the selected category to the template
         }
     )
 
@@ -201,13 +226,15 @@ async def check_article(request: Request, input_data: str = Form(...)):
         createinput("output_data", output)
 
         interpretation_counts = {
+            "Fake": 0,
+            "LIKELY TRUE": 0,
             "Real": 0,
-            "Propaganda": 0,
+            "Unclear": 0,
             "Unsure (Neutral)": 0
         }
 
         interpretation_data = db.query(
-            "SELECT CAST(interpretation AS VARCHAR(MAX)), COUNT(*) FROM manual_data GROUP BY CAST(interpretation AS VARCHAR(MAX))"
+            "SELECT CAST(interpretation AS VARCHAR(MAX)), COUNT(*) FROM output_data GROUP BY CAST(interpretation AS VARCHAR(MAX))"
         )
         
         for row in interpretation_data:
@@ -224,7 +251,7 @@ async def check_article(request: Request, input_data: str = Form(...)):
             'result': f"Error: {str(e)}",
             'input_data': {'url': None},
             'top_authors': top_authors,
-            'interpretationCounts': {"Real": 0, "Propaganda": 0, "Unsure (Neutral)": 0}
+            'interpretationCounts': {"Fake": 0, "LIKELY TRUE": 0, "Real": 0, "Unclear": 0, "Unsure (Neutral)": 0},
         })
 
 @app.get("/articles")
@@ -244,3 +271,29 @@ async def check_crawled_articles(request: Request):
     #     "articles.html", 
     #     {"request": request, "crawled": crawled_articles}
     # )
+
+
+
+@app.get("/get_articles_by_category")
+async def get_articles_by_category(category: str):
+    try:
+        # Parameterized query to prevent SQL injection
+        articles = db.query("SELECT * FROM output_data WHERE CAST(interpretation AS VARCHAR(MAX)) = ?", (category,))
+        
+        # Format the articles into a list of dictionaries
+        articles_list = []
+        for article in articles:
+            articles_list.append({
+                "title": article[0],
+                "explanation": article[1],
+                "interpretation": article[2],
+                "confidence": article[3],
+                "deepfake": article[4],
+                "sentiment_explanation": article[5],
+                "target_Audience": article[6]
+            })
+        
+        return {"articles": articles_list}
+    
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
