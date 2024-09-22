@@ -82,13 +82,15 @@ async def health(request: Request):
     db_outputdata_items = readtable("output_data")
 
     interpretation_counts = {
-            "Real": 0,
-            "Propaganda": 0,
-            "Unsure (Neutral)": 0
-        }
+        "Fake": 0,
+        "LIKELY TRUE": 0,
+        "Real": 0,
+        "Unclear": 0,
+        "Unsure (Neutral)": 0
+    }
     
     interpretation_data = db.query(
-            "SELECT CAST(interpretation AS VARCHAR(MAX)), COUNT(*) FROM manual_data GROUP BY CAST(interpretation AS VARCHAR(MAX))"
+            "SELECT CAST(interpretation AS VARCHAR(MAX)), COUNT(*) FROM output_data GROUP BY CAST(interpretation AS VARCHAR(MAX))"
         )
 
     for row in interpretation_data:
@@ -170,13 +172,15 @@ async def check_article(request: Request, input_data: str = Form(...)):
         createinput("output_data", output)
 
         interpretation_counts = {
+            "Fake": 0,
+            "LIKELY TRUE": 0,
             "Real": 0,
-            "Propaganda": 0,
+            "Unclear": 0,
             "Unsure (Neutral)": 0
         }
 
         interpretation_data = db.query(
-            "SELECT CAST(interpretation AS VARCHAR(MAX)), COUNT(*) FROM manual_data GROUP BY CAST(interpretation AS VARCHAR(MAX))"
+            "SELECT CAST(interpretation AS VARCHAR(MAX)), COUNT(*) FROM output_data GROUP BY CAST(interpretation AS VARCHAR(MAX))"
         )
         
         for row in interpretation_data:
@@ -193,7 +197,7 @@ async def check_article(request: Request, input_data: str = Form(...)):
             'result': f"Error: {str(e)}",
             'input_data': {'url': None},
             'top_authors': top_authors,
-            'interpretationCounts': {"Real": 0, "Propaganda": 0, "Unsure (Neutral)": 0}
+            'interpretationCounts': {"Fake": 0, "LIKELY TRUE": 0, "Real": 0, "Unclear": 0, "Unsure (Neutral)": 0},
         })
 
 @app.get("/articles")
@@ -213,3 +217,27 @@ async def check_crawled_articles(request: Request):
     #     "articles.html", 
     #     {"request": request, "crawled": crawled_articles}
     # )
+
+
+
+@app.get("/get_articles_by_category")
+async def get_articles_by_category(category: str):
+    try:
+        # Fetch articles from the database by category
+        articles = db.query(f"SELECT * FROM output_data WHERE interpretation = '{category}'")
+        
+        # Format the articles into a list of dictionaries
+        articles_list = []
+        for article in articles:
+            articles_list.append({
+                "title": article[0],
+                "explanation": article[1],
+                "interpretation": article[2],
+                "confidence": article[3],
+                "deepfake": article[4]
+            })
+        
+        return {"articles": articles_list}
+    
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
