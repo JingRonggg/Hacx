@@ -96,7 +96,7 @@ async def health(request: Request, page: int = 1, page_size: int = 5, category: 
     offset = (page - 1) * page_size
 
     # Apply pagination with OFFSET and FETCH NEXT (with or without category filter)
-    paginated_query = f"{query} ORDER BY (SELECT NULL) OFFSET {offset} ROWS FETCH NEXT {page_size} ROWS ONLY"
+    paginated_query = f"{query} ORDER BY added_time DESC OFFSET {offset} ROWS FETCH NEXT {page_size} ROWS ONLY"
     db_outputdata_items = db.query(paginated_query)
 
     # Calculate the total number of pages
@@ -110,6 +110,8 @@ async def health(request: Request, page: int = 1, page_size: int = 5, category: 
         "Unclear": 0,
         "Unsure (Neutral)": 0
     }
+
+    interpretation_counts2 = {}
 
     interpretation_data = db.query(
             "SELECT CAST(interpretation AS VARCHAR(MAX)), COUNT(*) FROM output_data GROUP BY CAST(interpretation AS VARCHAR(MAX))"
