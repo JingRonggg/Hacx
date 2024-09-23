@@ -193,6 +193,8 @@ async def check_article(request: Request, input_data: str = Form(...), page: int
         # Process the URL to detect fake news
         article = process_url(url)
         
+        print(article)
+        
         # sentiment, sentiment_Explanation, disinformation, disinformation_Explanation, target_Audience = sentimental_analysis(article.get('text'))
     
         # article.sentiment = sentiment
@@ -200,45 +202,58 @@ async def check_article(request: Request, input_data: str = Form(...), page: int
         # article.disinformation = disinformation
         # article.disinformation_explanation = disinformation_Explanation
         # article.target_Audience = target_Audience
-        print("this is target audience" + article.get('target_Audience'))
-        print(article.get('authors'))
-        # Insert the article into the input_data table if it doesn't exist
-        if url_exists[0][0] == 0:
-            author = get_domain_name(url) if article.get('authors') == [] else article.get('authors')[0]
-            db.send("input_data", (article.get('title'), article.get('text'), author, None, url))
-        print(article)
-        print(article.get('authors'))
-        # Handle article processing and database insertions based on `article` values here
-        top_authors = calculate_top_authors(readtable("output_data"))
-
-        if hasattr(article, 'interpretation') and article.interpretation == "Propaganda":
-            # Save the article to the output_data table
-            output = (
-                article.title, article.explanation, article.interpretation, article.confidence, article.deepfake,
-                article.sentiment, article.sentiment_Explanation, article.disinformation, article.disinformation_Explanation,
-                article.target_Audience, url, datetime.datetime.now()
-            )
-            createinput("output_data", output)
         
-        if hasattr(article, 'interpretation') and article.interpretation == "Not Propaganda":
-            article_output = detect_fake_news_in_article(article)
+        if (article.target_Audience != None):
+            print("this is target audience" + article.target_Audience)
+            # Insert the article into the input_data table if it doesn't exist
+            if url_exists[0][0] == 0:
+                author = get_domain_name(url) if article.authors == [] else article.authors[0]
+                db.send("input_data", (article.title, article.text, author, None, url))
+            # Handle article processing and database insertions based on `article` values here
+            top_authors = calculate_top_authors(readtable("output_data"))
+        else: 
+            print(article)
+            if hasattr(article, 'interpretation') and article.interpretation == "Propaganda":
+                # Save the article to the output_data table
+                output = (
+                    article.title, article.explanation, article.interpretation, article.confidence, article.deepfake,
+                    article.sentiment, article.sentiment_explanation, article.disinformation, article.disinformation_explanation,
+                    article.target_Audience, url, datetime.datetime.now()
+                )
+                inputdata = (article.title, None, None, None, url)
+                createinput("input_data", inputdata)
+                createinput("output_data", output)
+                return RedirectResponse(url='/', status_code=303)
 
-        if 'deepfake' in article:
-            article_output.deepfake = article['deepfake']
+            if hasattr(article, 'interpretation') and article.interpretation == "Not Propaganda":
+                article_output = detect_fake_news_in_article(article)
+                # Save the article to the output_data table
+                output = (
+                    article.title, article.explanation, article.interpretation, article.confidence, article.deepfake,
+                    article.sentiment, article.sentiment_explanation, article.disinformation, article.disinformation_explanation,
+                    article.target_Audience, url, datetime.datetime.now()
+                )
+                inputdata = (article.title, None, None, None, url)
+                createinput("input_data", inputdata)
+                createinput("output_data", output)
+                return RedirectResponse(url='/', status_code=303)
+
+            if('deepfake' in article):
+                article_output.deepfake = article['deepfake']
 
         article_output = detect_fake_news_in_article(article)
         # Save the processed article to the output_data table
         output = (
-            article.get('title'),
+            article_output.title,
             article_output.explanation,
             article_output.interpretation,
             article_output.confidence,
-            article.get('deepfake'),
-            article.get('sentiment'),
-            article.get('sentiment_Explanation'),
-            article.get('disinformation'),
-            article.get('disinformation_Explanation'),
-            article.get('target_Audience'),
+            article_output.deepfake,
+            article_output.sentiment,
+            article_output.sentiment_explanation,
+            article_output.disinformation,
+            article_output.disinformation_explanation,
+            article_output.target_Audience,
             url,
             datetime.datetime.now()
         )

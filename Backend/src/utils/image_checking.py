@@ -40,12 +40,20 @@ def process_url(url):
             article = {
                 'title': 'Text Extracted from Image',
                 'text': article_text,
-                'deepfake': deepfakeScore
+                'deepfake': deepfakeScore,
+                'authors': article.authors,
+                'publish_date': article.publish_date,
+                'top_image': article.top_image,
+                'sentiment': None,
+                'sentiment_Explanation': None,
+                'disinformation': None,
+                'disinformation_Explanation': None,
+                'target_Audience': None
             }
     else:
         # The input URL is a web link
         article = fetch_article(url)
-        article['text'] = clean_text(article['text'])
+        article.text = clean_text(article.text)
 
     return article
 
@@ -56,7 +64,15 @@ def fetch_article(url):
     article.parse()
     
     sentiment, sentiment_Explanation, disinformation, disinformation_Explanation, target_Audience = sentimental_analysis(article.text)
-    return {
+    article.sentiment = sentiment
+    article.sentiment_explanation = sentiment_Explanation
+    article.disinformation = disinformation
+    article.disinformation_explanation = disinformation_Explanation
+    article.target_Audience = target_Audience
+    #sentiment, sentiment_Explanation, disinformation, disinformation_Explanation, target_Audience = sentimental_analysis(article.text)
+    print(target_Audience)
+    return article
+    '''return {
         'title': article.title,
         'text': article.text,
         'authors': article.authors,
@@ -68,4 +84,4 @@ def fetch_article(url):
         'disinformation_Explanation': disinformation_Explanation,
         'target_Audience': target_Audience
         
-    }
+    }'''
