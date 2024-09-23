@@ -22,8 +22,8 @@
                 <th scope="col" style="width: 15%;">URL</th>
                 <th scope="col" style="width: 15%;">Title</th>
                 <th scope="col" style="width: 30%;">Main Text</th>
-                <th scope="col">Author</th>
-                <th scope="col">Description</th>
+                <th scope="col" style="width: 10%;">Author</th>
+                <th scope="col" style="width: 20%;">Description</th>
             </tr>
         </thead>
         <tbody>
@@ -121,6 +121,20 @@
         justify-content: center;
         align-items: center;
         z-index: 1000;
+    }
+
+    .text-wrap {
+    word-wrap: break-word;
+    white-space: normal;
+    height: 100%;
+    }
+
+    td a {
+    display: block;
+    max-width: 200px;  /* Limit the width of the URL */
+    word-wrap: break-word;  /* Allow URLs to wrap within the cell */
+    white-space: normal;  /* Ensure the text can wrap onto multiple lines */
+    text-overflow: ellipsis;
     }
 </style>
 
