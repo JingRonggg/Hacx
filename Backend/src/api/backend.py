@@ -100,6 +100,9 @@ async def health(request: Request, page: int = 1, page_size: int = 5, category: 
     # Apply pagination with OFFSET and FETCH NEXT (with or without category filter)
     paginated_query = f"{query} ORDER BY added_time DESC OFFSET {offset} ROWS FETCH NEXT {page_size} ROWS ONLY"
     db_outputdata_items = db.query(paginated_query)
+    
+    explanation_query = f"{query} ORDER BY added_time DESC"
+    output_data = db.query(explanation_query)
 
     # Calculate the total number of pages
     total_pages = (total_articles + page_size - 1) // page_size
@@ -155,6 +158,7 @@ async def health(request: Request, page: int = 1, page_size: int = 5, category: 
         {
             "request": request,
             "result": db_outputdata_items,
+            "explanation_result" : output_data,
             "interpretationCounts": interpretation_counts,
             "interpretationCounts2": interpretation_counts2,
             "crawled": crawled_articles,
@@ -162,74 +166,72 @@ async def health(request: Request, page: int = 1, page_size: int = 5, category: 
             "page": page,
             "page_size": page_size,
             "total_pages": total_pages,
-            "selected_category": category  # Pass the selected category to the template
+            "selected_category": category 
         }
     )
 
 @app.post("/")
-async def check_article(request: Request, input_data: str = Form(...)):
+async def check_article(request: Request, input_data: str = Form(...), page: int = 1, page_size: int = 5, category: Optional[str] = None):
     try:
         # Process the URL and decode it
         url = unquote(input_data)
-        
+
         # Check if the URL already exists in the input_data table
         url_exists = db.query(f"SELECT COUNT(*) FROM dbo.input_data WHERE url = '{url}'")
 
-        if url_exists[0][0] == 0:
-            db.send("input_data", (None, None, None, None, url))  
-
         # Process the URL to detect fake news
         article = process_url(url)
-
-        print(article["title"])
         
+        # sentiment, sentiment_Explanation, disinformation, disinformation_Explanation, target_Audience = sentimental_analysis(article.get('text'))
+    
+        # article.sentiment = sentiment
+        # article.sentiment_explanation = sentiment_Explanation
+        # article.disinformation = disinformation
+        # article.disinformation_explanation = disinformation_Explanation
+        # article.target_Audience = target_Audience
+        print("this is target audience" + article.get('target_Audience'))
+        # Insert the article into the input_data table if it doesn't exist
+        if url_exists[0][0] == 0:
+            db.send("input_data", (article.get('title'), article.get('text'), article.get('authors')[0], None, url))
+        print(article)
+        print(article.get('authors'))
+        # Handle article processing and database insertions based on `article` values here
         top_authors = calculate_top_authors(readtable("output_data"))
 
         if hasattr(article, 'interpretation') and article.interpretation == "Propaganda":
-            # send output to db table
+            # Save the article to the output_data table
             output = (
-                article.title,
-                article.explanation,
-                article.interpretation,
-                article.confidence,
-                article.deepfake,
-                article.sentiment,
-                article.sentiment_explanation,
-                article.disinformation,
-                article.disinformation_explanation,
-                article.target_Audience,
-                url,
-                datetime.datetime.now()
+                article.title, article.explanation, article.interpretation, article.confidence, article.deepfake,
+                article.sentiment, article.sentiment_Explanation, article.disinformation, article.disinformation_Explanation,
+                article.target_Audience, url, datetime.datetime.now()
             )
             createinput("output_data", output)
-
+        
         if hasattr(article, 'interpretation') and article.interpretation == "Not Propaganda":
-            return RedirectResponse(url = "/", status_code=303)
-
-        # Perform fake news detection
-        article_output = detect_fake_news_in_article(article)
+            article_output = detect_fake_news_in_article(article)
 
         if 'deepfake' in article:
             article_output.deepfake = article['deepfake']
 
+        article_output = detect_fake_news_in_article(article)
         # Save the processed article to the output_data table
         output = (
-            article_output.title,
+            article.get('title'),
             article_output.explanation,
             article_output.interpretation,
             article_output.confidence,
-            article_output.deepfake,
-            article_output.sentiment,
-            article_output.sentiment_explanation,
-            article_output.disinformation,
-            article_output.disinformation_explanation,
-            article_output.target_Audience,
+            article.get('deepfake'),
+            article.get('sentiment'),
+            article.get('sentiment_Explanation'),
+            article.get('disinformation'),
+            article.get('disinformation_Explanation'),
+            article.get('target_Audience'),
             url,
             datetime.datetime.now()
         )
 
         createinput("output_data", output)
-
+        
         interpretation_counts = {
             "Fake": 0,
             "LIKELY TRUE": 0,
@@ -241,13 +243,13 @@ async def check_article(request: Request, input_data: str = Form(...)):
         interpretation_data = db.query(
             "SELECT CAST(interpretation AS VARCHAR(MAX)), COUNT(*) FROM output_data GROUP BY CAST(interpretation AS VARCHAR(MAX))"
         )
-        
+
         for row in interpretation_data:
             if row[0] in interpretation_counts:
                 interpretation_counts[row[0]] = row[1]
 
-
-        return RedirectResponse(url="/", status_code=303)
+        # Redirect to maintain page, category, and pagination state
+        return RedirectResponse(url=f"/?page={page}&category={category or ''}&page_size={page_size}", status_code=303)
 
     except Exception as e:
         top_authors = calculate_top_authors(readtable('output_data'))
@@ -257,6 +259,10 @@ async def check_article(request: Request, input_data: str = Form(...)):
             'input_data': {'url': None},
             'top_authors': top_authors,
             'interpretationCounts': {"Fake": 0, "LIKELY TRUE": 0, "Real": 0, "Unclear": 0, "Unsure (Neutral)": 0},
+            'page': page,
+            'page_size': page_size,
+            'total_pages': (len(db.query("SELECT * FROM output_data")) + page_size - 1) // page_size,
+            'selected_category': category
         })
 
 @app.get("/articles")

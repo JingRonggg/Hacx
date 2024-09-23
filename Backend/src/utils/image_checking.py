@@ -1,3 +1,4 @@
+from src.LLMs.sentimental_analysis import sentimental_analysis
 from src.utils.OCR import azure_ocr_image_to_text, is_url_image
 from src.utils.propaganda_detector import analyze_image_for_propaganda, extract_propaganda_analysis_with_regex
 from src.LLMs.deepfake_detection import detect_deepfake_from_url
@@ -53,10 +54,18 @@ def fetch_article(url):
     article = Article(url)
     article.download()
     article.parse()
+    
+    sentiment, sentiment_Explanation, disinformation, disinformation_Explanation, target_Audience = sentimental_analysis(article.text)
     return {
         'title': article.title,
         'text': article.text,
         'authors': article.authors,
         'publish_date': article.publish_date,
         'top_image': article.top_image,
+        'sentiment': sentiment,
+        'sentiment_Explanation': sentiment_Explanation,
+        'disinformation': disinformation,
+        'disinformation_Explanation': disinformation_Explanation,
+        'target_Audience': target_Audience
+        
     }
