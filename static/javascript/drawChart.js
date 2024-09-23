@@ -32,7 +32,7 @@ var chart1 = new Chart(ctx1, {
     data: {
         labels: Object.keys(interpretationCounts),
         datasets: [{
-            label: 'Interpretation Counts',
+            label: 'Frequency',
             data: Object.values(interpretationCounts),
             backgroundColor: [
                 'rgba(255, 99, 132, 0.2)',   
@@ -84,7 +84,7 @@ var chart2 = new Chart(ctx2, {
   data: {
       labels: Object.keys(interpretationCounts2),
       datasets: [{
-        label: 'My First Dataset',
+        label: 'Fake News Detected', 
         data: Object.values(interpretationCounts2),
         fill: true,
         backgroundColor: 'rgba(255, 99, 132, 0.2)',

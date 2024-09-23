@@ -61,6 +61,11 @@ class ArticleOutput(BaseModel):
     disinformation_explanation: Optional[str] = None
     target_Audience: Optional[str] = None
 
+
+def get_domain_name(url):
+    parsed_url = urlparse(url)
+    return parsed_url.netloc
+
 def calculate_top_authors(data, top_n=6):
     author_counter = Counter()
 
@@ -134,22 +139,28 @@ async def health(request: Request, page: int = 1, page_size: int = 5, category: 
     for row in interpretation_data:
         if row[0] in interpretation_counts:
             interpretation_counts[row[0]] = row[1]
+            
 
-# Iterate over the rows in interpretation_data2
     for row in interpretation_data2:
-        # Extract the date and the label
         date = row[0]  # Assuming row[0] is the date
-        label = row[1]  # Assuming row[1] is the label (e.g., 'Propaganda', 'Real', etc.)
-        print(date)
-        print(label)
-        # Only count fake news ('Propaganda')
+        count = row[1]  # Assuming row[1] is the count
+        interpretation_counts2[date] = count
+
+# # Iterate over the rows in interpretation_data2
+#     for row in interpretation_data2:
+#         # Extract the date and the label
+#         date = row[0]  # Assuming row[0] is the date
+#         label = row[1]  # Assuming row[1] is the label (e.g., 'Propaganda', 'Real', etc.)
+#         print(date)
+#         print(label)
+#         # Only count fake news ('Propaganda')
         
-        # If the date is already in the dictionary, increment its count
-        if date in interpretation_counts2:
-            interpretation_counts2[date] += 1
-        else:
-            # If the date is not in the dictionary, add it with a count of 1
-            interpretation_counts2[date] = 1
+#         # If the date is already in the dictionary, increment its count
+#         if date in interpretation_counts2:
+#             interpretation_counts2[date] += 1
+#         else:
+#             # If the date is not in the dictionary, add it with a count of 1
+#             interpretation_counts2[date] = 1
 
     print(interpretation_counts2)
 
@@ -190,9 +201,11 @@ async def check_article(request: Request, input_data: str = Form(...), page: int
         # article.disinformation_explanation = disinformation_Explanation
         # article.target_Audience = target_Audience
         print("this is target audience" + article.get('target_Audience'))
+        print(article.get('authors'))
         # Insert the article into the input_data table if it doesn't exist
         if url_exists[0][0] == 0:
-            db.send("input_data", (article.get('title'), article.get('text'), article.get('authors')[0], None, url))
+            author = get_domain_name(url) if article.get('authors') == [] else article.get('authors')[0]
+            db.send("input_data", (article.get('title'), article.get('text'), author, None, url))
         print(article)
         print(article.get('authors'))
         # Handle article processing and database insertions based on `article` values here
@@ -240,13 +253,11 @@ async def check_article(request: Request, input_data: str = Form(...), page: int
             "Unsure (Neutral)": 0
         }
 
+
         interpretation_data = db.query(
             "SELECT CAST(interpretation AS VARCHAR(MAX)), COUNT(*) FROM output_data GROUP BY CAST(interpretation AS VARCHAR(MAX))"
         )
 
-        for row in interpretation_data:
-            if row[0] in interpretation_counts:
-                interpretation_counts[row[0]] = row[1]
 
         # Redirect to maintain page, category, and pagination state
         return RedirectResponse(url=f"/?page={page}&category={category or ''}&page_size={page_size}", status_code=303)

@@ -58,7 +58,7 @@
                     <div class="text-wrapper" style="overflow-y: auto; height: 400px; padding: 30px; margin-top: 35px;">
                         {% if result %}
                             <p style="text-align: justify;">
-                                {{ explanation_result[0][1]}}
+                                {{ explanation_result[0][1] if explanation_result and explanation_result[0][1] else "" }}
                             </p>
                         {% else %}
                             <p style="text-align: center;">
