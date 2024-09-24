@@ -128,12 +128,12 @@ def fetch_articles():
         if url not in root_urls_set:
             article_list.append(url)
             article = fetch_article(url)
-        
+            print(article)
             # Safely extract the first author or set to 'Unknown' if the list is empty 
-            first_author = article["authors"][0] if article["authors"] else "Unknown"
-
+            first_author = article.authors[0] if article.authors else "Unknown"
+            print(first_author)
             # Pass only the first author to createinput 
-            p = createinput("input_data", (article["title"], article["text"], first_author, "", url))
+            p = createinput("input_data", (article.title, article.text, first_author, "", url))
             print(p)
             if p:
                 article = process_url(url)
@@ -141,15 +141,15 @@ def fetch_articles():
                 article_output = detect_fake_news_in_article(article)
 
                 # Perform sentiment analysis
-                sentiment, sentiment_Explanation, disinformation, disinformation_Explanation, target_Audience = sentimental_analysis(article['text'])
+                sentiment, sentiment_Explanation, disinformation, disinformation_Explanation, target_Audience = sentimental_analysis(article.text)
                 article_output.sentiment = sentiment
                 article_output.sentiment_explanation = sentiment_Explanation
                 article_output.disinformation = disinformation
                 article_output.disinformation_explanation = disinformation_Explanation
                 article_output.target_Audience = target_Audience
 
-                if('deepfake' in article):
-                    article_output.deepfake = article['deepfake']
+                if(hasattr(article, 'deepfake')):
+                    article_output.deepfake = article.deepfake
                 
                 output = (
                     article_output.title,

@@ -60,6 +60,8 @@ def process_url(url):
 
 def fetch_article(url):
     article = Article(url)
+    print("Downloading article...")
+    print(type(article))
     article.download()
     article.parse()
     
@@ -71,6 +73,7 @@ def fetch_article(url):
     article.target_Audience = target_Audience
     #sentiment, sentiment_Explanation, disinformation, disinformation_Explanation, target_Audience = sentimental_analysis(article.text)
     print(target_Audience)
+    print(article.authors)
     return article
     '''return {
         'title': article.title,

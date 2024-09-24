@@ -226,7 +226,8 @@ async def check_article(request: Request, input_data: str = Form(...), page: int
                 return RedirectResponse(url='/', status_code=303)
 
             if hasattr(article, 'interpretation') and article.interpretation == "Not Propaganda":
-                article_output = detect_fake_news_in_article(article)
+                if(hasattr(article, 'text')):
+                    article_output = detect_fake_news_in_article(article)
                 # Save the article to the output_data table
                 output = (
                     article.title, article.explanation, article.interpretation, article.confidence, article.deepfake,

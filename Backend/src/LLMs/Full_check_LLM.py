@@ -30,6 +30,7 @@ def detect_fake_news_in_article(article):
         ArticleOutput: An instance of the ArticleOutput class with the detection results.
     """
     # Perform fake news detection, Layer 1 (ChatGPT)
+    print(article.text)
     response = get_gpt_response(article.text)
     gpt_response = response['choices'][0]['message']['content'].strip()
     interpretation, confidence, explanation = parse_gpt_response(gpt_response)
