@@ -82,7 +82,7 @@ This project addresses the challenge of detecting and attributing the online spr
 ## 3. Technical Architecture
 
 ### System Architecture
-*System Architecture Diagram: [insert image]*
+*System Architecture Diagram: (workflow.jpg)
 
 ### Technology Stack
 - **Azure OpenAI**: For text and image analysis using advanced language models.
