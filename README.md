@@ -86,7 +86,7 @@ This project addresses the challenge of detecting and attributing the online spr
 
 ### Technology Stack
 - **Azure OpenAI**: For text and image analysis using advanced language models.
-- **Python**: The core programming language for the backend and analysis algorithms.
+- **Python**: The core programming language for the backend.
 - **FastAPI**: A fast and modern web framework to handle backend API calls.
 - **Azure SQL Database**: For storing processed data and analysis results.
 
